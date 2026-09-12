@@ -1,9 +1,12 @@
 {
   "cleanUrls": true,
   "trailingSlash": false,
-  "routes": [
-    { "src": "^/admin(/.*)?$", "dest": "/index.html" },
-    { "handle": "filesystem" },
-    { "src": "/(.*)", "dest": "/index.html" }
+  "rewrites": [
+    { "source": "/legacy-admin", "destination": "/legacy-admin/index.html" },
+    { "source": "/legacy-admin/", "destination": "/legacy-admin/index.html" },
+    { "source": "/legacy-admin/(.*)", "destination": "/legacy-admin/$1" },
+    { "source": "/admin", "destination": "/index.html" },
+    { "source": "/admin/(.*)", "destination": "/index.html" },
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
