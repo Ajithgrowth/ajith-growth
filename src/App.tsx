@@ -44,6 +44,7 @@ function AppContent() {
     // Normalize path by stripping query params and trailing slashes
     const path = currentPath.split('?')[0].split('#')[0];
     const normalized = path === '/' ? '/' : path.replace(/\/+$/, '');
+    const normalizedLower = normalized.toLowerCase();
 
     if (normalized === '' || normalized === '/') {
       return <HomePage />;
@@ -73,7 +74,7 @@ function AppContent() {
     if (normalized === '/terms') {
       return <TermsPage />;
     }
-    if (normalized === '/admin' || normalized.startsWith('/admin/')) {
+    if (normalizedLower === '/admin' || normalizedLower.startsWith('/admin/')) {
       return <AdminPage />;
     }
 
@@ -82,7 +83,8 @@ function AppContent() {
 
   const path = currentPath.split('?')[0].split('#')[0];
   const normalized = path === '/' ? '/' : path.replace(/\/+$/, '');
-  const isAdmin = normalized === '/admin' || normalized.startsWith('/admin/');
+  const normalizedLower = normalized.toLowerCase();
+  const isAdmin = normalizedLower === '/admin' || normalizedLower.startsWith('/admin/');
 
   if (isAdmin) {
     return <AdminPage />;
