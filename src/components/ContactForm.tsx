@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Send, CheckCircle2, AlertCircle, Mail, Phone, MessageCircle } from 'lucide-react';
+import { Send, CheckCircle2, AlertCircle, Mail, Phone, MessageCircle, Loader2 } from 'lucide-react';
 import { ConsultationFormData } from '../types';
 import { trackEvent } from '../utils/analytics';
 import { siteConfig } from '../data/siteConfig';
@@ -18,6 +18,7 @@ export function ContactForm() {
 
   const [hasStarted, setHasStarted] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
   const challenges = [
@@ -36,13 +37,65 @@ export function ContactForm() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return;
     setErrorMessage('');
 
     if (!formData.name.trim() || !formData.company.trim() || !formData.phoneOrEmail.trim()) {
       setErrorMessage('Please fill in your name, company name, and contact information.');
       return;
+    }
+
+    const webhookUrl = import.meta.env.VITE_LEADS_WEBHOOK_URL;
+    if (!webhookUrl) {
+      setErrorMessage('Something went wrong. Please try again or contact us on WhatsApp.');
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    const payload = {
+      name: formData.name,
+      company: formData.company,
+      website: formData.website,
+      location: formData.location,
+      primaryChallenge: formData.primaryChallenge,
+      preferredContact: formData.preferredContact,
+      phoneOrEmail: formData.phoneOrEmail,
+      message: formData.message,
+      source: 'Ajith Growth Website',
+    };
+
+    try {
+      // Send POST request with text/plain to avoid CORS preflight (OPTIONS) which Google Apps Script does not support
+      const response = await fetch(webhookUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'text/plain;charset=utf-8',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+    } catch (fetchErr) {
+      // In case browser redirect security restricts cross-origin 302 read, retry with mode: 'no-cors'
+      try {
+        await fetch(webhookUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: {
+            'Content-Type': 'text/plain;charset=utf-8',
+          },
+          body: JSON.stringify(payload),
+        });
+      } catch (fallbackErr) {
+        setErrorMessage('Something went wrong. Please try again or contact us on WhatsApp.');
+        setIsSubmitting(false);
+        return;
+      }
     }
 
     trackEvent('consultation_form_submit', {
@@ -52,6 +105,7 @@ export function ContactForm() {
     });
 
     setSubmitted(true);
+    setIsSubmitting(false);
   };
 
   if (submitted) {
@@ -300,10 +354,20 @@ export function ContactForm() {
       {/* Button: Request a Growth Consultation */}
       <button
         type="submit"
-        className="w-full py-3.5 px-6 rounded-lg bg-[#0D1B2A] hover:bg-[#172A3A] text-white font-body font-semibold text-sm sm:text-base flex items-center justify-center gap-2.5 transition-all shadow-xs active:scale-[0.99]"
+        disabled={isSubmitting}
+        className="w-full py-3.5 px-6 rounded-lg bg-[#0D1B2A] hover:bg-[#172A3A] text-white font-body font-semibold text-sm sm:text-base flex items-center justify-center gap-2.5 transition-all shadow-xs active:scale-[0.99] disabled:opacity-75 disabled:cursor-not-allowed"
       >
-        <span>Request a Growth Consultation</span>
-        <Send className="w-4 h-4 text-sky-400" />
+        {isSubmitting ? (
+          <>
+            <span>Submitting Consultation Request...</span>
+            <Loader2 className="w-4 h-4 text-sky-400 animate-spin" />
+          </>
+        ) : (
+          <>
+            <span>Request a Growth Consultation</span>
+            <Send className="w-4 h-4 text-sky-400" />
+          </>
+        )}
       </button>
 
       <p className="text-center text-[11px] font-supporting text-[#64748B] pt-1">
