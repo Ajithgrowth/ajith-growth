@@ -47,12 +47,6 @@ export function ContactForm() {
       return;
     }
 
-    const webhookUrl = import.meta.env.VITE_LEADS_WEBHOOK_URL;
-    if (!webhookUrl) {
-      setErrorMessage('Something went wrong. Please try again or contact us on WhatsApp.');
-      return;
-    }
-
     setIsSubmitting(true);
 
     const payload = {
@@ -68,44 +62,37 @@ export function ContactForm() {
     };
 
     try {
-      // Send POST request with text/plain to avoid CORS preflight (OPTIONS) which Google Apps Script does not support
-      const response = await fetch(webhookUrl, {
+      const response = await fetch('/api/leads', {
         method: 'POST',
         headers: {
-          'Content-Type': 'text/plain;charset=utf-8',
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
+        throw new Error(`Server returned status ${response.status}`);
       }
-    } catch (fetchErr) {
-      // In case browser redirect security restricts cross-origin 302 read, retry with mode: 'no-cors'
-      try {
-        await fetch(webhookUrl, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: {
-            'Content-Type': 'text/plain;charset=utf-8',
-          },
-          body: JSON.stringify(payload),
-        });
-      } catch (fallbackErr) {
-        setErrorMessage('Something went wrong. Please try again or contact us on WhatsApp.');
-        setIsSubmitting(false);
-        return;
+
+      const data = await response.json().catch(() => ({}));
+      if (data && data.success === false) {
+        throw new Error(data.error || 'Submission was not accepted');
       }
+
+      // GA4 event fires ONLY after the lead has been successfully accepted
+      trackEvent('consultation_form_submit', {
+        company: formData.company,
+        challenge: formData.primaryChallenge,
+        contact_method: formData.preferredContact,
+      });
+
+      setSubmitted(true);
+    } catch (err) {
+      console.error('Lead submission error:', err);
+      setErrorMessage('Something went wrong. Please try again or contact us on WhatsApp.');
+    } finally {
+      setIsSubmitting(false);
     }
-
-    trackEvent('consultation_form_submit', {
-      company: formData.company,
-      challenge: formData.primaryChallenge,
-      contact_method: formData.preferredContact,
-    });
-
-    setSubmitted(true);
-    setIsSubmitting(false);
   };
 
   if (submitted) {
