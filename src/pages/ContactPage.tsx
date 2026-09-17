@@ -10,7 +10,7 @@ export function ContactPage() {
   const seo = staticPagesSeo['/contact'];
 
   return (
-    <main id="main-content" className="w-full">
+    <main id="main-content" className="w-full bg-white">
       <SEO
         title={seo.title}
         description={seo.description}
@@ -32,18 +32,17 @@ export function ContactPage() {
             </nav>
 
             <span className="inline-block text-xs font-semibold tracking-wider text-sky-400 font-supporting uppercase mb-3">
-              GROWTH CONSULTATION
+              DIRECT FOUNDER CONSULTATION
             </span>
             <h1 className="text-3xl sm:text-5xl font-heading font-bold text-white tracking-tight leading-tight mb-6">
-              Let's Talk About Your Construction Business Growth
+              Let's Talk About What's Actually Happening in Your Business
             </h1>
             <p className="text-base sm:text-lg text-slate-300 font-body leading-relaxed mb-8">
-              Speak directly with Ajith to evaluate your market territory, analyze competitor search vulnerabilities, and determine the exact Google growth architecture for your construction business.
+              No boilerplate agency sales pitch. A direct, honest 30-minute conversation with Ajith to review your current search visibility, identify where unqualified leads are wasting your time, and map out a growth system tailored for residential construction.
             </p>
 
             {/* Primary & Secondary CTAs */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-              {/* Primary CTA: Book a Growth Consultation (Scrolls to form) */}
               <a
                 href="#consultation-form"
                 onClick={() => trackEvent('consultation_cta_click', { location: 'contact_hero_primary' })}
@@ -53,7 +52,6 @@ export function ContactPage() {
                 <ArrowRight className="w-4 h-4 text-[#0D1B2A]" />
               </a>
 
-              {/* Secondary CTA: Direct Phone */}
               <a
                 href={siteConfig.phoneTel}
                 onClick={() => trackEvent('phone_click', { location: 'contact_hero_secondary' })}
@@ -63,7 +61,6 @@ export function ContactPage() {
                 <span>Call {siteConfig.phone}</span>
               </a>
 
-              {/* Tertiary CTA: WhatsApp */}
               <a
                 href={siteConfig.whatsappUrl}
                 target="_blank"
@@ -90,32 +87,32 @@ export function ContactPage() {
                 <span className="text-xs font-supporting font-bold uppercase tracking-wider text-sky-800 block mb-2">
                   QUALIFICATION CRITERIA
                 </span>
-                <h2 className="text-xl sm:text-2xl font-heading font-semibold text-[#0D1B2A] mb-4">
+                <h2 className="text-xl sm:text-2xl font-heading font-bold text-[#0D1B2A] mb-4">
                   Who This Consultation Is For
                 </h2>
                 <div className="space-y-3 font-body text-sm text-[#64748B]">
                   <div className="flex items-start gap-3">
                     <CheckCircle2 className="w-5 h-5 text-sky-800 shrink-0 mt-0.5" />
                     <span>
-                      <strong className="text-[#0D1B2A]">Residential Construction Companies:</strong> Turnkey home builders, custom villa contractors, and residential construction firms.
+                      <strong className="text-[#0D1B2A]">Residential Construction Companies:</strong> Turnkey home builders, villa contractors and residential construction firms looking for serious projects.
                     </span>
                   </div>
                   <div className="flex items-start gap-3">
                     <CheckCircle2 className="w-5 h-5 text-sky-800 shrink-0 mt-0.5" />
                     <span>
-                      <strong className="text-[#0D1B2A]">Substantial Project Focus:</strong> Companies focused on turnkey home construction, private villas, and bespoke residential builds.
+                      <strong className="text-[#0D1B2A]">Focus on Inquiry Quality:</strong> Companies looking for better-qualified homeowner enquiries—not simply more cheap clicks or budget shoppers.
                     </span>
                   </div>
                   <div className="flex items-start gap-3">
                     <CheckCircle2 className="w-5 h-5 text-sky-800 shrink-0 mt-0.5" />
                     <span>
-                      <strong className="text-[#0D1B2A]">Frustrated by Generic Marketing:</strong> Builders tired of tire-kickers, budget shoppers, and agencies that don't understand residential construction.
+                      <strong className="text-[#0D1B2A]">Google Search Expansion:</strong> Builders looking to improve visibility across Google Ads, Local SEO, and Google Business Profile in their target territories.
                     </span>
                   </div>
                   <div className="flex items-start gap-3">
                     <CheckCircle2 className="w-5 h-5 text-sky-800 shrink-0 mt-0.5" />
                     <span>
-                      <strong className="text-[#0D1B2A]">Commitment to Growth Systems:</strong> Leaders who view marketing as an integrated pipeline delivering qualified leads and measurable results.
+                      <strong className="text-[#0D1B2A]">Commitment to Growth Systems:</strong> Business owners who want a structured, measurable growth system rather than disconnected marketing tactics.
                     </span>
                   </div>
                 </div>
@@ -126,8 +123,8 @@ export function ContactPage() {
                 <span className="text-xs font-supporting font-bold uppercase tracking-wider text-sky-800 block mb-2">
                   CONSULTATION AGENDA
                 </span>
-                <h2 className="text-xl sm:text-2xl font-heading font-semibold text-[#0D1B2A] mb-4">
-                  What We’ll Discuss
+                <h2 className="text-xl sm:text-2xl font-heading font-bold text-[#0D1B2A] mb-4">
+                  What We'll Discuss
                 </h2>
                 <div className="space-y-4 font-body text-sm text-[#64748B]">
                   <div className="flex items-start gap-3">
@@ -135,11 +132,11 @@ export function ContactPage() {
                       1
                     </div>
                     <div>
-                      <h3 className="font-heading font-semibold text-[#0D1B2A]">
-                        Territory Search Footprint
+                      <h3 className="font-heading font-bold text-[#0D1B2A]">
+                        Your Business & Ideal Projects
                       </h3>
                       <p className="text-xs text-[#64748B] mt-0.5">
-                        We analyze your exact geographical zip codes and evaluate current Google Ads and 3-Pack Maps visibility against local competitors.
+                        What types of construction projects you want more of and where your best margins and customer relationships come from.
                       </p>
                     </div>
                   </div>
@@ -149,11 +146,11 @@ export function ContactPage() {
                       2
                     </div>
                     <div>
-                      <h3 className="font-heading font-semibold text-[#0D1B2A]">
-                        Inquiry Quality & Qualification Levers
+                      <h3 className="font-heading font-bold text-[#0D1B2A]">
+                        Your Current Google Presence
                       </h3>
                       <p className="text-xs text-[#64748B] mt-0.5">
-                        We identify why budget shoppers may be leaking through and review negative keyword fortresses and landing page friction needed to filter them.
+                        Where your business currently appears across Google Ads, local search, Google Maps, and organic search relative to local competitors.
                       </p>
                     </div>
                   </div>
@@ -163,11 +160,11 @@ export function ContactPage() {
                       3
                     </div>
                     <div>
-                      <h3 className="font-heading font-semibold text-[#0D1B2A]">
-                        Closed-Loop Attribution Strategy
+                      <h3 className="font-heading font-bold text-[#0D1B2A]">
+                        Enquiry Quality & Conversion
                       </h3>
                       <p className="text-xs text-[#64748B] mt-0.5">
-                        How to connect your website and Google Ads to your CRM so bidding algorithms train on closed contracts rather than cheap form fills.
+                        Why website visitors may not be turning into qualified calls or consultation requests, and where budget shoppers are slipping in.
                       </p>
                     </div>
                   </div>
@@ -177,11 +174,11 @@ export function ContactPage() {
                       4
                     </div>
                     <div>
-                      <h3 className="font-heading font-semibold text-[#0D1B2A]">
-                        Actionable Next Steps
+                      <h3 className="font-heading font-bold text-[#0D1B2A]">
+                        Strategic Opportunities
                       </h3>
                       <p className="text-xs text-[#64748B] mt-0.5">
-                        A candid assessment of whether an Ajith Growth partnership is appropriate for your firm, with zero pressure sales tactics.
+                        Clear, actionable recommendations on what to prioritize next—with an honest assessment of whether an Ajith Growth partnership is a fit.
                       </p>
                     </div>
                   </div>
@@ -191,9 +188,9 @@ export function ContactPage() {
               {/* 3. Ways to connect & Verified Business Information */}
               <div className="bg-white p-7 rounded-2xl border border-[#DCE5EE] shadow-xs">
                 <span className="text-xs font-supporting font-bold uppercase tracking-wider text-sky-800 block mb-2">
-                  BUSINESS INFORMATION & DIRECT CHANNELS
+                  DIRECT CONTACT CHANNELS
                 </span>
-                <h2 className="text-xl sm:text-2xl font-heading font-semibold text-[#0D1B2A] mb-4">
+                <h2 className="text-xl sm:text-2xl font-heading font-bold text-[#0D1B2A] mb-4">
                   Ways to Connect
                 </h2>
                 <div className="space-y-3.5">
@@ -232,7 +229,7 @@ export function ContactPage() {
                         WhatsApp Chat
                       </span>
                       <span className="text-xs text-[#64748B]">
-                        {siteConfig.phone} (Fastest response)
+                        {siteConfig.phone} (Quick inquiries)
                       </span>
                     </div>
                   </a>
@@ -286,7 +283,7 @@ export function ContactPage() {
                     </div>
                   </div>
 
-                  {/* Founder LinkedIn (if configured) */}
+                  {/* Founder LinkedIn */}
                   {siteConfig.socialProfiles.linkedin ? (
                     <a
                       href={siteConfig.socialProfiles.linkedin}
@@ -311,7 +308,7 @@ export function ContactPage() {
               </div>
             </div>
 
-            {/* Right Column: 4. Qualification form */}
+            {/* Right Column: Qualification form */}
             <div id="consultation-form" className="lg:col-span-6 scroll-mt-28">
               <ContactForm />
             </div>
@@ -328,4 +325,3 @@ export function ContactPage() {
     </main>
   );
 }
-

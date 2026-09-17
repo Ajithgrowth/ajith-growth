@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { Calendar, Clock, ArrowLeft, ArrowRight, CheckCircle2, BookOpen, MessageCircle } from 'lucide-react';
+import { Calendar, Clock, ArrowLeft, ArrowRight, CheckCircle2, BookOpen, MessageCircle, Sparkles } from 'lucide-react';
 import { SEO } from '../components/SEO';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { AuthorCard } from '../components/AuthorCard';
@@ -15,6 +15,8 @@ import { getCategoryBySlug, getCategoryLabel } from '../data/insightCategories';
 import { useArticle } from '../lib/cmsArticles';
 import { slugify, createHeadingSlugger } from '../utils/slugify';
 import { trackEvent } from '../utils/analytics';
+import { buildArticleSectionsWithImages } from '../utils/articleContent';
+import { ArticleSectionImage } from '../types';
 
 interface ArticlePageProps {
   slug: string;
@@ -100,6 +102,37 @@ export function ArticlePage({ slug }: ArticlePageProps) {
     { name: article.title, url: canonicalUrl },
   ];
 
+  // Resolve Contextual Section Images (1-4)
+  const sectionImages: ArticleSectionImage[] = useMemo(() => {
+    if (article.sectionImages && article.sectionImages.length > 0) {
+      return article.sectionImages;
+    }
+    return [
+      { url: article.section_image_1, alt: article.section_image_1_alt, caption: article.section_image_1_caption },
+      { url: article.section_image_2, alt: article.section_image_2_alt, caption: article.section_image_2_caption },
+      { url: article.section_image_3, alt: article.section_image_3_alt, caption: article.section_image_3_caption },
+      { url: article.section_image_4, alt: article.section_image_4_alt, caption: article.section_image_4_caption },
+    ].filter((img) => Boolean(img.url && img.url.trim()));
+  }, [
+    article.sectionImages,
+    article.section_image_1,
+    article.section_image_1_alt,
+    article.section_image_1_caption,
+    article.section_image_2,
+    article.section_image_2_alt,
+    article.section_image_2_caption,
+    article.section_image_3,
+    article.section_image_3_alt,
+    article.section_image_3_caption,
+    article.section_image_4,
+    article.section_image_4_alt,
+    article.section_image_4_caption,
+  ]);
+
+  const contentBlocks = useMemo(() => {
+    return buildArticleSectionsWithImages(article.body || '', sectionImages);
+  }, [article.body, sectionImages]);
+
   return (
     <main id="main-content" className="w-full bg-[#F8FAFC]">
       <SEO
@@ -161,6 +194,12 @@ export function ArticlePage({ slug }: ArticlePageProps) {
           >
             {categoryLabel}
           </Link>
+          {(article.builderSegment || article.builder_segment) && (
+            <span className="px-2.5 py-1 rounded-md bg-sky-100 text-sky-900 border border-sky-200 font-semibold tracking-wide flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-sky-600" />
+              <span>Target: {article.builderSegment || article.builder_segment}</span>
+            </span>
+          )}
           <span className="flex items-center gap-1.5 text-[#64748B]">
             <Calendar className="w-3.5 h-3.5 text-slate-400" />
             <span>Published: {article.publishedDate}</span>
@@ -242,6 +281,19 @@ export function ArticlePage({ slug }: ArticlePageProps) {
               </div>
             )}
 
+            {/* Founder's Strategic Perspective Callout */}
+            {(article.strategicTakeaway || article.strategic_takeaway) && (
+              <div className="bg-[#0D1B2A] text-white rounded-xl p-6 mb-8 border border-slate-700 shadow-md">
+                <div className="flex items-center gap-2 text-sky-400 text-xs font-supporting font-bold uppercase tracking-wider mb-2">
+                  <Sparkles className="w-4 h-4 text-sky-400" />
+                  <span>Ajith's Growth Perspective</span>
+                </div>
+                <p className="text-xs sm:text-sm font-body text-slate-200 leading-relaxed italic">
+                  &ldquo;{article.strategicTakeaway || article.strategic_takeaway}&rdquo;
+                </p>
+              </div>
+            )}
+
             {/* 5. Mobile Collapsible Table of Contents */}
             {article.tableOfContents && article.tableOfContents.length > 0 && (
               <div className="lg:hidden bg-[#F8FAFC] border border-[#DCE5EE] rounded-xl p-4 mb-8">
@@ -271,132 +323,156 @@ export function ArticlePage({ slug }: ArticlePageProps) {
               </div>
             )}
 
-            {/* 6. Main Article Content (ReactMarkdown + remark-gfm) */}
+            {/* 6. Main Article Content (ReactMarkdown + remark-gfm + Contextual Section Images) */}
             <div className="font-body text-[#334155] text-base leading-relaxed">
-              <ReactMarkdown
-                remarkPlugins={[remarkGfm]}
-                components={{
-                  h2: ({ children, ...props }) => {
-                    const text = getNodeText(children);
-                    const id = headingSlugger(text);
-                    return (
-                      <h2
-                        id={id}
-                        className="text-xl sm:text-2xl font-heading font-bold text-[#0D1B2A] tracking-tight pt-8 pb-2 border-t border-slate-100 scroll-mt-28 sm:scroll-mt-32 first:border-t-0 first:pt-0"
-                        {...props}
-                      >
-                        {children}
-                      </h2>
-                    );
-                  },
-                  h3: ({ children, ...props }) => {
-                    const text = getNodeText(children);
-                    const id = headingSlugger(text);
-                    return (
-                      <h3
-                        id={id}
-                        className="text-lg sm:text-xl font-heading font-semibold text-[#0D1B2A] tracking-tight pt-5 pb-1 scroll-mt-28 sm:scroll-mt-32"
-                        {...props}
-                      >
-                        {children}
-                      </h3>
-                    );
-                  },
-                  h4: ({ children, ...props }) => {
-                    const text = getNodeText(children);
-                    const id = headingSlugger(text);
-                    return (
-                      <h4
-                        id={id}
-                        className="text-base sm:text-lg font-heading font-semibold text-[#0D1B2A] tracking-tight pt-4 pb-1 scroll-mt-28 sm:scroll-mt-32"
-                        {...props}
-                      >
-                        {children}
-                      </h4>
-                    );
-                  },
+              {contentBlocks.map((block, idx) => (
+                <React.Fragment key={idx}>
+                  {block.markdown ? (
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm]}
+                      components={{
+                        h2: ({ children, ...props }) => {
+                          const text = getNodeText(children);
+                          const id = headingSlugger(text);
+                          return (
+                            <h2
+                              id={id}
+                              className="text-xl sm:text-2xl font-heading font-bold text-[#0D1B2A] tracking-tight pt-8 pb-2 border-t border-slate-100 scroll-mt-28 sm:scroll-mt-32 first:border-t-0 first:pt-0"
+                              {...props}
+                            >
+                              {children}
+                            </h2>
+                          );
+                        },
+                        h3: ({ children, ...props }) => {
+                          const text = getNodeText(children);
+                          const id = headingSlugger(text);
+                          return (
+                            <h3
+                              id={id}
+                              className="text-lg sm:text-xl font-heading font-semibold text-[#0D1B2A] tracking-tight pt-5 pb-1 scroll-mt-28 sm:scroll-mt-32"
+                              {...props}
+                            >
+                              {children}
+                            </h3>
+                          );
+                        },
+                        h4: ({ children, ...props }) => {
+                          const text = getNodeText(children);
+                          const id = headingSlugger(text);
+                          return (
+                            <h4
+                              id={id}
+                              className="text-base sm:text-lg font-heading font-semibold text-[#0D1B2A] tracking-tight pt-4 pb-1 scroll-mt-28 sm:scroll-mt-32"
+                              {...props}
+                            >
+                              {children}
+                            </h4>
+                          );
+                        },
 
-                  p: ({ children, ...props }) => (
-                    <p className="text-[#334155] leading-relaxed mb-6" {...props}>
-                      {children}
-                    </p>
-                  ),
-                  ul: ({ children, ...props }) => (
-                    <ul className="space-y-2 list-disc list-outside ml-5 text-[#334155] mb-6" {...props}>
-                      {children}
-                    </ul>
-                  ),
-                  ol: ({ children, ...props }) => (
-                    <ol className="space-y-2 list-decimal list-outside ml-5 text-[#334155] mb-6" {...props}>
-                      {children}
-                    </ol>
-                  ),
-                  li: ({ children, ...props }) => (
-                    <li className="leading-relaxed pl-1" {...props}>
-                      {children}
-                    </li>
-                  ),
-                  blockquote: ({ children, ...props }) => (
-                    <blockquote
-                      className="p-4 my-6 rounded-lg bg-[#F8FAFC] border-l-4 border-[#0D1B2A] text-sm italic text-[#0D1B2A]"
-                      {...props}
+                        p: ({ children, ...props }) => (
+                          <p className="text-[#334155] leading-relaxed mb-6" {...props}>
+                            {children}
+                          </p>
+                        ),
+                        ul: ({ children, ...props }) => (
+                          <ul className="space-y-2 list-disc list-outside ml-5 text-[#334155] mb-6" {...props}>
+                            {children}
+                          </ul>
+                        ),
+                        ol: ({ children, ...props }) => (
+                          <ol className="space-y-2 list-decimal list-outside ml-5 text-[#334155] mb-6" {...props}>
+                            {children}
+                          </ol>
+                        ),
+                        li: ({ children, ...props }) => (
+                          <li className="leading-relaxed pl-1" {...props}>
+                            {children}
+                          </li>
+                        ),
+                        blockquote: ({ children, ...props }) => (
+                          <blockquote
+                            className="p-4 my-6 rounded-lg bg-[#F8FAFC] border-l-4 border-[#0D1B2A] text-sm italic text-[#0D1B2A]"
+                            {...props}
+                          >
+                            {children}
+                          </blockquote>
+                        ),
+                        table: ({ children, ...props }) => (
+                          <div className="overflow-x-auto my-6 border border-[#DCE5EE] rounded-xl">
+                            <table className="min-w-full divide-y divide-[#DCE5EE] text-sm" {...props}>
+                              {children}
+                            </table>
+                          </div>
+                        ),
+                        th: ({ children, ...props }) => (
+                          <th className="bg-slate-50 px-4 py-3 font-heading font-semibold text-left text-[#0D1B2A]" {...props}>
+                            {children}
+                          </th>
+                        ),
+                        td: ({ children, ...props }) => (
+                          <td className="px-4 py-3 border-t border-[#DCE5EE] text-[#334155]" {...props}>
+                            {children}
+                          </td>
+                        ),
+                        img: ({ src, alt, ...props }) => (
+                          <div className="my-6 rounded-xl overflow-hidden border border-[#DCE5EE]">
+                            <img src={src} alt={alt || ''} className="w-full h-auto object-cover" {...props} />
+                            {alt && <p className="text-[11px] font-supporting text-[#64748B] text-center mt-2 italic">{alt}</p>}
+                          </div>
+                        ),
+                        a: ({ href, children, ...props }) => {
+                          if (!href) return <span {...props}>{children}</span>;
+                          const isInternal = href.startsWith('/') || href.startsWith('#');
+                          if (isInternal) {
+                            return (
+                              <Link
+                                href={href}
+                                className="text-sky-800 font-medium underline decoration-sky-300 underline-offset-2 hover:text-[#0D1B2A] transition-colors"
+                                {...props}
+                              >
+                                {children}
+                              </Link>
+                            );
+                          }
+                          return (
+                            <a
+                              href={href}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-sky-800 font-medium underline decoration-sky-300 underline-offset-2 hover:text-[#0D1B2A] transition-colors"
+                              {...props}
+                            >
+                              {children}
+                            </a>
+                          );
+                        },
+                      }}
                     >
-                      {children}
-                    </blockquote>
-                  ),
-                  table: ({ children, ...props }) => (
-                    <div className="overflow-x-auto my-6 border border-[#DCE5EE] rounded-xl">
-                      <table className="min-w-full divide-y divide-[#DCE5EE] text-sm" {...props}>
-                        {children}
-                      </table>
-                    </div>
-                  ),
-                  th: ({ children, ...props }) => (
-                    <th className="bg-slate-50 px-4 py-3 font-heading font-semibold text-left text-[#0D1B2A]" {...props}>
-                      {children}
-                    </th>
-                  ),
-                  td: ({ children, ...props }) => (
-                    <td className="px-4 py-3 border-t border-[#DCE5EE] text-[#334155]" {...props}>
-                      {children}
-                    </td>
-                  ),
-                  img: ({ src, alt, ...props }) => (
-                    <div className="my-6 rounded-xl overflow-hidden border border-[#DCE5EE]">
-                      <img src={src} alt={alt || ''} className="w-full h-auto object-cover" {...props} />
-                      {alt && <p className="text-[11px] font-supporting text-[#64748B] text-center mt-2 italic">{alt}</p>}
-                    </div>
-                  ),
-                  a: ({ href, children, ...props }) => {
-                    if (!href) return <span {...props}>{children}</span>;
-                    const isInternal = href.startsWith('/') || href.startsWith('#');
-                    if (isInternal) {
-                      return (
-                        <Link
-                          href={href}
-                          className="text-sky-800 font-medium underline decoration-sky-300 underline-offset-2 hover:text-[#0D1B2A] transition-colors"
-                          {...props}
-                        >
-                          {children}
-                        </Link>
-                      );
-                    }
-                    return (
-                      <a
-                        href={href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-sky-800 font-medium underline decoration-sky-300 underline-offset-2 hover:text-[#0D1B2A] transition-colors"
-                        {...props}
-                      >
-                        {children}
-                      </a>
-                    );
-                  },
-                }}
-              >
-                {article.body}
-              </ReactMarkdown>
+                      {block.markdown}
+                    </ReactMarkdown>
+                  ) : null}
+
+                  {/* Contextual Section Image Figure */}
+                  {block.imageAfter && block.imageAfter.url && (
+                    <figure className="my-8 rounded-2xl overflow-hidden border border-[#DCE5EE] bg-[#F8FAFC]">
+                      <img
+                        src={block.imageAfter.url}
+                        alt={block.imageAfter.alt || article.title}
+                        loading="lazy"
+                        className="w-full h-auto object-cover max-h-[500px]"
+                        referrerPolicy="no-referrer"
+                      />
+                      {block.imageAfter.caption && block.imageAfter.caption.trim() && (
+                        <figcaption className="px-4 py-2.5 text-xs text-center text-slate-500 font-body bg-white border-t border-[#DCE5EE] italic">
+                          {block.imageAfter.caption.trim()}
+                        </figcaption>
+                      )}
+                    </figure>
+                  )}
+                </React.Fragment>
+              ))}
             </div>
 
             {/* Inline Consultation Banner */}

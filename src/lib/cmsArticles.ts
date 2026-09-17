@@ -57,6 +57,30 @@ export function cmsArticleToPublicArticle(row: CMSArticle): Article | null {
   const ogImage = row.og_image?.trim() || row.featured_image?.trim() || '/images/og-default.jpg';
   const noindex = Boolean(row.noindex);
 
+  // Contextual Section Images (1-4)
+  const section_image_1 = row.section_image_1?.trim() || '';
+  const section_image_1_alt = row.section_image_1_alt?.trim() || '';
+  const section_image_1_caption = row.section_image_1_caption?.trim() || '';
+
+  const section_image_2 = row.section_image_2?.trim() || '';
+  const section_image_2_alt = row.section_image_2_alt?.trim() || '';
+  const section_image_2_caption = row.section_image_2_caption?.trim() || '';
+
+  const section_image_3 = row.section_image_3?.trim() || '';
+  const section_image_3_alt = row.section_image_3_alt?.trim() || '';
+  const section_image_3_caption = row.section_image_3_caption?.trim() || '';
+
+  const section_image_4 = row.section_image_4?.trim() || '';
+  const section_image_4_alt = row.section_image_4_alt?.trim() || '';
+  const section_image_4_caption = row.section_image_4_caption?.trim() || '';
+
+  const sectionImages = [
+    { url: section_image_1, alt: section_image_1_alt, caption: section_image_1_caption },
+    { url: section_image_2, alt: section_image_2_alt, caption: section_image_2_caption },
+    { url: section_image_3, alt: section_image_3_alt, caption: section_image_3_caption },
+    { url: section_image_4, alt: section_image_4_alt, caption: section_image_4_caption },
+  ].filter((img) => Boolean(img.url));
+
   return {
     title: row.title.trim(),
     slug,
@@ -88,6 +112,33 @@ export function cmsArticleToPublicArticle(row: CMSArticle): Article | null {
     tableOfContents,
     canonicalUrl,
     source: 'cms',
+
+    // Personal Brand & Authority Strategy fields
+    target_keyword: row.target_keyword?.trim() || undefined,
+    targetKeyword: row.target_keyword?.trim() || undefined,
+    builder_segment: row.builder_segment?.trim() || undefined,
+    builderSegment: row.builder_segment?.trim() || undefined,
+    strategic_takeaway: row.strategic_takeaway?.trim() || undefined,
+    strategicTakeaway: row.strategic_takeaway?.trim() || undefined,
+    primary_service_cta: row.primary_service_cta?.trim() || undefined,
+    primaryServiceCta: row.primary_service_cta?.trim() || undefined,
+    linkedin_post_summary: row.linkedin_post_summary?.trim() || undefined,
+    linkedinPostSummary: row.linkedin_post_summary?.trim() || undefined,
+
+    // Section images
+    section_image_1,
+    section_image_1_alt,
+    section_image_1_caption,
+    section_image_2,
+    section_image_2_alt,
+    section_image_2_caption,
+    section_image_3,
+    section_image_3_alt,
+    section_image_3_caption,
+    section_image_4,
+    section_image_4_alt,
+    section_image_4_caption,
+    sectionImages,
 
     // Compatibility fields
     publishDate: publishedDate,

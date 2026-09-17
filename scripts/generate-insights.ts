@@ -136,6 +136,20 @@ function generateInsights() {
       tableOfContents,
       canonicalUrl,
 
+      // Contextual Section Images
+      sectionImage1: frontmatter.sectionImage1 || frontmatter.section_image_1 || null,
+      sectionImage1Alt: frontmatter.sectionImage1Alt || frontmatter.section_image_1_alt || null,
+      sectionImage1Caption: frontmatter.sectionImage1Caption || frontmatter.section_image_1_caption || null,
+      sectionImage2: frontmatter.sectionImage2 || frontmatter.section_image_2 || null,
+      sectionImage2Alt: frontmatter.sectionImage2Alt || frontmatter.section_image_2_alt || null,
+      sectionImage2Caption: frontmatter.sectionImage2Caption || frontmatter.section_image_2_caption || null,
+      sectionImage3: frontmatter.sectionImage3 || frontmatter.section_image_3 || null,
+      sectionImage3Alt: frontmatter.sectionImage3Alt || frontmatter.section_image_3_alt || null,
+      sectionImage3Caption: frontmatter.sectionImage3Caption || frontmatter.section_image_3_caption || null,
+      sectionImage4: frontmatter.sectionImage4 || frontmatter.section_image_4 || null,
+      sectionImage4Alt: frontmatter.sectionImage4Alt || frontmatter.section_image_4_alt || null,
+      sectionImage4Caption: frontmatter.sectionImage4Caption || frontmatter.section_image_4_caption || null,
+
       // Compatibility aliases
       publishDate: frontmatter.publishedDate ? String(frontmatter.publishedDate) : '',
       modifiedDate: frontmatter.updatedDate ? String(frontmatter.updatedDate) : (frontmatter.publishedDate ? String(frontmatter.publishedDate) : ''),

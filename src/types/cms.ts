@@ -36,6 +36,28 @@ export interface CMSArticle {
   is_featured?: boolean; // BOOLEAN DEFAULT FALSE
   og_image?: string; // Plain TEXT (Optional social sharing image)
   noindex?: boolean; // BOOLEAN DEFAULT FALSE
+
+  // Personal Brand, Builder ICP & Authority Fields
+  target_keyword?: string; // Primary SEO Keyword targeted by this post
+  builder_segment?: string; // e.g. "Custom Villa Builders", "Luxury Turnkey Contractors"
+  strategic_takeaway?: string; // Ajith's personal founder takeaway / perspective
+  primary_service_cta?: string; // Connected service (e.g. "google-ads", "local-seo")
+  linkedin_post_summary?: string; // Ready-to-share LinkedIn hook & post draft
+
+  // Multi-section contextual article images
+  section_image_1?: string;
+  section_image_1_alt?: string;
+  section_image_1_caption?: string;
+  section_image_2?: string;
+  section_image_2_alt?: string;
+  section_image_2_caption?: string;
+  section_image_3?: string;
+  section_image_3_alt?: string;
+  section_image_3_caption?: string;
+  section_image_4?: string;
+  section_image_4_alt?: string;
+  section_image_4_caption?: string;
+
   created_at?: string;
   updated_at?: string;
 }
@@ -52,6 +74,25 @@ export const CMS_CATEGORIES: CMSCategoryOption[] = [
   { label: 'Google Business Profile Tips', value: 'google-business-profile' },
   { label: 'Construction Marketing', value: 'construction-marketing' },
   { label: 'Business Insights', value: 'business-insights' },
+];
+
+export const CMS_BUILDER_SEGMENTS = [
+  'Custom Villa Builders (₹1.5 Cr – ₹5 Cr+)',
+  'Luxury Architectural Home Contractors',
+  'Turnkey Residential Builders',
+  'High-End Residential Remodelers',
+  'Independent Custom Home Builders',
+  'Multi-Unit Residential Developers',
+];
+
+export const CMS_PRIMARY_SERVICES = [
+  { value: 'google-ads', label: 'Google Ads for Builders' },
+  { value: 'local-seo', label: 'Local SEO & Organic Ranking' },
+  { value: 'google-business-profile', label: 'Google Business Profile' },
+  { value: 'landing-pages', label: 'High-Converting Landing Pages' },
+  { value: 'conversion-tracking', label: 'Full-Funnel Closed-Loop Tracking' },
+  { value: 'ai-search', label: 'AI Search & GEO Optimization' },
+  { value: 'growth-consultation', label: 'Direct Growth Consultation' },
 ];
 
 /**

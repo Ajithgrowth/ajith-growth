@@ -25,6 +25,12 @@ export interface ArticleFAQ {
   answer: string;
 }
 
+export interface ArticleSectionImage {
+  url?: string;
+  alt?: string;
+  caption?: string;
+}
+
 export interface Article {
   title: string;
   slug: string;
@@ -53,6 +59,46 @@ export interface Article {
   source?: 'cms' | 'markdown';
   faqs?: ArticleFAQ[];
   body?: string;
+
+  // Personal Brand, Builder ICP & Authority Fields
+  target_keyword?: string;
+  targetKeyword?: string;
+  builder_segment?: string;
+  builderSegment?: string;
+  strategic_takeaway?: string;
+  strategicTakeaway?: string;
+  primary_service_cta?: string;
+  primaryServiceCta?: string;
+  linkedin_post_summary?: string;
+  linkedinPostSummary?: string;
+
+  // Contextual section images (1-4)
+  section_image_1?: string;
+  section_image_1_alt?: string;
+  section_image_1_caption?: string;
+  section_image_2?: string;
+  section_image_2_alt?: string;
+  section_image_2_caption?: string;
+  section_image_3?: string;
+  section_image_3_alt?: string;
+  section_image_3_caption?: string;
+  section_image_4?: string;
+  section_image_4_alt?: string;
+  section_image_4_caption?: string;
+
+  sectionImage1?: string | null;
+  sectionImage1Alt?: string | null;
+  sectionImage1Caption?: string | null;
+  sectionImage2?: string | null;
+  sectionImage2Alt?: string | null;
+  sectionImage2Caption?: string | null;
+  sectionImage3?: string | null;
+  sectionImage3Alt?: string | null;
+  sectionImage3Caption?: string | null;
+  sectionImage4?: string | null;
+  sectionImage4Alt?: string | null;
+  sectionImage4Caption?: string | null;
+  sectionImages?: ArticleSectionImage[];
 
   // Optional future-ready fields
   tags?: string[];
@@ -89,6 +135,7 @@ export interface Service {
   strategicNote: string;
   iconName: string;
   tag: string;
+  ctaText?: string;
   relatedArticleSlug?: string;
   relatedArticleTitle?: string;
 }

@@ -23,11 +23,22 @@ import {
   Check,
   Globe,
   EyeOff,
+  Sparkles,
+  Share2,
+  Target,
+  Link2,
+  MessageSquare,
 } from 'lucide-react';
 import type { CMSArticle, CMSArticleFAQ, CMSArticleStatus } from '../../types/cms';
-import { CMS_CATEGORIES, generateSlug } from '../../types/cms';
+import {
+  CMS_CATEGORIES,
+  CMS_BUILDER_SEGMENTS,
+  CMS_PRIMARY_SERVICES,
+  generateSlug,
+} from '../../types/cms';
 import { uploadBlogImage } from '../../lib/cmsStorage';
 import { siteConfig } from '../../data/siteConfig';
+import { getCategoryFaqTemplates } from '../../data/categoryFaqTemplates';
 import { MarkdownEditor } from './MarkdownEditor';
 import { ArticlePreviewModal } from './ArticlePreviewModal';
 
@@ -103,12 +114,53 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
     Boolean(initialArticle?.noindex)
   );
 
+  // Personal Brand, Builder ICP & Authority Strategy States
+  const [targetKeyword, setTargetKeyword] = useState<string>(
+    initialArticle?.target_keyword || ''
+  );
+  const [builderSegment, setBuilderSegment] = useState<string>(
+    initialArticle?.builder_segment || ''
+  );
+  const [strategicTakeaway, setStrategicTakeaway] = useState<string>(
+    initialArticle?.strategic_takeaway || ''
+  );
+  const [primaryServiceCta, setPrimaryServiceCta] = useState<string>(
+    initialArticle?.primary_service_cta || 'google-ads'
+  );
+  const [linkedinPostSummary, setLinkedinPostSummary] = useState<string>(
+    initialArticle?.linkedin_post_summary || ''
+  );
+  const [copiedLinkedin, setCopiedLinkedin] = useState<boolean>(false);
+
+  // Section Images 1-4
+  const [sectionImage1, setSectionImage1] = useState<string>(initialArticle?.section_image_1 || '');
+  const [sectionImage1Alt, setSectionImage1Alt] = useState<string>(initialArticle?.section_image_1_alt || '');
+  const [sectionImage1Caption, setSectionImage1Caption] = useState<string>(initialArticle?.section_image_1_caption || '');
+
+  const [sectionImage2, setSectionImage2] = useState<string>(initialArticle?.section_image_2 || '');
+  const [sectionImage2Alt, setSectionImage2Alt] = useState<string>(initialArticle?.section_image_2_alt || '');
+  const [sectionImage2Caption, setSectionImage2Caption] = useState<string>(initialArticle?.section_image_2_caption || '');
+
+  const [sectionImage3, setSectionImage3] = useState<string>(initialArticle?.section_image_3 || '');
+  const [sectionImage3Alt, setSectionImage3Alt] = useState<string>(initialArticle?.section_image_3_alt || '');
+  const [sectionImage3Caption, setSectionImage3Caption] = useState<string>(initialArticle?.section_image_3_caption || '');
+
+  const [sectionImage4, setSectionImage4] = useState<string>(initialArticle?.section_image_4 || '');
+  const [sectionImage4Alt, setSectionImage4Alt] = useState<string>(initialArticle?.section_image_4_alt || '');
+  const [sectionImage4Caption, setSectionImage4Caption] = useState<string>(initialArticle?.section_image_4_caption || '');
+
+  const [uploadingSectionImage, setUploadingSectionImage] = useState<number | null>(null);
+  const [sectionImageUploadError, setSectionImageUploadError] = useState<{ [key: number]: string | null }>({});
+
   const [faqs, setFaqs] = useState<CMSArticleFAQ[]>(() => {
     if (initialArticle?.faqs && Array.isArray(initialArticle.faqs)) {
       return initialArticle.faqs;
     }
     return [];
   });
+
+  const [showFaqConfirmModal, setShowFaqConfirmModal] = useState<boolean>(false);
+  const [faqFeedbackMessage, setFaqFeedbackMessage] = useState<string | null>(null);
 
   // UI States
   const [uploadingImage, setUploadingImage] = useState<boolean>(false);
@@ -220,11 +272,95 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
     setUploadingOgImage(false);
   };
 
+  // Section Image Handlers (1-4)
+  const handleSectionImageUpload = async (slot: 1 | 2 | 3 | 4, file: File) => {
+    setUploadingSectionImage(slot);
+    setSectionImageUploadError((prev) => ({ ...prev, [slot]: null }));
+
+    const res = await uploadBlogImage(file);
+    if (res.error) {
+      setSectionImageUploadError((prev) => ({ ...prev, [slot]: res.error }));
+    } else if (res.url) {
+      if (slot === 1) {
+        setSectionImage1(res.url);
+        if (!sectionImage1Alt) setSectionImage1Alt(title ? `${title} - Visual Framework 1` : file.name.replace(/\.[^/.]+$/, ''));
+      } else if (slot === 2) {
+        setSectionImage2(res.url);
+        if (!sectionImage2Alt) setSectionImage2Alt(title ? `${title} - Tactical Breakdown 2` : file.name.replace(/\.[^/.]+$/, ''));
+      } else if (slot === 3) {
+        setSectionImage3(res.url);
+        if (!sectionImage3Alt) setSectionImage3Alt(title ? `${title} - Metric Analysis 3` : file.name.replace(/\.[^/.]+$/, ''));
+      } else if (slot === 4) {
+        setSectionImage4(res.url);
+        if (!sectionImage4Alt) setSectionImage4Alt(title ? `${title} - Implementation Step 4` : file.name.replace(/\.[^/.]+$/, ''));
+      }
+    }
+    setUploadingSectionImage(null);
+  };
+
+  const handleClearSectionImage = (slot: 1 | 2 | 3 | 4) => {
+    if (slot === 1) {
+      setSectionImage1('');
+      setSectionImage1Alt('');
+      setSectionImage1Caption('');
+    } else if (slot === 2) {
+      setSectionImage2('');
+      setSectionImage2Alt('');
+      setSectionImage2Caption('');
+    } else if (slot === 3) {
+      setSectionImage3('');
+      setSectionImage3Alt('');
+      setSectionImage3Caption('');
+    } else if (slot === 4) {
+      setSectionImage4('');
+      setSectionImage4Alt('');
+      setSectionImage4Caption('');
+    }
+    setSectionImageUploadError((prev) => ({ ...prev, [slot]: null }));
+  };
+
   const handleCopyCanonical = () => {
     const fullCanonical = `${siteConfig.canonicalDomain}/insights/${slug || ''}`;
     navigator.clipboard.writeText(fullCanonical);
     setCopiedCanonical(true);
     setTimeout(() => setCopiedCanonical(false), 2000);
+  };
+
+  // Category FAQ Suggestions Handlers
+  const currentCategoryLabel =
+    CMS_CATEGORIES.find((c) => c.value === category)?.label || category;
+
+  const handleLoadFaqSuggestionsClick = () => {
+    const templates = getCategoryFaqTemplates(category);
+    if (templates.length === 0) return;
+
+    if (faqs.length === 0) {
+      // No existing FAQs -> load immediately without modal
+      setFaqs(templates.map((t) => ({ question: t.question, answer: t.answer })));
+      setFaqFeedbackMessage(`Loaded ${templates.length} FAQ suggestions for ${currentCategoryLabel}.`);
+      setTimeout(() => setFaqFeedbackMessage(null), 4500);
+    } else {
+      // Prompt modal to choose between append, replace, or cancel
+      setShowFaqConfirmModal(true);
+    }
+  };
+
+  const handleAppendFaqSuggestions = () => {
+    const templates = getCategoryFaqTemplates(category);
+    const newItems = templates.map((t) => ({ question: t.question, answer: t.answer }));
+    setFaqs([...faqs, ...newItems]);
+    setShowFaqConfirmModal(false);
+    setFaqFeedbackMessage(`Appended ${newItems.length} suggestions to existing FAQs.`);
+    setTimeout(() => setFaqFeedbackMessage(null), 4500);
+  };
+
+  const handleReplaceFaqSuggestions = () => {
+    const templates = getCategoryFaqTemplates(category);
+    const newItems = templates.map((t) => ({ question: t.question, answer: t.answer }));
+    setFaqs(newItems);
+    setShowFaqConfirmModal(false);
+    setFaqFeedbackMessage(`Replaced all FAQs with ${newItems.length} category suggestions.`);
+    setTimeout(() => setFaqFeedbackMessage(null), 4500);
   };
 
   // FAQ Dynamic Handlers
@@ -240,6 +376,39 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
 
   const handleRemoveFaq = (index: number) => {
     setFaqs(faqs.filter((_, i) => i !== index));
+  };
+
+  // LinkedIn Post Generation & Copy Handlers
+  const handleGenerateLinkedInDraft = () => {
+    const segment = builderSegment ? `for ${builderSegment}` : 'for residential custom home builders';
+    const draft = `Residential construction is driven by trust and craftsmanship. But attracting serious, qualified clients comes down to search intent.
+
+Here is an operational breakdown ${segment}:
+
+📌 The Core Challenge:
+${title || 'High marketing spend yielding unqualified inquiries and price-shoppers.'}
+
+💡 Ajith's Perspective:
+${strategicTakeaway || excerpt || 'Stop bidding on low-intent generic keywords. Build high-authority search visibility that reaches homeowners when they are actively evaluating architects and builders.'}
+
+📖 Read the complete strategic analysis:
+${siteConfig.siteUrl}/insights/${slug || 'residential-construction-growth'}
+
+#ResidentialConstruction #CustomHomeBuilders #GoogleSearch #ConstructionMarketing #AjithGrowth`;
+
+    setLinkedinPostSummary(draft);
+  };
+
+  const handleCopyLinkedInDraft = async () => {
+    if (!linkedinPostSummary.trim()) return;
+    try {
+      await navigator.clipboard.writeText(linkedinPostSummary);
+      setCopiedLinkedin(true);
+      setTimeout(() => setCopiedLinkedin(false), 2500);
+    } catch {
+      setCopiedLinkedin(true);
+      setTimeout(() => setCopiedLinkedin(false), 2500);
+    }
   };
 
   // Construct payload with exact database schema fields
@@ -285,6 +454,28 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
       is_featured: isFeatured,
       og_image: ogImage.trim() || null,
       noindex: noindex,
+
+      // Personal Brand, Builder ICP & Authority Fields
+      target_keyword: targetKeyword.trim() || null,
+      builder_segment: builderSegment.trim() || null,
+      strategic_takeaway: strategicTakeaway.trim() || null,
+      primary_service_cta: primaryServiceCta.trim() || null,
+      linkedin_post_summary: linkedinPostSummary.trim() || null,
+
+      // Contextual Section Images (1-4)
+      section_image_1: sectionImage1.trim() || null,
+      section_image_1_alt: sectionImage1Alt.trim() || null,
+      section_image_1_caption: sectionImage1Caption.trim() || null,
+      section_image_2: sectionImage2.trim() || null,
+      section_image_2_alt: sectionImage2Alt.trim() || null,
+      section_image_2_caption: sectionImage2Caption.trim() || null,
+      section_image_3: sectionImage3.trim() || null,
+      section_image_3_alt: sectionImage3Alt.trim() || null,
+      section_image_3_caption: sectionImage3Caption.trim() || null,
+      section_image_4: sectionImage4.trim() || null,
+      section_image_4_alt: sectionImage4Alt.trim() || null,
+      section_image_4_caption: sectionImage4Caption.trim() || null,
+
       updated_at: nowIso,
     };
   };
@@ -310,6 +501,24 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
 
     if (!content.trim()) {
       setValidationError('Article Content is required.');
+      return;
+    }
+
+    // Validate Section Image Alt texts when URLs are provided
+    if (sectionImage1.trim() && !sectionImage1Alt.trim()) {
+      setValidationError('Section Image 1 requires Alt Text for SEO & accessibility.');
+      return;
+    }
+    if (sectionImage2.trim() && !sectionImage2Alt.trim()) {
+      setValidationError('Section Image 2 requires Alt Text for SEO & accessibility.');
+      return;
+    }
+    if (sectionImage3.trim() && !sectionImage3Alt.trim()) {
+      setValidationError('Section Image 3 requires Alt Text for SEO & accessibility.');
+      return;
+    }
+    if (sectionImage4.trim() && !sectionImage4Alt.trim()) {
+      setValidationError('Section Image 4 requires Alt Text for SEO & accessibility.');
       return;
     }
 
@@ -501,6 +710,106 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
               </select>
             </div>
 
+            {/* Target Builder Segment & Focus Keyword (2 columns) */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-[#DCE5EE]">
+              {/* Target Builder Segment */}
+              <div>
+                <label htmlFor="builder-segment" className="block text-xs font-supporting font-semibold uppercase tracking-wider text-[#0D1B2A] mb-1.5 flex items-center justify-between">
+                  <span className="flex items-center gap-1.5">
+                    <Target className="w-3.5 h-3.5 text-sky-800" />
+                    <span>Target Builder Segment</span>
+                  </span>
+                  <span className="text-[10px] text-slate-400 font-normal">ICP</span>
+                </label>
+                <input
+                  id="builder-segment"
+                  type="text"
+                  list="builder-segments-list"
+                  value={builderSegment}
+                  onChange={(e) => setBuilderSegment(e.target.value)}
+                  placeholder="e.g. Custom Villa Builders (₹1.5 Cr – ₹5 Cr+)"
+                  className="w-full px-3.5 py-2 rounded-xl border border-[#DCE5EE] bg-[#F8FAFC] text-sm text-[#0D1B2A] placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-800/20 focus:border-sky-800 font-body"
+                />
+                <datalist id="builder-segments-list">
+                  {CMS_BUILDER_SEGMENTS.map((seg) => (
+                    <option key={seg} value={seg} />
+                  ))}
+                </datalist>
+                <p className="text-[11px] text-slate-400 mt-1 font-body">
+                  Select a suggested builder profile or type a specific construction niche.
+                </p>
+              </div>
+
+              {/* Focus Search Keyword */}
+              <div>
+                <label htmlFor="target-keyword" className="block text-xs font-supporting font-semibold uppercase tracking-wider text-[#0D1B2A] mb-1.5 flex items-center justify-between">
+                  <span className="flex items-center gap-1.5">
+                    <Search className="w-3.5 h-3.5 text-sky-800" />
+                    <span>Focus Search Keyword</span>
+                  </span>
+                  <span className="text-[10px] text-slate-400 font-normal">SEO / Ads</span>
+                </label>
+                <input
+                  id="target-keyword"
+                  type="text"
+                  value={targetKeyword}
+                  onChange={(e) => setTargetKeyword(e.target.value)}
+                  placeholder="e.g. google ads for residential home builders"
+                  className="w-full px-3.5 py-2 rounded-xl border border-[#DCE5EE] bg-[#F8FAFC] text-sm text-[#0D1B2A] placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-800/20 focus:border-sky-800 font-body"
+                />
+                <p className="text-[11px] text-slate-400 mt-1 font-body">
+                  Primary high-intent term targeted for Google Search & Ads positioning.
+                </p>
+              </div>
+            </div>
+
+            {/* Founder's Strategic Takeaway / Perspective */}
+            <div className="bg-[#F8FAFC] border border-sky-100 rounded-xl p-4 space-y-2">
+              <div className="flex items-center justify-between">
+                <label htmlFor="strategic-takeaway" className="block text-xs font-supporting font-semibold uppercase tracking-wider text-[#0D1B2A] flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-sky-600" />
+                  <span>Ajith's Strategic Takeaway (Founder Perspective)</span>
+                </label>
+                <span className="text-[10px] font-supporting text-sky-700 font-medium bg-sky-50 px-2 py-0.5 rounded border border-sky-200">
+                  Personal Brand Callout
+                </span>
+              </div>
+              <textarea
+                id="strategic-takeaway"
+                rows={3}
+                value={strategicTakeaway}
+                onChange={(e) => setStrategicTakeaway(e.target.value)}
+                placeholder="Direct 1-2 sentence founder insight demonstrating deep systems thinking and residential market nuance (e.g. 'Builders don't fail from low website traffic; they fail because generic broad keywords burn 40% of their ad spend on DIY searchers instead of serious plot owners.')..."
+                className="w-full px-3 py-2 rounded-lg border border-[#DCE5EE] bg-white text-xs sm:text-sm font-body text-[#0D1B2A] placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-800/20 focus:border-sky-800 leading-relaxed"
+              />
+              <p className="text-[11px] text-slate-500 font-body">
+                Displayed in a dedicated, high-contrast dark consultation card on the live article to reinforce founder trust.
+              </p>
+            </div>
+
+            {/* Connected Service CTA */}
+            <div>
+              <label htmlFor="primary-service-cta" className="block text-xs font-supporting font-semibold uppercase tracking-wider text-[#0D1B2A] mb-1.5 flex items-center gap-1.5">
+                <Link2 className="w-3.5 h-3.5 text-sky-800" />
+                <span>Connected Service / Consultation CTA</span>
+              </label>
+              <select
+                id="primary-service-cta"
+                value={primaryServiceCta}
+                onChange={(e) => setPrimaryServiceCta(e.target.value)}
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#DCE5EE] bg-[#F8FAFC] text-sm text-[#0D1B2A] focus:outline-none focus:ring-2 focus:ring-sky-800/20 focus:border-sky-800 font-body"
+              >
+                {CMS_PRIMARY_SERVICES.map((srv) => (
+                  <option key={srv.value} value={srv.value}>
+                    {srv.label}
+                  </option>
+                ))}
+              </select>
+              <p className="text-[11px] text-slate-400 mt-1 font-body">
+                Connects this insight article directly to the relevant growth service.
+              </p>
+            </div>
+
             {/* Excerpt */}
             <div>
               <label htmlFor="article-excerpt" className="block text-xs font-supporting font-semibold uppercase tracking-wider text-[#0D1B2A] mb-1.5">
@@ -547,24 +856,316 @@ Targeting specific territories with customized project portfolios improves consu
             </div>
           </div>
 
+          {/* LINKEDIN REPURPOSING & DISTRIBUTION ENGINE */}
+          <div className="bg-gradient-to-br from-white to-[#F8FAFC] rounded-2xl border border-sky-200/80 p-6 space-y-4 shadow-xs">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#DCE5EE] pb-3">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-[#0077B5] text-white flex items-center justify-center font-bold text-sm shadow-xs">
+                  in
+                </div>
+                <div>
+                  <h2 className="text-base font-heading font-semibold text-[#0D1B2A] flex items-center gap-2">
+                    <span>LinkedIn Repurposing & Distribution</span>
+                  </h2>
+                  <p className="text-xs text-slate-500 font-body">
+                    Personal Brand Engine: 2 blogs every week &rarr; ready-to-publish LinkedIn post copy for construction founders.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleGenerateLinkedInDraft}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-sky-300 bg-sky-50 hover:bg-sky-100 text-sky-800 font-body font-medium text-xs transition-colors cursor-pointer"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-sky-700" />
+                  <span>Auto-Draft Hook</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={handleCopyLinkedInDraft}
+                  disabled={!linkedinPostSummary.trim()}
+                  className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-body font-semibold transition-all cursor-pointer ${
+                    copiedLinkedin
+                      ? 'bg-emerald-600 text-white shadow-xs'
+                      : 'bg-[#0077B5] hover:bg-[#005E93] text-white disabled:opacity-40 disabled:cursor-not-allowed shadow-xs'
+                  }`}
+                >
+                  {copiedLinkedin ? (
+                    <>
+                      <Check className="w-3.5 h-3.5" />
+                      <span>Copied!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-3.5 h-3.5" />
+                      <span>Copy for LinkedIn</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label htmlFor="linkedin-summary" className="block text-xs font-supporting font-semibold uppercase tracking-wider text-[#0D1B2A]">
+                  Ready-to-Post LinkedIn Content
+                </label>
+                <span className="text-[11px] font-mono text-slate-400">
+                  {linkedinPostSummary.length} characters
+                </span>
+              </div>
+              <textarea
+                id="linkedin-summary"
+                rows={6}
+                value={linkedinPostSummary}
+                onChange={(e) => setLinkedinPostSummary(e.target.value)}
+                placeholder="Click 'Auto-Draft Hook' above or compose your LinkedIn post hook, key builder takeaways, and article link here..."
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#DCE5EE] bg-white text-xs sm:text-sm font-body text-[#0D1B2A] placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0077B5]/20 focus:border-[#0077B5] leading-relaxed"
+              />
+              <p className="text-[11px] text-slate-500 mt-1 font-body">
+                Stored directly in your Supabase CMS table so you can cross-post whenever your article goes live on the site.
+              </p>
+            </div>
+          </div>
+
+          {/* ARTICLE SECTION IMAGES Panel (Contextual Body Images 1-4) */}
+          <div className="bg-white rounded-2xl border border-[#DCE5EE] p-6 space-y-6">
+            <div className="border-b border-[#DCE5EE] pb-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <ImageIcon className="w-4 h-4 text-sky-800" />
+                  <h2 className="text-base font-heading font-semibold text-[#0D1B2A]">
+                    Article Section Images
+                  </h2>
+                </div>
+                <span className="text-xs font-supporting font-semibold text-slate-500 uppercase tracking-wider">
+                  Up to 4 Contextual Visuals
+                </span>
+              </div>
+              <p className="text-xs text-slate-500 font-body mt-1">
+                Contextual images naturally anchored after your article&apos;s major H2 sections. Articles with 0, 1, 2, 3, or 4 images are fully supported.
+              </p>
+            </div>
+
+            <div className="space-y-6">
+              {[
+                {
+                  slot: 1 as const,
+                  title: 'Section Image 1',
+                  anchor: 'Anchored after H2 Section 1 / Intro',
+                  url: sectionImage1,
+                  alt: sectionImage1Alt,
+                  caption: sectionImage1Caption,
+                  setUrl: setSectionImage1,
+                  setAlt: setSectionImage1Alt,
+                  setCaption: setSectionImage1Caption,
+                },
+                {
+                  slot: 2 as const,
+                  title: 'Section Image 2',
+                  anchor: 'Anchored after H2 Section 2',
+                  url: sectionImage2,
+                  alt: sectionImage2Alt,
+                  caption: sectionImage2Caption,
+                  setUrl: setSectionImage2,
+                  setAlt: setSectionImage2Alt,
+                  setCaption: setSectionImage2Caption,
+                },
+                {
+                  slot: 3 as const,
+                  title: 'Section Image 3',
+                  anchor: 'Anchored after H2 Section 3',
+                  url: sectionImage3,
+                  alt: sectionImage3Alt,
+                  caption: sectionImage3Caption,
+                  setUrl: setSectionImage3,
+                  setAlt: setSectionImage3Alt,
+                  setCaption: setSectionImage3Caption,
+                },
+                {
+                  slot: 4 as const,
+                  title: 'Section Image 4',
+                  anchor: 'Anchored after H2 Section 4',
+                  url: sectionImage4,
+                  alt: sectionImage4Alt,
+                  caption: sectionImage4Caption,
+                  setUrl: setSectionImage4,
+                  setAlt: setSectionImage4Alt,
+                  setCaption: setSectionImage4Caption,
+                },
+              ].map((item) => (
+                <div
+                  key={item.slot}
+                  className="p-4 rounded-xl border border-[#DCE5EE] bg-[#F8FAFC] space-y-3"
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="text-xs font-supporting font-bold uppercase tracking-wider text-[#0D1B2A]">
+                        {item.title}
+                      </span>
+                      <span className="text-[11px] font-body text-slate-400 ml-2">
+                        ({item.anchor})
+                      </span>
+                    </div>
+                    {item.url && (
+                      <button
+                        type="button"
+                        onClick={() => handleClearSectionImage(item.slot)}
+                        className="inline-flex items-center gap-1 text-[11px] font-supporting font-semibold text-rose-600 hover:text-rose-800 p-1 transition-colors"
+                        title="Clear image"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                        <span>Remove Image</span>
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Image Upload / Preview */}
+                  <div className="space-y-2">
+                    <input
+                      type="file"
+                      id={`section-image-input-${item.slot}`}
+                      accept="image/jpeg,image/png,image/webp"
+                      onChange={(e) => {
+                        const f = e.target.files?.[0];
+                        if (f) handleSectionImageUpload(item.slot, f);
+                      }}
+                      disabled={uploadingSectionImage === item.slot}
+                      className="hidden"
+                    />
+
+                    {item.url ? (
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 p-2 bg-white rounded-lg border border-[#DCE5EE]">
+                        <img
+                          src={item.url}
+                          alt={item.alt || item.title}
+                          className="w-24 h-16 object-cover rounded-md border border-slate-200 shrink-0"
+                          referrerPolicy="no-referrer"
+                        />
+                        <div className="flex-1 w-full min-w-0 space-y-1">
+                          <input
+                            type="text"
+                            value={item.url}
+                            onChange={(e) => item.setUrl(e.target.value)}
+                            placeholder="Image URL"
+                            className="w-full px-2.5 py-1 text-xs font-mono rounded border border-slate-200 bg-slate-50 text-slate-700 focus:outline-none"
+                          />
+                          <div className="flex items-center gap-3">
+                            <label
+                              htmlFor={`section-image-input-${item.slot}`}
+                              className="text-[11px] font-heading font-medium text-sky-800 hover:underline cursor-pointer inline-flex items-center gap-1"
+                            >
+                              <Upload className="w-3 h-3" />
+                              <span>Replace from file</span>
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                        <label
+                          htmlFor={`section-image-input-${item.slot}`}
+                          className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg border border-[#DCE5EE] bg-white hover:bg-slate-50 text-xs font-heading font-medium text-sky-800 cursor-pointer transition-colors shrink-0"
+                        >
+                          {uploadingSectionImage === item.slot ? (
+                            <>
+                              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                              <span>Uploading to Storage...</span>
+                            </>
+                          ) : (
+                            <>
+                              <Upload className="w-3.5 h-3.5" />
+                              <span>Upload Image</span>
+                            </>
+                          )}
+                        </label>
+                        <input
+                          type="text"
+                          value={item.url}
+                          onChange={(e) => item.setUrl(e.target.value)}
+                          placeholder="Or paste direct image URL (https://...)"
+                          className="flex-1 px-3 py-2 text-xs font-mono rounded-lg border border-[#DCE5EE] bg-white text-[#0D1B2A] placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-800/20"
+                        />
+                      </div>
+                    )}
+
+                    {sectionImageUploadError[item.slot] && (
+                      <p className="text-xs text-red-600 font-body">
+                        {sectionImageUploadError[item.slot]}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Alt Text & Caption Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                    <div>
+                      <label className="block text-[11px] font-supporting font-semibold uppercase tracking-wider text-[#0D1B2A] mb-1">
+                        ALT Text {item.url && <span className="text-red-500">*</span>}
+                      </label>
+                      <input
+                        type="text"
+                        value={item.alt}
+                        onChange={(e) => item.setAlt(e.target.value)}
+                        placeholder="Descriptive image alt text (required if image set)"
+                        className="w-full px-3 py-1.5 rounded-lg border border-[#DCE5EE] bg-white text-xs font-body text-[#0D1B2A] placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-800/20"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-supporting font-semibold uppercase tracking-wider text-[#0D1B2A] mb-1">
+                        Caption (Optional)
+                      </label>
+                      <input
+                        type="text"
+                        value={item.caption}
+                        onChange={(e) => item.setCaption(e.target.value)}
+                        placeholder="Display caption shown below image"
+                        className="w-full px-3 py-1.5 rounded-lg border border-[#DCE5EE] bg-white text-xs font-body text-[#0D1B2A] placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-800/20"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
           {/* Section 2: FAQs (JSONB) */}
           <div className="bg-white rounded-2xl border border-[#DCE5EE] p-6 space-y-5">
-            <div className="flex items-center justify-between border-b border-[#DCE5EE] pb-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#DCE5EE] pb-3 gap-3">
               <div className="flex items-center gap-2">
                 <HelpCircle className="w-4 h-4 text-sky-800" />
                 <h2 className="text-base font-heading font-semibold text-[#0D1B2A]">
                   Frequently Asked Questions (FAQ)
                 </h2>
               </div>
-              <button
-                type="button"
-                onClick={handleAddFaq}
-                className="inline-flex items-center gap-1 text-xs font-supporting font-semibold text-sky-800 hover:text-sky-950 bg-sky-50 px-2.5 py-1.5 rounded-lg border border-sky-100 transition-colors"
-              >
-                <Plus className="w-3.5 h-3.5" />
-                <span>Add FAQ</span>
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleLoadFaqSuggestionsClick}
+                  className="inline-flex items-center gap-1.5 text-xs font-supporting font-semibold text-slate-700 hover:text-sky-900 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg border border-slate-200 transition-colors cursor-pointer"
+                  title="Load 10 preloaded FAQ templates for the current category"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+                  <span>Load Category FAQ Suggestions</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={handleAddFaq}
+                  className="inline-flex items-center gap-1 text-xs font-supporting font-semibold text-sky-800 hover:text-sky-950 bg-sky-50 px-2.5 py-1.5 rounded-lg border border-sky-100 transition-colors cursor-pointer"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Add FAQ</span>
+                </button>
+              </div>
             </div>
+
+            {faqFeedbackMessage && (
+              <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl text-xs font-body flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
+                <span>{faqFeedbackMessage}</span>
+              </div>
+            )}
 
             {faqs.length === 0 ? (
               <div className="text-center py-6 border-2 border-dashed border-[#DCE5EE] rounded-xl text-slate-400 text-xs font-body">
@@ -1090,6 +1691,52 @@ Targeting specific territories with customized project portfolios improves consu
           article={buildArticlePayload()}
           onClose={() => setShowPreviewModal(false)}
         />
+      )}
+
+      {/* Category FAQ Confirmation Modal */}
+      {showFaqConfirmModal && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-50 overflow-y-auto bg-[#0D1B2A]/75 backdrop-blur-xs flex items-center justify-center p-4"
+        >
+          <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-[#DCE5EE] p-6 space-y-4">
+            <div className="flex items-center gap-2.5 text-amber-600 border-b border-slate-100 pb-3">
+              <Sparkles className="w-5 h-5 text-amber-600" />
+              <h3 className="font-heading font-bold text-base text-[#0D1B2A]">
+                Load Category FAQ Suggestions
+              </h3>
+            </div>
+            <p className="text-xs sm:text-sm text-[#334155] font-body leading-relaxed">
+              This article already has <strong>{faqs.length}</strong> FAQ(s). How would you like to apply the 10 preloaded suggestions for <strong>{currentCategoryLabel}</strong>?
+            </p>
+            <div className="space-y-2 pt-2">
+              <button
+                type="button"
+                onClick={handleAppendFaqSuggestions}
+                className="w-full px-4 py-2.5 text-xs sm:text-sm font-heading font-semibold text-white bg-sky-800 hover:bg-sky-900 rounded-xl transition-colors text-left flex items-center justify-between cursor-pointer"
+              >
+                <span>Append to Existing FAQs</span>
+                <span className="text-[11px] font-normal opacity-80">+10 suggestions</span>
+              </button>
+              <button
+                type="button"
+                onClick={handleReplaceFaqSuggestions}
+                className="w-full px-4 py-2.5 text-xs sm:text-sm font-heading font-semibold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-xl transition-colors text-left flex items-center justify-between cursor-pointer"
+              >
+                <span>Replace All Existing FAQs</span>
+                <span className="text-[11px] font-normal opacity-80">Overwrites {faqs.length}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowFaqConfirmModal(false)}
+                className="w-full px-4 py-2 text-xs sm:text-sm font-heading font-medium text-slate-600 hover:bg-slate-100 rounded-xl transition-colors text-center cursor-pointer"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

@@ -22,7 +22,11 @@ export type AnalyticsEventName =
   | 'consultation_form_submit'
   | 'article_click'
   | 'category_filter_click'
-  | 'service_cta_click';
+  | 'service_cta_click'
+  | 'about_final_cta_click'
+  | 'home_final_cta_click'
+  | 'services_hero_cta_click'
+  | 'services_final_cta_click';
 
 export function initAnalytics() {
   if (typeof window === 'undefined') return;

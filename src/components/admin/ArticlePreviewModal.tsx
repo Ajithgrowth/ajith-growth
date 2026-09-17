@@ -4,6 +4,7 @@ import remarkGfm from 'remark-gfm';
 import { X, Calendar, Tag, UserCheck, HelpCircle, CheckCircle, Star, EyeOff } from 'lucide-react';
 import type { CMSArticle } from '../../types/cms';
 import { CMS_CATEGORIES } from '../../types/cms';
+import { buildArticleSectionsWithImages } from '../../utils/articleContent';
 
 interface ArticlePreviewModalProps {
   article: Partial<CMSArticle>;
@@ -30,6 +31,15 @@ export const ArticlePreviewModal: React.FC<ArticlePreviewModalProps> = ({
     : article.status === 'published'
     ? new Date().toISOString().split('T')[0]
     : 'Draft (Not published)';
+
+  const sectionImages = [
+    { url: article.section_image_1 || '', alt: article.section_image_1_alt || '', caption: article.section_image_1_caption || '' },
+    { url: article.section_image_2 || '', alt: article.section_image_2_alt || '', caption: article.section_image_2_caption || '' },
+    { url: article.section_image_3 || '', alt: article.section_image_3_alt || '', caption: article.section_image_3_caption || '' },
+    { url: article.section_image_4 || '', alt: article.section_image_4_alt || '', caption: article.section_image_4_caption || '' },
+  ].filter((img) => Boolean(img.url.trim()));
+
+  const contentBlocks = buildArticleSectionsWithImages(article.content || '', sectionImages);
 
   return (
     <div
@@ -132,7 +142,29 @@ export const ArticlePreviewModal: React.FC<ArticlePreviewModalProps> = ({
           {/* Main Article Content */}
           <div className="article-preview-content prose prose-slate max-w-none text-slate-800 font-body leading-relaxed">
             {article.content ? (
-              <Markdown remarkPlugins={[remarkGfm]}>{article.content}</Markdown>
+              contentBlocks.map((block, idx) => (
+                <React.Fragment key={idx}>
+                  {block.markdown ? (
+                    <Markdown remarkPlugins={[remarkGfm]}>{block.markdown}</Markdown>
+                  ) : null}
+
+                  {block.imageAfter && block.imageAfter.url && (
+                    <figure className="my-6 rounded-xl overflow-hidden border border-[#DCE5EE] bg-[#F8FAFC]">
+                      <img
+                        src={block.imageAfter.url}
+                        alt={block.imageAfter.alt || article.title || ''}
+                        className="w-full h-auto object-cover max-h-[400px]"
+                        referrerPolicy="no-referrer"
+                      />
+                      {block.imageAfter.caption && block.imageAfter.caption.trim() && (
+                        <figcaption className="px-4 py-2 text-xs text-center text-slate-500 font-body bg-white border-t border-[#DCE5EE] italic">
+                          {block.imageAfter.caption.trim()}
+                        </figcaption>
+                      )}
+                    </figure>
+                  )}
+                </React.Fragment>
+              ))
             ) : (
               <p className="text-slate-400 italic">No content written yet.</p>
             )}
