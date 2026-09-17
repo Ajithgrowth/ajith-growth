@@ -30,6 +30,12 @@ export interface CMSArticle {
   status: CMSArticleStatus;
   published_at?: string | null; // TIMESTAMPTZ
   author_name?: string; // Plain TEXT ("Ajith")
+  author_designation?: string; // Plain TEXT
+  author_photo?: string; // Plain TEXT (Supabase storage URL or external image URL)
+  author_bio?: string; // Plain TEXT
+  is_featured?: boolean; // BOOLEAN DEFAULT FALSE
+  og_image?: string; // Plain TEXT (Optional social sharing image)
+  noindex?: boolean; // BOOLEAN DEFAULT FALSE
   created_at?: string;
   updated_at?: string;
 }

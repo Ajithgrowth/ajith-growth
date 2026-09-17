@@ -74,7 +74,7 @@ export function InsightsPage() {
 
   // Featured article: newest marked featured: true; fallback to newest published article
   const featuredArticle = useMemo(() => {
-    const featured = allArticles.find((a) => a.featured);
+    const featured = allArticles.find((a) => a.featured || a.is_featured);
     return featured || allArticles[0];
   }, [allArticles]);
 

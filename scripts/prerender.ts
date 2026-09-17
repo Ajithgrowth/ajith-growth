@@ -335,6 +335,14 @@ for (const route of routes) {
   }
 
   // 10b. Verification & robots tags
+  if (route.noindex) {
+    if (html.includes('<meta name="robots"')) {
+      html = html.replace(/<meta name="robots".*?\/>/, '<meta name="robots" content="noindex, follow" />');
+    } else {
+      html = html.replace('</head>', '  <meta name="robots" content="noindex, follow" />\n  </head>');
+    }
+  }
+
   if (siteConfig.analytics.googleSiteVerification && siteConfig.analytics.googleSiteVerification.trim() !== '') {
     const gscTag = `<meta name="google-site-verification" content="${siteConfig.analytics.googleSiteVerification.trim()}" />\n  `;
     if (!html.includes('name="google-site-verification"')) {
@@ -375,10 +383,11 @@ for (const route of routes) {
 
 console.log(`prerender.ts: Successfully prerendered ${renderedCount} static routes.`);
 
-// Automated sitemap.xml generation
+// Automated sitemap.xml generation (excluding noindex routes)
+const sitemapRoutes = routes.filter((r) => !r.noindex);
 const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${routes
+${sitemapRoutes
   .map((r) => {
     return `  <url>
     <loc>${r.canonicalUrl}</loc>

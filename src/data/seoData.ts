@@ -21,6 +21,7 @@ export interface SeoRouteData {
   keywords?: string[];
   articleSection?: string;
   imageAlt?: string;
+  noindex?: boolean;
 }
 
 export const staticPagesSeo: Record<string, SeoRouteData> = {
@@ -217,14 +218,19 @@ export function getArticleSeo(article: Article): SeoRouteData {
   const pubDate = article.publishedDate || article.publishDate || '2026-09-08';
   const modDate = article.updatedDate || article.modifiedDate;
 
+  const rawOg = article.ogImage || article.og_image || article.featuredImage;
+  const ogImage = rawOg
+    ? rawOg.startsWith('http')
+      ? rawOg
+      : `${siteConfig.canonicalDomain}${rawOg}`
+    : `${siteConfig.canonicalDomain}/images/og-default.jpg`;
+
   return {
     path: `/insights/${article.slug}`,
     title: article.seoTitle || `${article.title} | Ajith Growth`,
     description: article.metaDescription || article.excerpt,
     canonicalUrl,
-    ogImage: article.featuredImage.startsWith('http')
-      ? article.featuredImage
-      : `${siteConfig.canonicalDomain}${article.featuredImage}`,
+    ogImage,
     ogType: 'article',
     publishedTime: pubDate,
     modifiedTime: modDate,
@@ -243,6 +249,7 @@ export function getArticleSeo(article: Article): SeoRouteData {
     keywords: article.keywords,
     articleSection: categoryLabel,
     imageAlt: article.featuredImageAlt,
+    noindex: Boolean(article.noindex),
   };
 }
 

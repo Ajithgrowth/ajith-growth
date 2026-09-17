@@ -43,6 +43,13 @@ export interface Article {
   summary?: string[];
   quick_summary?: string;
   author_name?: string;
+  author_designation?: string;
+  author_photo?: string;
+  author_bio?: string;
+  is_featured?: boolean;
+  og_image?: string;
+  ogImage?: string;
+  noindex?: boolean;
   source?: 'cms' | 'markdown';
   faqs?: ArticleFAQ[];
   body?: string;

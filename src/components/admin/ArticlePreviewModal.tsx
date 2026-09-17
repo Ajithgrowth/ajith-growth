@@ -1,7 +1,7 @@
 import React from 'react';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { X, Calendar, Tag, UserCheck, HelpCircle, CheckCircle } from 'lucide-react';
+import { X, Calendar, Tag, UserCheck, HelpCircle, CheckCircle, Star, EyeOff } from 'lucide-react';
 import type { CMSArticle } from '../../types/cms';
 import { CMS_CATEGORIES } from '../../types/cms';
 
@@ -40,13 +40,22 @@ export const ArticlePreviewModal: React.FC<ArticlePreviewModalProps> = ({
       <div className="bg-white w-full max-w-4xl rounded-2xl shadow-2xl border border-[#DCE5EE] overflow-hidden flex flex-col max-h-[90vh]">
         {/* Modal Top Bar */}
         <div className="bg-[#0D1B2A] text-white px-6 py-4 flex items-center justify-between border-b border-slate-800">
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             <span className="px-2.5 py-0.5 rounded-full text-xs font-supporting font-semibold uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/40">
               {article.status === 'published' ? 'Preview (Published)' : 'Preview (Private Draft)'}
             </span>
-            <span className="text-xs text-slate-400 font-body hidden sm:inline">
-              Not accessible publicly
-            </span>
+            {article.is_featured && (
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-supporting font-semibold uppercase tracking-wider bg-sky-500/20 text-sky-300 border border-sky-500/40">
+                <Star className="w-3 h-3 fill-sky-300 text-sky-300" />
+                Featured
+              </span>
+            )}
+            {article.noindex && (
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-supporting font-semibold uppercase tracking-wider bg-rose-500/20 text-rose-300 border border-rose-500/40">
+                <EyeOff className="w-3 h-3 text-rose-300" />
+                Noindex
+              </span>
+            )}
           </div>
           <button
             onClick={onClose}
@@ -129,6 +138,36 @@ export const ArticlePreviewModal: React.FC<ArticlePreviewModalProps> = ({
             )}
           </div>
 
+          {/* Author Card in Preview */}
+          <div className="p-6 rounded-xl bg-[#F8FAFC] border border-[#DCE5EE] flex flex-col sm:flex-row items-center sm:items-start gap-4">
+            {article.author_photo ? (
+              <img
+                src={article.author_photo}
+                alt={article.author_name || 'Author'}
+                className="w-14 h-14 rounded-xl object-cover border border-[#DCE5EE] shrink-0"
+                referrerPolicy="no-referrer"
+              />
+            ) : (
+              <div className="w-14 h-14 rounded-xl bg-[#0D1B2A] text-white flex items-center justify-center font-heading font-bold text-lg shrink-0">
+                {(article.author_name || 'Ajith')[0]}
+              </div>
+            )}
+            <div className="flex-1 text-center sm:text-left">
+              <span className="text-[11px] font-supporting font-bold uppercase tracking-wider text-sky-800 block mb-0.5">
+                Written by {article.author_name || 'Ajith'}
+              </span>
+              <h4 className="font-heading font-bold text-base text-[#0D1B2A]">
+                {article.author_name || 'Ajith'}
+                {article.author_designation ? ` — ${article.author_designation}` : ''}
+              </h4>
+              {article.author_bio && (
+                <p className="text-xs text-[#64748B] font-body mt-1 leading-relaxed">
+                  {article.author_bio}
+                </p>
+              )}
+            </div>
+          </div>
+
           {/* FAQs Preview */}
           {article.faqs && article.faqs.length > 0 && (
             <div className="pt-8 border-t border-[#DCE5EE] space-y-4">
@@ -165,6 +204,16 @@ export const ArticlePreviewModal: React.FC<ArticlePreviewModalProps> = ({
             <p className="text-xs text-[#64748B]">
               {article.meta_description || article.excerpt || 'Meta description preview...'}
             </p>
+            {article.og_image && (
+              <div className="text-xs text-slate-500 font-body">
+                <span className="font-semibold text-[#0D1B2A]">OG Image:</span> {article.og_image}
+              </div>
+            )}
+            {article.noindex && (
+              <div className="text-xs font-semibold text-rose-600 font-body">
+                Robots Meta: noindex, follow (Excluded from sitemap.xml)
+              </div>
+            )}
           </div>
         </div>
 

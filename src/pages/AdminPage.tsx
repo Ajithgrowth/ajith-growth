@@ -246,7 +246,7 @@ export function AdminPage() {
       }
 
       // Payload strictly aligned with existing Supabase articles table
-      const payload = {
+      const payload: any = {
         title: articleData.title,
         slug: articleData.slug,
         category: articleData.category,
@@ -261,6 +261,12 @@ export function AdminPage() {
         status,
         published_at: published_at || null, // TIMESTAMPTZ
         author_name: articleData.author_name || 'Ajith', // TEXT
+        author_designation: articleData.author_designation || null, // TEXT
+        author_photo: articleData.author_photo || null, // TEXT
+        author_bio: articleData.author_bio || null, // TEXT
+        is_featured: Boolean(articleData.is_featured), // BOOLEAN
+        og_image: articleData.og_image || null, // TEXT
+        noindex: Boolean(articleData.noindex), // BOOLEAN
         updated_at: now,
       };
 

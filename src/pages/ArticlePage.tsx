@@ -74,6 +74,9 @@ export function ArticlePage({ slug }: ArticlePageProps) {
   const categoryUrl = `${siteConfig.canonicalDomain}/insights/${categorySlug}`;
 
   const authorName = article.author_name || article.author || defaultAuthor.name;
+  const authorDesignation = article.author_designation || defaultAuthor.role;
+  const authorPhoto = article.author_photo || defaultAuthor.image;
+  const authorBio = article.author_bio || defaultAuthor.bio;
   const authorInitials = authorName
     .split(' ')
     .map((n: string) => n[0])
@@ -81,6 +84,8 @@ export function ArticlePage({ slug }: ArticlePageProps) {
     .slice(0, 2)
     .join('')
     .toUpperCase() || defaultAuthor.initials;
+
+  const [topAuthorImgError, setTopAuthorImgError] = useState(false);
 
   // Check for verified WhatsApp URL from centralized siteConfig
   const verifiedWhatsAppUrl = siteConfig.whatsappUrl;
@@ -101,13 +106,14 @@ export function ArticlePage({ slug }: ArticlePageProps) {
         title={article.seoTitle || `${article.title} | Ajith Growth`}
         description={article.metaDescription || article.excerpt}
         canonicalUrl={canonicalUrl}
-        ogImage={article.featuredImage}
+        ogImage={article.ogImage || article.og_image || article.featuredImage}
         ogType="article"
         publishedTime={article.publishedDate}
         modifiedTime={article.updatedDate || article.publishedDate}
         author={authorName}
         breadcrumbs={breadcrumbs}
         faqs={article.faqs && article.faqs.length > 0 ? article.faqs : undefined}
+        noindex={Boolean(article.noindex)}
         keywords={article.keywords}
         articleSection={categoryLabel}
         imageAlt={article.featuredImageAlt}
@@ -182,16 +188,28 @@ export function ArticlePage({ slug }: ArticlePageProps) {
 
         {/* Author Line */}
         <div className="flex items-center gap-3 pt-4 border-t border-[#DCE5EE]">
-          <div className="w-10 h-10 rounded-full bg-[#0D1B2A] text-white flex items-center justify-center font-heading font-bold text-sm shadow-xs">
-            {authorInitials}
-          </div>
+          {authorPhoto && !topAuthorImgError ? (
+            <img
+              src={authorPhoto}
+              alt={authorName}
+              onError={() => setTopAuthorImgError(true)}
+              className="w-10 h-10 rounded-full object-cover border border-[#DCE5EE] shadow-xs"
+              referrerPolicy="no-referrer"
+            />
+          ) : (
+            <div className="w-10 h-10 rounded-full bg-[#0D1B2A] text-white flex items-center justify-center font-heading font-bold text-sm shadow-xs">
+              {authorInitials}
+            </div>
+          )}
           <div>
             <span className="font-heading font-semibold text-sm text-[#0D1B2A] block">
               {authorName}
             </span>
-            <span className="font-supporting text-xs text-[#64748B]">
-              {defaultAuthor.role}
-            </span>
+            {authorDesignation && (
+              <span className="font-supporting text-xs text-[#64748B]">
+                {authorDesignation}
+              </span>
+            )}
           </div>
         </div>
       </header>
@@ -444,7 +462,13 @@ export function ArticlePage({ slug }: ArticlePageProps) {
             )}
 
             {/* Author Box Component */}
-            <AuthorCard compact />
+            <AuthorCard
+              compact
+              authorName={authorName}
+              authorRole={authorDesignation}
+              authorImage={authorPhoto}
+              authorBio={authorBio}
+            />
           </aside>
         </div>
 
@@ -462,7 +486,12 @@ export function ArticlePage({ slug }: ArticlePageProps) {
 
         {/* 8. Full Author Section */}
         <section className="mt-16 bg-[#F8FAFC]">
-          <AuthorCard />
+          <AuthorCard
+            authorName={authorName}
+            authorRole={authorDesignation}
+            authorImage={authorPhoto}
+            authorBio={authorBio}
+          />
         </section>
 
         {/* 9. Related Articles (Exactly 3, same category first, no drafts) */}

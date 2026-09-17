@@ -16,10 +16,18 @@ import {
   CheckCircle2,
   Loader2,
   RefreshCw,
+  User,
+  Star,
+  Image as ImageIcon,
+  Copy,
+  Check,
+  Globe,
+  EyeOff,
 } from 'lucide-react';
 import type { CMSArticle, CMSArticleFAQ, CMSArticleStatus } from '../../types/cms';
 import { CMS_CATEGORIES, generateSlug } from '../../types/cms';
 import { uploadBlogImage } from '../../lib/cmsStorage';
+import { siteConfig } from '../../data/siteConfig';
 import { MarkdownEditor } from './MarkdownEditor';
 import { ArticlePreviewModal } from './ArticlePreviewModal';
 
@@ -76,6 +84,25 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
   const [authorName, setAuthorName] = useState<string>(
     initialArticle?.author_name || 'Ajith'
   );
+  const [authorDesignation, setAuthorDesignation] = useState<string>(
+    initialArticle?.author_designation || ''
+  );
+  const [authorPhoto, setAuthorPhoto] = useState<string>(
+    initialArticle?.author_photo || ''
+  );
+  const [authorBio, setAuthorBio] = useState<string>(
+    initialArticle?.author_bio || ''
+  );
+  const [isFeatured, setIsFeatured] = useState<boolean>(
+    Boolean(initialArticle?.is_featured)
+  );
+  const [ogImage, setOgImage] = useState<string>(
+    initialArticle?.og_image || ''
+  );
+  const [noindex, setNoindex] = useState<boolean>(
+    Boolean(initialArticle?.noindex)
+  );
+
   const [faqs, setFaqs] = useState<CMSArticleFAQ[]>(() => {
     if (initialArticle?.faqs && Array.isArray(initialArticle.faqs)) {
       return initialArticle.faqs;
@@ -86,6 +113,11 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
   // UI States
   const [uploadingImage, setUploadingImage] = useState<boolean>(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [uploadingAuthorPhoto, setUploadingAuthorPhoto] = useState<boolean>(false);
+  const [authorPhotoUploadError, setAuthorPhotoUploadError] = useState<string | null>(null);
+  const [uploadingOgImage, setUploadingOgImage] = useState<boolean>(false);
+  const [ogImageUploadError, setOgImageUploadError] = useState<string | null>(null);
+  const [copiedCanonical, setCopiedCanonical] = useState<boolean>(false);
   const [slugError, setSlugError] = useState<string | null>(null);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [showPreviewModal, setShowPreviewModal] = useState<boolean>(false);
@@ -154,6 +186,47 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
     setUploadingImage(false);
   };
 
+  // Handle Author Photo File Upload (Supabase Storage: blog-images)
+  const handleAuthorPhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingAuthorPhoto(true);
+    setAuthorPhotoUploadError(null);
+
+    const res = await uploadBlogImage(file);
+    if (res.error) {
+      setAuthorPhotoUploadError(res.error);
+    } else if (res.url) {
+      setAuthorPhoto(res.url);
+    }
+    setUploadingAuthorPhoto(false);
+  };
+
+  // Handle OG Image File Upload (Supabase Storage: blog-images)
+  const handleOgImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingOgImage(true);
+    setOgImageUploadError(null);
+
+    const res = await uploadBlogImage(file);
+    if (res.error) {
+      setOgImageUploadError(res.error);
+    } else if (res.url) {
+      setOgImage(res.url);
+    }
+    setUploadingOgImage(false);
+  };
+
+  const handleCopyCanonical = () => {
+    const fullCanonical = `${siteConfig.canonicalDomain}/insights/${slug || ''}`;
+    navigator.clipboard.writeText(fullCanonical);
+    setCopiedCanonical(true);
+    setTimeout(() => setCopiedCanonical(false), 2000);
+  };
+
   // FAQ Dynamic Handlers
   const handleAddFaq = () => {
     setFaqs([...faqs, { question: '', answer: '' }]);
@@ -206,6 +279,12 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
       status: finalStatus,
       published_at: finalPublishedAt, // TIMESTAMPTZ
       author_name: (authorName.trim() || 'Ajith'), // Plain TEXT
+      author_designation: authorDesignation.trim() || null,
+      author_photo: authorPhoto.trim() || null,
+      author_bio: authorBio.trim() || null,
+      is_featured: isFeatured,
+      og_image: ogImage.trim() || null,
+      noindex: noindex,
       updated_at: nowIso,
     };
   };
@@ -580,10 +659,39 @@ Targeting specific territories with customized project portfolios improves consu
               </p>
             </div>
 
+            {/* Featured Blog Toggle (is_featured) */}
+            <div className="pt-2 border-t border-[#DCE5EE]">
+              <label className="flex items-start gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={isFeatured}
+                  onChange={(e) => setIsFeatured(e.target.checked)}
+                  className="mt-1 w-4 h-4 rounded border-[#DCE5EE] text-sky-800 focus:ring-sky-800/20"
+                />
+                <div>
+                  <span className="text-xs font-supporting font-semibold uppercase tracking-wider text-[#0D1B2A] flex items-center gap-1.5">
+                    <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+                    <span>Featured Blog</span>
+                  </span>
+                  <p className="text-[11px] text-slate-500 font-body mt-0.5">
+                    Feature this article in the Insights hub hero section.
+                  </p>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          {/* Panel 2: Author Section */}
+          <div className="bg-white rounded-2xl border border-[#DCE5EE] p-6 space-y-4">
+            <h2 className="text-base font-heading font-semibold text-[#0D1B2A] border-b border-[#DCE5EE] pb-3 flex items-center gap-2">
+              <User className="w-4 h-4 text-sky-800" />
+              <span>Author</span>
+            </h2>
+
             {/* Author Name */}
             <div>
               <label htmlFor="author-name" className="block text-xs font-supporting font-semibold uppercase tracking-wider text-[#0D1B2A] mb-1.5">
-                Author
+                Author Name
               </label>
               <input
                 id="author-name"
@@ -591,25 +699,128 @@ Targeting specific territories with customized project portfolios improves consu
                 value={authorName}
                 onChange={(e) => setAuthorName(e.target.value)}
                 placeholder="Ajith"
-                className="w-full px-3.5 py-2.5 rounded-xl border border-[#DCE5EE] bg-[#F8FAFC] text-sm text-[#0D1B2A] focus:outline-none focus:ring-2 focus:ring-sky-800/20 font-body"
+                className="w-full px-3.5 py-2 rounded-xl border border-[#DCE5EE] bg-[#F8FAFC] text-sm text-[#0D1B2A] focus:outline-none focus:ring-2 focus:ring-sky-800/20 font-body"
               />
               <p className="text-[11px] text-slate-400 mt-1 font-body">
-                Stored in &ldquo;author_name&rdquo; (TEXT). Defaults to &ldquo;Ajith&rdquo;.
+                Stored in &ldquo;author_name&rdquo; (TEXT).
+              </p>
+            </div>
+
+            {/* Author Designation */}
+            <div>
+              <label htmlFor="author-designation" className="block text-xs font-supporting font-semibold uppercase tracking-wider text-[#0D1B2A] mb-1.5">
+                Author Designation
+              </label>
+              <input
+                id="author-designation"
+                type="text"
+                value={authorDesignation}
+                onChange={(e) => setAuthorDesignation(e.target.value)}
+                placeholder="Founder & Growth Architect"
+                className="w-full px-3.5 py-2 rounded-xl border border-[#DCE5EE] bg-[#F8FAFC] text-sm text-[#0D1B2A] focus:outline-none focus:ring-2 focus:ring-sky-800/20 font-body"
+              />
+              <p className="text-[11px] text-slate-400 mt-1 font-body">
+                Stored in &ldquo;author_designation&rdquo; (TEXT).
+              </p>
+            </div>
+
+            {/* Author Photo */}
+            <div>
+              <label className="block text-xs font-supporting font-semibold uppercase tracking-wider text-[#0D1B2A] mb-1.5">
+                Author Photo
+              </label>
+              <div className="flex items-center gap-3 mb-2">
+                {authorPhoto ? (
+                  <div className="w-12 h-12 rounded-xl overflow-hidden border border-[#DCE5EE] bg-slate-100 relative shrink-0">
+                    <img
+                      src={authorPhoto}
+                      alt={authorName || 'Author'}
+                      className="w-full h-full object-cover"
+                      referrerPolicy="no-referrer"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setAuthorPhoto('')}
+                      className="absolute top-0.5 right-0.5 p-0.5 rounded bg-black/60 text-white hover:bg-black/80"
+                      title="Remove photo"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="w-12 h-12 rounded-xl bg-slate-100 border border-[#DCE5EE] flex items-center justify-center text-slate-400 shrink-0">
+                    <User className="w-6 h-6" />
+                  </div>
+                )}
+                <div className="flex-1">
+                  <input
+                    type="file"
+                    id="author-photo-input"
+                    accept="image/jpeg,image/png,image/webp"
+                    onChange={handleAuthorPhotoUpload}
+                    disabled={uploadingAuthorPhoto}
+                    className="hidden"
+                  />
+                  <label
+                    htmlFor="author-photo-input"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#DCE5EE] hover:bg-slate-50 text-xs font-heading font-medium text-sky-800 cursor-pointer transition-colors"
+                  >
+                    {uploadingAuthorPhoto ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        <span>Uploading...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Upload className="w-3.5 h-3.5" />
+                        <span>Upload Photo</span>
+                      </>
+                    )}
+                  </label>
+                </div>
+              </div>
+              <input
+                type="text"
+                value={authorPhoto}
+                onChange={(e) => setAuthorPhoto(e.target.value)}
+                placeholder="Or paste public photo URL..."
+                className="w-full px-3 py-1.5 rounded-lg border border-[#DCE5EE] bg-[#F8FAFC] text-xs font-mono text-[#0D1B2A] focus:outline-none"
+              />
+              {authorPhotoUploadError && (
+                <p className="text-xs text-red-600 mt-1 font-body">{authorPhotoUploadError}</p>
+              )}
+            </div>
+
+            {/* Author Bio */}
+            <div>
+              <label htmlFor="author-bio" className="block text-xs font-supporting font-semibold uppercase tracking-wider text-[#0D1B2A] mb-1.5">
+                Author Bio
+              </label>
+              <textarea
+                id="author-bio"
+                rows={3}
+                value={authorBio}
+                onChange={(e) => setAuthorBio(e.target.value)}
+                placeholder="Brief bio highlighting domain expertise..."
+                className="w-full px-3.5 py-2 rounded-xl border border-[#DCE5EE] bg-[#F8FAFC] text-xs font-body text-[#0D1B2A] focus:outline-none focus:ring-2 focus:ring-sky-800/20"
+              />
+              <p className="text-[11px] text-slate-400 mt-1 font-body">
+                Stored in &ldquo;author_bio&rdquo; (TEXT).
               </p>
             </div>
           </div>
 
-          {/* Panel 2: Featured Image (Supabase Storage: blog-images) */}
+          {/* Panel 3: Featured Image & OG Image (Supabase Storage: blog-images) */}
           <div className="bg-white rounded-2xl border border-[#DCE5EE] p-6 space-y-4">
             <h2 className="text-base font-heading font-semibold text-[#0D1B2A] border-b border-[#DCE5EE] pb-3 flex items-center gap-2">
               <Upload className="w-4 h-4 text-sky-800" />
-              <span>Featured Image</span>
+              <span>Media & Images</span>
             </h2>
 
             {/* Upload Area */}
             <div>
               <label className="block text-xs font-supporting font-semibold uppercase tracking-wider text-[#0D1B2A] mb-1.5">
-                Upload Image (Supabase Bucket: blog-images)
+                Featured Image (blog-images bucket)
               </label>
               <div className="border-2 border-dashed border-[#DCE5EE] rounded-xl p-4 text-center hover:bg-slate-50 transition-colors">
                 <input
@@ -651,7 +862,7 @@ Targeting specific territories with customized project portfolios improves consu
             {/* Direct URL input fallback */}
             <div>
               <label htmlFor="featured-image-url" className="block text-xs font-supporting font-semibold uppercase tracking-wider text-[#0D1B2A] mb-1">
-                Image Public URL
+                Featured Image URL
               </label>
               <input
                 id="featured-image-url"
@@ -666,7 +877,7 @@ Targeting specific territories with customized project portfolios improves consu
             {/* Alt Text */}
             <div>
               <label htmlFor="featured-image-alt" className="block text-xs font-supporting font-semibold uppercase tracking-wider text-[#0D1B2A] mb-1">
-                Image Alt Text
+                Featured Image Alt Text
               </label>
               <input
                 id="featured-image-alt"
@@ -700,9 +911,80 @@ Targeting specific territories with customized project portfolios improves consu
                 </button>
               </div>
             )}
+
+            {/* Open Graph (OG) Image */}
+            <div className="pt-4 border-t border-[#DCE5EE] space-y-3">
+              <div>
+                <label className="block text-xs font-supporting font-semibold uppercase tracking-wider text-[#0D1B2A]">
+                  Open Graph (OG) Image
+                </label>
+                <p className="text-[11px] text-slate-500 font-body mt-0.5">
+                  Custom image for social media sharing. Fallback to Featured Image if empty.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3">
+                {ogImage ? (
+                  <div className="w-16 h-10 rounded-lg overflow-hidden border border-[#DCE5EE] bg-slate-100 relative shrink-0">
+                    <img
+                      src={ogImage}
+                      alt="OG Preview"
+                      className="w-full h-full object-cover"
+                      referrerPolicy="no-referrer"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setOgImage('')}
+                      className="absolute top-0.5 right-0.5 p-0.5 rounded bg-black/60 text-white hover:bg-black/80"
+                      title="Remove OG image"
+                    >
+                      <X className="w-2.5 h-2.5" />
+                    </button>
+                  </div>
+                ) : null}
+
+                <div className="flex-1">
+                  <input
+                    type="file"
+                    id="og-image-input"
+                    accept="image/jpeg,image/png,image/webp"
+                    onChange={handleOgImageUpload}
+                    disabled={uploadingOgImage}
+                    className="hidden"
+                  />
+                  <label
+                    htmlFor="og-image-input"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#DCE5EE] hover:bg-slate-50 text-xs font-heading font-medium text-sky-800 cursor-pointer transition-colors"
+                  >
+                    {uploadingOgImage ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        <span>Uploading...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Upload className="w-3.5 h-3.5" />
+                        <span>Upload OG Image</span>
+                      </>
+                    )}
+                  </label>
+                </div>
+              </div>
+
+              <input
+                type="text"
+                value={ogImage}
+                onChange={(e) => setOgImage(e.target.value)}
+                placeholder="Or paste public OG image URL..."
+                className="w-full px-3 py-1.5 rounded-lg border border-[#DCE5EE] bg-[#F8FAFC] text-xs font-mono text-[#0D1B2A] focus:outline-none"
+              />
+              {ogImageUploadError && (
+                <p className="text-xs text-red-600 mt-1 font-body">{ogImageUploadError}</p>
+              )}
+            </div>
           </div>
 
-          {/* Panel 3: SEO Configuration */}
+          {/* Panel 4: SEO Configuration */}
           <div className="bg-white rounded-2xl border border-[#DCE5EE] p-6 space-y-4">
             <h2 className="text-base font-heading font-semibold text-[#0D1B2A] border-b border-[#DCE5EE] pb-3 flex items-center gap-2">
               <Search className="w-4 h-4 text-sky-800" />
@@ -749,6 +1031,54 @@ Targeting specific territories with customized project portfolios improves consu
                   {(metaDescription || excerpt).length} chars
                 </span>
               </div>
+            </div>
+
+            {/* Canonical URL Preview */}
+            <div>
+              <label className="block text-xs font-supporting font-semibold uppercase tracking-wider text-[#0D1B2A] mb-1">
+                Canonical URL Preview
+              </label>
+              <div className="flex items-center gap-1.5">
+                <div className="flex-1 px-3 py-2 rounded-lg border border-[#DCE5EE] bg-[#F1F5F9] text-xs font-mono text-slate-700 select-all truncate">
+                  {siteConfig.canonicalDomain}/insights/{slug || '[slug]'}
+                </div>
+                <button
+                  type="button"
+                  onClick={handleCopyCanonical}
+                  className="p-2 rounded-lg border border-[#DCE5EE] hover:bg-slate-100 text-slate-600 transition-colors shrink-0"
+                  title="Copy Canonical URL"
+                >
+                  {copiedCanonical ? (
+                    <Check className="w-4 h-4 text-emerald-600" />
+                  ) : (
+                    <Copy className="w-4 h-4" />
+                  )}
+                </button>
+              </div>
+              <p className="text-[11px] text-slate-400 mt-1 font-body">
+                Read-only self-referential canonical URL generated from domain and slug.
+              </p>
+            </div>
+
+            {/* No Index Toggle */}
+            <div className="pt-3 border-t border-[#DCE5EE]">
+              <label className="flex items-start gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={noindex}
+                  onChange={(e) => setNoindex(e.target.checked)}
+                  className="mt-1 w-4 h-4 rounded border-[#DCE5EE] text-rose-600 focus:ring-rose-500/20"
+                />
+                <div>
+                  <span className="text-xs font-supporting font-semibold uppercase tracking-wider text-[#0D1B2A] flex items-center gap-1.5">
+                    <EyeOff className="w-3.5 h-3.5 text-rose-500" />
+                    <span>No Index (Exclude from Search Engines)</span>
+                  </span>
+                  <p className="text-[11px] text-slate-500 font-body mt-0.5">
+                    Sets robots meta tag to &ldquo;noindex, follow&rdquo; and excludes this article from sitemap.xml.
+                  </p>
+                </div>
+              </label>
             </div>
           </div>
         </div>

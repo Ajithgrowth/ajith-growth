@@ -8,46 +8,74 @@ import { trackEvent } from '../utils/analytics';
 export interface AuthorCardProps {
   compact?: boolean;
   className?: string;
+  authorName?: string;
+  authorRole?: string;
+  authorImage?: string;
+  authorBio?: string;
 }
 
-export function AuthorCard({ compact = false, className = '' }: AuthorCardProps) {
+export function AuthorCard({
+  compact = false,
+  className = '',
+  authorName,
+  authorRole,
+  authorImage,
+  authorBio,
+}: AuthorCardProps) {
   const [imageError, setImageError] = useState(false);
-  const author = defaultAuthor;
+
+  const name = authorName?.trim() || defaultAuthor.name;
+  const role = authorRole !== undefined && authorRole.trim() !== '' ? authorRole.trim() : (authorRole === undefined ? defaultAuthor.role : '');
+  const image = authorImage !== undefined && authorImage.trim() !== '' ? authorImage.trim() : (authorImage === undefined ? defaultAuthor.image : '');
+  const bio = authorBio !== undefined && authorBio.trim() !== '' ? authorBio.trim() : (authorBio === undefined ? defaultAuthor.bio : '');
+
+  const initials = name
+    .split(' ')
+    .filter(Boolean)
+    .map((n) => n[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase() || defaultAuthor.initials;
 
   if (compact) {
     return (
       <div className={`bg-white p-6 rounded-2xl border border-[#DCE5EE] shadow-xs ${className}`}>
         <span className="text-[11px] font-supporting text-slate-500 uppercase tracking-wider font-semibold block mb-3">
-          Written by {author.name}
+          Written by {name}
         </span>
         <div className="flex items-center gap-3 mb-3">
-          {author.image && !imageError ? (
+          {image && !imageError ? (
             <img
-              src={author.image}
-              alt="Ajith B R, Founder of Ajith Growth"
+              src={image}
+              alt={name}
               onError={() => setImageError(true)}
               className="w-11 h-11 rounded-xl object-cover border border-[#DCE5EE] shadow-xs"
+              referrerPolicy="no-referrer"
             />
           ) : (
             <div className="w-11 h-11 rounded-xl bg-[#0D1B2A] text-white flex items-center justify-center font-heading font-bold text-sm shadow-xs">
-              {author.initials}
+              {initials}
             </div>
           )}
           <div>
             <span className="font-heading font-semibold text-sm text-[#0D1B2A] block">
-              {author.name}
+              {name}
             </span>
-            <span className="text-[11px] font-supporting text-sky-800 uppercase tracking-wider font-semibold block">
-              {author.role}
-            </span>
+            {role && (
+              <span className="text-[11px] font-supporting text-sky-800 uppercase tracking-wider font-semibold block">
+                {role}
+              </span>
+            )}
           </div>
         </div>
-        <p className="text-xs font-body text-[#64748B] leading-relaxed mb-4">
-          {author.bio}
-        </p>
+        {bio && (
+          <p className="text-xs font-body text-[#64748B] leading-relaxed mb-4">
+            {bio}
+          </p>
+        )}
         <div className="flex flex-wrap items-center justify-between gap-2">
           <Link
-            href={author.profileUrl}
+            href={defaultAuthor.profileUrl}
             className="text-xs font-supporting font-semibold uppercase tracking-wider text-[#0D1B2A] hover:text-sky-800 flex items-center gap-1.5 transition-colors"
           >
             <span>Learn More About Ajith</span>
@@ -70,34 +98,37 @@ export function AuthorCard({ compact = false, className = '' }: AuthorCardProps)
 
   return (
     <div className={`bg-[#F8FAFC] rounded-2xl p-6 sm:p-8 border border-[#DCE5EE] flex flex-col sm:flex-row items-center sm:items-start gap-6 ${className}`}>
-      {author.image && !imageError ? (
+      {image && !imageError ? (
         <img
-          src={author.image}
-          alt="Ajith B R, Founder of Ajith Growth"
+          src={image}
+          alt={name}
           onError={() => setImageError(true)}
           className="w-18 h-18 rounded-2xl object-cover border border-[#DCE5EE] shrink-0 shadow-xs"
+          referrerPolicy="no-referrer"
         />
       ) : (
         <div className="w-18 h-18 rounded-2xl bg-[#0D1B2A] text-white flex items-center justify-center font-heading font-bold text-xl shrink-0 shadow-xs">
-          {author.initials}
+          {initials}
         </div>
       )}
       <div className="flex-1 text-center sm:text-left">
         <span className="text-xs font-supporting font-bold uppercase tracking-wider text-sky-800 block mb-1">
-          Written by {author.name}
+          Written by {name}
         </span>
         <h3 className="text-lg sm:text-xl font-heading font-bold text-[#0D1B2A] mb-1">
-          {author.name} — {author.role}
+          {name}{role ? ` — ${role}` : ''}
         </h3>
         <p className="text-xs font-supporting text-slate-500 mb-3">
-          {author.expertise} • {author.experience}
+          {defaultAuthor.expertise} • {defaultAuthor.experience}
         </p>
-        <p className="text-sm font-body text-[#64748B] leading-relaxed mb-4">
-          {author.bio}
-        </p>
+        {bio && (
+          <p className="text-sm font-body text-[#64748B] leading-relaxed mb-4">
+            {bio}
+          </p>
+        )}
         <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4">
           <Link
-            href={author.profileUrl}
+            href={defaultAuthor.profileUrl}
             className="text-xs font-supporting font-semibold uppercase tracking-wider text-[#0D1B2A] hover:text-sky-800 inline-flex items-center gap-1.5"
           >
             <span>Learn More About Ajith</span>
@@ -105,7 +136,7 @@ export function AuthorCard({ compact = false, className = '' }: AuthorCardProps)
           </Link>
           <span className="text-slate-300 hidden sm:inline">•</span>
           <Link
-            href={author.contactUrl}
+            href={defaultAuthor.contactUrl}
             className="text-xs font-supporting font-semibold uppercase tracking-wider text-sky-800 hover:text-[#0D1B2A] inline-flex items-center gap-1.5"
           >
             <span>Book Growth Consultation</span>

@@ -70,7 +70,7 @@ export function SEO({
       'name',
       'robots',
       noindex
-        ? 'noindex, nofollow'
+        ? 'noindex, follow'
         : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'
     );
 

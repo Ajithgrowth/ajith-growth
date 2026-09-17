@@ -73,6 +73,12 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://ajithgrowth.com/insights/test-article</loc>
+    <lastmod>2026-09-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://ajithgrowth.com/insights/generative-engine-optimization-ai-search-builders</loc>
     <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>

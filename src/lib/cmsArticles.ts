@@ -50,6 +50,12 @@ export function cmsArticleToPublicArticle(row: CMSArticle): Article | null {
 
   const canonicalUrl = `https://ajithgrowth.com/insights/${slug}`;
   const authorName = row.author_name?.trim() || 'Ajith B R';
+  const authorDesignation = row.author_designation?.trim() || '';
+  const authorPhoto = row.author_photo?.trim() || '';
+  const authorBio = row.author_bio?.trim() || '';
+  const isFeatured = Boolean(row.is_featured);
+  const ogImage = row.og_image?.trim() || row.featured_image?.trim() || '/images/og-default.jpg';
+  const noindex = Boolean(row.noindex);
 
   return {
     title: row.title.trim(),
@@ -60,13 +66,20 @@ export function cmsArticleToPublicArticle(row: CMSArticle): Article | null {
     featuredImageAlt: row.featured_image_alt?.trim() || row.title.trim(),
     author: authorName,
     author_name: authorName,
+    author_designation: authorDesignation,
+    author_photo: authorPhoto,
+    author_bio: authorBio,
     publishedDate,
     updatedDate,
-    featured: false,
+    featured: isFeatured,
+    is_featured: isFeatured,
     draft: false,
     keywords: [],
     seoTitle: row.seo_title?.trim() || `${row.title.trim()} | Ajith Growth`,
     metaDescription: row.meta_description?.trim() || row.excerpt?.trim() || '',
+    og_image: row.og_image?.trim() || '',
+    ogImage,
+    noindex,
     summary: quickSummaryPoints,
     quick_summary: row.quick_summary?.trim() || '',
     faqs,
