@@ -20,7 +20,7 @@ export function PrivacyPage() {
       />
 
       {/* Header Section */}
-      <section className="pt-8 pb-12 sm:pt-12 sm:pb-14 bg-[#0D1B2A] text-white border-b border-slate-800">
+      <section className="pt-32 pb-14 bg-[#0D1B2A] text-white border-b border-slate-800">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <Breadcrumb
             items={[
@@ -55,7 +55,7 @@ export function PrivacyPage() {
                 1. Commitment to Client Confidentiality
               </h2>
               <p>
-                At Ajith Growth, we provide strategic Google growth consulting exclusively to residential construction companies, turnkey builders, villa developers, and luxury remodelers. We recognize that project pipelines, architectural scopes, estimating structures, and sales metrics represent proprietary business assets. We maintain the highest standards of data security and confidentiality.
+                At Ajith Growth, we provide strategic Google growth consulting primarily to residential construction companies, with selected work for premium and designer boutiques. We recognize that business, customer and marketing information represents proprietary business assets. We maintain high standards of data security and confidentiality.
               </p>
             </div>
 

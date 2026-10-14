@@ -12,9 +12,15 @@ import { ContactPage } from './pages/ContactPage';
 import { PrivacyPage } from './pages/PrivacyPage';
 import { TermsPage } from './pages/TermsPage';
 import { NotFoundPage } from './pages/NotFoundPage';
-import { AdminPage } from './pages/AdminPage';
+import { ConstructionIndustryPage } from './pages/ConstructionIndustryPage';
+import { BoutiquesIndustryPage } from './pages/BoutiquesIndustryPage';
 import { isCategorySlug } from './data/insightCategories';
 import { initAnalytics } from './utils/analytics';
+
+function AdminRedirect() {
+  useEffect(() => { window.location.replace('/admin/index.html'); }, []);
+  return <main className="min-h-screen flex items-center justify-center text-sm text-slate-600">Opening the content manager…</main>;
+}
 
 function AppContent() {
   const { currentPath } = useRouter();
@@ -44,7 +50,6 @@ function AppContent() {
     // Normalize path by stripping query params and trailing slashes
     const path = currentPath.split('?')[0].split('#')[0];
     const normalized = path === '/' ? '/' : path.replace(/\/+$/, '');
-    const normalizedLower = normalized.toLowerCase();
 
     if (normalized === '' || normalized === '/') {
       return <HomePage />;
@@ -54,6 +59,12 @@ function AppContent() {
     }
     if (normalized === '/services') {
       return <ServicesPage />;
+    }
+    if (normalized === '/industries/construction') {
+      return <ConstructionIndustryPage />;
+    }
+    if (normalized === '/industries/boutiques') {
+      return <BoutiquesIndustryPage />;
     }
     if (normalized === '/insights') {
       return <InsightsPage />;
@@ -74,8 +85,8 @@ function AppContent() {
     if (normalized === '/terms') {
       return <TermsPage />;
     }
-    if (normalizedLower === '/admin' || normalizedLower.startsWith('/admin/')) {
-      return <AdminPage />;
+    if (normalized === '/admin' || normalized.startsWith('/admin/')) {
+      return <AdminRedirect />;
     }
 
     return <NotFoundPage />;
@@ -83,11 +94,10 @@ function AppContent() {
 
   const path = currentPath.split('?')[0].split('#')[0];
   const normalized = path === '/' ? '/' : path.replace(/\/+$/, '');
-  const normalizedLower = normalized.toLowerCase();
-  const isAdmin = normalizedLower === '/admin' || normalizedLower.startsWith('/admin/');
+  const isAdmin = normalized === '/admin' || normalized.startsWith('/admin/');
 
   if (isAdmin) {
-    return <AdminPage />;
+    return <AdminRedirect />;
   }
 
   return (

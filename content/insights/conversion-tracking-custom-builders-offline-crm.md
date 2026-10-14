@@ -1,7 +1,7 @@
 ---
 title: "Closed-Loop Conversion Tracking: Connecting Google Clicks to CRM Offline Contracts"
 slug: "conversion-tracking-custom-builders-offline-crm"
-category: "construction-marketing"
+category: "conversion-landing-pages"
 excerpt: "Because the sales cycle in custom home building lasts 3 to 12 months, tracking website form fills alone blinds your marketing. Here is how closed-loop CRM attribution works."
 featuredImage: "/images/article-conversion-tracking.jpg"
 featuredImageAlt: "Contemporary luxury home interior featuring clean architectural lines and warm natural wood finishes"

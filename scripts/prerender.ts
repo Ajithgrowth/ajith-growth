@@ -2,7 +2,6 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { getAllSeoRoutes } from '../src/data/seoData.ts';
 import { getAllArticles } from '../src/generated/insights.ts';
-import { fetchPublishedCMSArticles, mergeArticles } from '../src/lib/cmsArticles.ts';
 import { siteConfig, SCHEMA_IDS } from '../src/data/siteConfig.ts';
 import { services as siteServices } from '../src/data/services.ts';
 
@@ -17,28 +16,9 @@ if (!fs.existsSync(BASE_HTML_PATH)) {
 
 const baseTemplate = fs.readFileSync(BASE_HTML_PATH, 'utf8');
 
-async function runPrerender() {
-  // Combine static routes, category archive routes, and dynamic article routes
-  const markdownArticles = getAllArticles();
-  let cmsArticles: any[] = [];
-
-  try {
-    console.log('prerender.ts: Fetching published Supabase CMS articles...');
-    cmsArticles = await Promise.race([
-      fetchPublishedCMSArticles(),
-      new Promise<any[]>((resolve) => setTimeout(() => resolve([]), 5000)),
-    ]);
-    if (cmsArticles.length > 0) {
-      console.log(`prerender.ts: Fetched ${cmsArticles.length} published CMS articles.`);
-    } else {
-      console.log('prerender.ts: No remote CMS articles returned. Proceeding with local markdown articles.');
-    }
-  } catch (err: any) {
-    console.warn('prerender.ts: Remote CMS fetch notice:', err?.message || err);
-  }
-
-  const allArticles = mergeArticles(markdownArticles, cmsArticles);
-  const routes = getAllSeoRoutes(allArticles);
+// Combine static routes, category archive routes, and dynamic article routes
+const allArticles = getAllArticles();
+const routes = getAllSeoRoutes(allArticles);
 
 function buildSchemaGraph(route: typeof routes[0]) {
   const validSameAs = siteConfig.getValidSameAs();
@@ -63,7 +43,7 @@ function buildSchemaGraph(route: typeof routes[0]) {
     },
     audience: {
       '@type': 'Audience',
-      audienceType: 'Residential Construction Companies, Turnkey Builders, Villa Construction Companies, and Luxury Home Builders',
+      audienceType: 'Residential Construction Companies and selected Premium & Designer Boutiques',
     },
     founder: {
       '@type': 'Person',
@@ -335,14 +315,6 @@ for (const route of routes) {
   }
 
   // 10b. Verification & robots tags
-  if (route.noindex) {
-    if (html.includes('<meta name="robots"')) {
-      html = html.replace(/<meta name="robots".*?\/>/, '<meta name="robots" content="noindex, follow" />');
-    } else {
-      html = html.replace('</head>', '  <meta name="robots" content="noindex, follow" />\n  </head>');
-    }
-  }
-
   if (siteConfig.analytics.googleSiteVerification && siteConfig.analytics.googleSiteVerification.trim() !== '') {
     const gscTag = `<meta name="google-site-verification" content="${siteConfig.analytics.googleSiteVerification.trim()}" />\n  `;
     if (!html.includes('name="google-site-verification"')) {
@@ -356,7 +328,7 @@ for (const route of routes) {
     <noscript>
       <header style="background: #0D1B2A; color: #FFFFFF; padding: 2rem 1rem; text-align: center;">
         <h1 style="font-size: 1.8rem; margin: 0 0 0.5rem 0;">${route.title}</h1>
-        <p style="color: #94A3B8; margin: 0;">Ajith Growth | Google Growth Consultant for Residential Construction</p>
+        <p style="color: #94A3B8; margin: 0;">Ajith Growth | Technology, Business & Google Growth</p>
       </header>
       <main style="max-width: 800px; margin: 2rem auto; padding: 0 1rem; font-family: sans-serif; line-height: 1.6; color: #1E293B;">
         <h2>${route.noscriptHeading}</h2>
@@ -383,11 +355,10 @@ for (const route of routes) {
 
 console.log(`prerender.ts: Successfully prerendered ${renderedCount} static routes.`);
 
-// Automated sitemap.xml generation (excluding noindex routes)
-const sitemapRoutes = routes.filter((r) => !r.noindex);
+// Automated sitemap.xml generation
 const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${sitemapRoutes
+${routes
   .map((r) => {
     return `  <url>
     <loc>${r.canonicalUrl}</loc>
@@ -406,9 +377,3 @@ if (fs.existsSync(PUBLIC_DIR)) {
 }
 
 console.log(`prerender.ts: Successfully generated sitemap.xml with ${routes.length} URLs in both dist/ and public/.`);
-}
-
-runPrerender().catch((err) => {
-  console.error('prerender.ts: Fatal prerender error:', err);
-  process.exit(1);
-});

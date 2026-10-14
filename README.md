@@ -1,20 +1,19 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# Ajith Growth Website
 
-# Run and deploy your AI Studio app
+React and Vite website for Ajith Growth.
 
-This contains everything you need to run your app locally.
+## Local development
 
-View your app in AI Studio: https://ai.studio/apps/825063c0-66be-4540-a6b5-ef3a7df6c70e
+1. Install dependencies with `npm install`.
+2. Copy `.env.example` to `.env.local` and configure the required values.
+3. Run `npm run dev`.
+4. Run `npm run lint` for TypeScript validation.
+5. Run `npm run build` for the production build, generated Insights data, prerendered pages and sitemap.
 
-## Run Locally
+## Content management
 
-**Prerequisites:**  Node.js
+The production content manager is available at `/admin/`. Publishing an Insights article updates `content/insights/`; the deployment build refreshes article listings, categories and the sitemap.
 
+## Consultation form
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+The form posts to `/api/contact`. Configure `RESEND_API_KEY` and `CONTACT_FROM_EMAIL` in the deployment environment to enable email delivery.

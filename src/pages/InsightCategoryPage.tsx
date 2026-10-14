@@ -8,7 +8,7 @@ import { AuthorCard } from '../components/AuthorCard';
 import { Link, useRouter } from '../utils/router';
 import { siteConfig } from '../data/siteConfig';
 import { getCategoryBySlug, InsightCategorySlug } from '../data/insightCategories';
-import { useArticles, getArticlesByCategory } from '../lib/cmsArticles';
+import { getArticlesByCategory } from '../generated/insights';
 
 interface InsightCategoryPageProps {
   categorySlug: InsightCategorySlug | string;
@@ -19,7 +19,6 @@ const ARTICLES_PER_PAGE = 12;
 export function InsightCategoryPage({ categorySlug }: InsightCategoryPageProps) {
   const { search, navigate } = useRouter();
   const category = getCategoryBySlug(categorySlug);
-  const { articles } = useArticles();
 
   // Read page from search query (?page=2)
   const currentPage = useMemo(() => {
@@ -29,8 +28,8 @@ export function InsightCategoryPage({ categorySlug }: InsightCategoryPageProps) 
   }, [search]);
 
   const categoryArticles = useMemo(() => {
-    return getArticlesByCategory(articles, categorySlug);
-  }, [articles, categorySlug]);
+    return getArticlesByCategory(categorySlug);
+  }, [categorySlug]);
 
   const totalPages = Math.ceil(categoryArticles.length / ARTICLES_PER_PAGE) || 1;
 
@@ -97,7 +96,7 @@ export function InsightCategoryPage({ categorySlug }: InsightCategoryPageProps) 
       </div>
 
       {/* Category Hero Section */}
-      <section className="bg-[#0D1B2A] text-white pt-8 pb-14 sm:pt-12 sm:pb-18 border-b border-slate-800">
+      <section className="bg-[#0D1B2A] text-white pt-16 pb-20 sm:pt-20 sm:pb-24 border-b border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-sky-950 text-sky-300 text-xs font-supporting font-semibold uppercase tracking-wider border border-sky-800/40 mb-4">
@@ -227,7 +226,7 @@ export function InsightCategoryPage({ categorySlug }: InsightCategoryPageProps) 
       <CTASection
         eyebrow="STRATEGIC CONSULTATION"
         title={`Accelerate Your Growth in ${category.label}`}
-        description={`Schedule a high-level consultation with Ajith to build a predictable, high-value client acquisition system customized for your residential construction territory.`}
+        description="Start with a conversation about your business, your goals and where your current growth system can improve."
         primaryButtonText="Book a Growth Consultation"
         primaryButtonHref="/contact"
         secondaryButtonText="Explore All Services"

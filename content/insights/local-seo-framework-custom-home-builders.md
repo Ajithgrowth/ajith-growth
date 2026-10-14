@@ -1,7 +1,7 @@
 ---
 title: "The Local SEO Framework for Residential Construction Companies"
 slug: "local-seo-framework-custom-home-builders"
-category: "seo"
+category: "seo-local-search"
 excerpt: "Ranking in a broad metro area for vanity terms is inefficient; ranking in target communities where residential projects are commissioned is business growth. Here is the hyper-local SEO blueprint."
 featuredImage: "/images/article-local-seo.jpg"
 featuredImageAlt: "Striking modern luxury villa exterior with warm architectural lighting at twilight"

@@ -1,7 +1,7 @@
 ---
 title: "Landing Page Architecture for Residential Builders: Converting High-Value Homeowner Inquiries"
 slug: "high-ticket-remodeling-landing-page-architecture"
-category: "construction-marketing"
+category: "conversion-landing-pages"
 excerpt: "When prospective clients consider a major custom build or substantial residential renovation, generic marketing funnels fail. Here is how to engineer landing pages that convey architectural caliber and convert qualified homeowners."
 featuredImage: "/images/article-landing-pages.jpg"
 featuredImageAlt: "Minimalist luxury bathroom with freestanding soaking tub overlooking private courtyard"

@@ -21,27 +21,26 @@ export interface SeoRouteData {
   keywords?: string[];
   articleSection?: string;
   imageAlt?: string;
-  noindex?: boolean;
 }
 
 export const staticPagesSeo: Record<string, SeoRouteData> = {
   '/': {
     path: '/',
-    title: 'Ajith Growth | Google Ads & SEO for Home Builders',
-    description: 'Ajith Growth helps residential construction companies win qualified homeowner leads through Google Ads, Local SEO, and conversion-focused growth systems.',
+    title: 'Ajith Growth | Google Growth Systems for Business',
+    description: 'Ajith Growth helps residential construction companies and selected premium boutiques build Google visibility, improve conversion and measure growth.',
     canonicalUrl: siteConfig.canonicalDomain,
     ogImage: `${siteConfig.canonicalDomain}/images/og-default.jpg`,
     ogType: 'website',
     lastmod: '2026-09-10',
     changefreq: 'weekly',
     priority: '1.0',
-    noscriptHeading: 'Turn Google Searches Into High-Value Construction Opportunities',
-    noscriptBody: '<p>Ajith Growth helps residential construction companies, turnkey builders, villa developers, and luxury remodelers attract qualified homeowners through Google Ads, Local SEO, Google Business Profile optimization, landing pages, and closed-loop conversion tracking.</p><p><a href="/services">View Services</a> | <a href="/insights">Read Insights</a> | <a href="/contact">Book Consultation</a></p>'
+    noscriptHeading: 'Helping Residential Construction Companies Grow Through Google',
+    noscriptBody: '<p>We build Google Growth Systems that help residential construction companies attract qualified homeowner enquiries, improve conversion, and measure what actually drives growth.</p><p><a href="/services">View Services</a> | <a href="/insights">Read Insights</a> | <a href="/contact">Book Consultation</a></p>'
   },
   '/about': {
     path: '/about',
-    title: 'About Ajith | Google Growth Consultant',
-    description: 'Meet Ajith, a Google Growth Consultant for residential builders, bringing 16+ years of enterprise tech experience to engineered growth systems.',
+    title: 'About Ajith Growth | Technology, Business & Growth',
+    description: 'Ajith Growth combines 16+ years in technology and management with hands-on business experience and practical Google growth consulting.',
     canonicalUrl: `${siteConfig.canonicalDomain}/about`,
     ogImage: `${siteConfig.canonicalDomain}/images/og-about.jpg`,
     ogType: 'website',
@@ -53,12 +52,12 @@ export const staticPagesSeo: Record<string, SeoRouteData> = {
       { name: 'About', url: `${siteConfig.canonicalDomain}/about` }
     ],
     noscriptHeading: 'About Ajith | Google Growth Consultant for Residential Construction',
-    noscriptBody: '<p>With 16+ years in Technology & Management across global leaders (Cognizant, Accenture, Wipro, HP, IBM, Kyndryl), Ajith specializes exclusively in engineered Google growth systems for residential construction companies.</p><p><a href="/contact">Contact Ajith</a></p>'
+    noscriptBody: '<p>Ajith Growth is built on 16+ years of experience in technology and management, combined with hands-on experience building and marketing a real business.</p><p><a href="/contact">Contact Ajith</a></p>'
   },
   '/services': {
     path: '/services',
-    title: 'Google Ads, SEO & GBP for Builders | Ajith Growth',
-    description: 'Google Ads, Local SEO, Google Business Profile, landing pages, and closed-loop tracking built for custom home builders and luxury remodelers.',
+    title: 'Google Growth Services | Ajith Growth',
+    description: 'Google Ads, SEO, Google Business Profile, landing pages, conversion tracking and growth strategy built around your business.',
     canonicalUrl: `${siteConfig.canonicalDomain}/services`,
     ogImage: `${siteConfig.canonicalDomain}/images/article-google-ads.jpg`,
     ogType: 'website',
@@ -85,12 +84,12 @@ export const staticPagesSeo: Record<string, SeoRouteData> = {
     ],
     noscriptHeading: 'Google Growth Services for Residential Construction Companies',
     noscriptBody: `
-      <p>Specialized search systems engineered for residential builders: Google Ads, Local SEO, Google Business Profile, Architectural Landing Pages, Closed-Loop Tracking, and Generative Engine Optimization.</p>
+      <p>Google Ads, SEO, Google Business Profile, landing pages and conversion tracking connected around the business, its customers and its goals.</p>
       <ul>
         <li><a href="/services#google-ads"><strong>Google Ads for Residential Construction:</strong> High-intent search campaigns targeting homeowners actively searching for residential building and remodeling services.</a></li>
         <li><a href="/services#local-seo"><strong>Local SEO for Custom Home Builders:</strong> Improve local organic search visibility in key neighborhoods and service areas.</a></li>
         <li><a href="/services#google-business-profile"><strong>Google Business Profile Optimization:</strong> Map pack ranking, verified local citations, and trust signals for luxury contractors.</a></li>
-        <li><a href="/services#landing-pages"><strong>Landing Page Architecture:</strong> High-converting, portfolio-centered landing experiences engineered with qualification friction.</a></li>
+        <li><a href="/services#landing-pages"><strong>Landing Page Optimization:</strong> A clearer journey from search to enquiry.</a></li>
         <li><a href="/services#conversion-tracking"><strong>Conversion Tracking & Revenue Loop:</strong> Connect offline CRM milestones and signed construction contracts directly to Google search terms.</a></li>
         <li><a href="/services#growth-strategy"><strong>Residential Growth Architecture:</strong> Holistic search and sales alignment for sustainable contractor growth.</a></li>
         <li><a href="/services#geo-ai-search"><strong>Generative Engine Optimization (GEO):</strong> Structured entity architecture positioning your firm for AI Overviews and answer engines.</a></li>
@@ -100,8 +99,8 @@ export const staticPagesSeo: Record<string, SeoRouteData> = {
   },
   '/insights': {
     path: '/insights',
-    title: 'Construction Marketing Insights | Ajith Growth',
-    description: 'Search strategy and technical insights on Google Ads, Local SEO, conversion, and AI search for residential construction companies.',
+    title: 'Growth Insights | Ajith Growth',
+    description: 'Practical insights on Google Ads, SEO, local search, conversion, AI Search and business growth from Ajith Growth.',
     canonicalUrl: `${siteConfig.canonicalDomain}/insights`,
     ogImage: `${siteConfig.canonicalDomain}/images/article-google-business-profile.jpg`,
     ogType: 'website',
@@ -117,8 +116,8 @@ export const staticPagesSeo: Record<string, SeoRouteData> = {
   },
   '/contact': {
     path: '/contact',
-    title: 'Contact Ajith | Construction Growth Consultant',
-    description: 'Book a confidential growth consultation with Ajith to review your construction company\'s Google search positioning and local competition.',
+    title: 'Book a Growth Consultation | Ajith Growth',
+    description: 'Start a conversation with Ajith about your construction business, Google visibility, enquiry journey and growth goals.',
     canonicalUrl: `${siteConfig.canonicalDomain}/contact`,
     ogImage: `${siteConfig.canonicalDomain}/images/article-landing-pages.jpg`,
     ogType: 'website',
@@ -133,6 +132,24 @@ export const staticPagesSeo: Record<string, SeoRouteData> = {
     noscriptBody: `<p>Direct communication with Ajith: email <a href="mailto:${siteConfig.email}">${siteConfig.email}</a> or submit the preliminary consultation request form.</p>`
   },
 
+  '/industries/construction': {
+    path: '/industries/construction',
+    title: 'Residential Construction Growth | Ajith Growth',
+    description: 'Google growth strategy for residential construction companies seeking stronger visibility and better homeowner enquiries.',
+    canonicalUrl: `${siteConfig.canonicalDomain}/industries/construction`,
+    ogImage: `${siteConfig.canonicalDomain}/images/hero-home.jpg`, ogType: 'website', lastmod: '2026-10-14', changefreq: 'monthly', priority: '0.8',
+    breadcrumbs: [{ name: 'Home', url: siteConfig.canonicalDomain }, { name: 'Construction Growth', url: `${siteConfig.canonicalDomain}/industries/construction` }],
+    noscriptHeading: 'Residential Construction Growth', noscriptBody: '<p>Helping residential construction companies build stronger Google visibility and attract homeowners who are genuinely planning their next project.</p>'
+  },
+  '/industries/boutiques': {
+    path: '/industries/boutiques',
+    title: 'Premium & Designer Boutique Growth | Ajith Growth',
+    description: 'Google growth strategy for selected premium and designer boutiques seeking stronger visibility and customer discovery.',
+    canonicalUrl: `${siteConfig.canonicalDomain}/industries/boutiques`,
+    ogImage: `${siteConfig.canonicalDomain}/images/og-default.jpg`, ogType: 'website', lastmod: '2026-10-14', changefreq: 'monthly', priority: '0.6',
+    breadcrumbs: [{ name: 'Home', url: siteConfig.canonicalDomain }, { name: 'Boutique Growth', url: `${siteConfig.canonicalDomain}/industries/boutiques` }],
+    noscriptHeading: 'Premium & Designer Boutique Growth', noscriptBody: '<p>Helping selected premium and designer boutiques strengthen their Google presence and connect with customers who appreciate their work.</p>'
+  },
   '/privacy': {
     path: '/privacy',
     title: 'Privacy Policy | Ajith Growth',
@@ -218,19 +235,14 @@ export function getArticleSeo(article: Article): SeoRouteData {
   const pubDate = article.publishedDate || article.publishDate || '2026-09-08';
   const modDate = article.updatedDate || article.modifiedDate;
 
-  const rawOg = article.ogImage || article.og_image || article.featuredImage;
-  const ogImage = rawOg
-    ? rawOg.startsWith('http')
-      ? rawOg
-      : `${siteConfig.canonicalDomain}${rawOg}`
-    : `${siteConfig.canonicalDomain}/images/og-default.jpg`;
-
   return {
     path: `/insights/${article.slug}`,
     title: article.seoTitle || `${article.title} | Ajith Growth`,
     description: article.metaDescription || article.excerpt,
     canonicalUrl,
-    ogImage,
+    ogImage: article.featuredImage.startsWith('http')
+      ? article.featuredImage
+      : `${siteConfig.canonicalDomain}${article.featuredImage}`,
     ogType: 'article',
     publishedTime: pubDate,
     modifiedTime: modDate,
@@ -249,7 +261,6 @@ export function getArticleSeo(article: Article): SeoRouteData {
     keywords: article.keywords,
     articleSection: categoryLabel,
     imageAlt: article.featuredImageAlt,
-    noindex: Boolean(article.noindex),
   };
 }
 

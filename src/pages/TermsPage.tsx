@@ -20,7 +20,7 @@ export function TermsPage() {
       />
 
       {/* Header Section */}
-      <section className="pt-8 pb-12 sm:pt-12 sm:pb-14 bg-[#0D1B2A] text-white border-b border-slate-800">
+      <section className="pt-32 pb-14 bg-[#0D1B2A] text-white border-b border-slate-800">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <Breadcrumb
             items={[
@@ -64,7 +64,7 @@ export function TermsPage() {
                 2. Scope of Services
               </h2>
               <p>
-                Ajith Growth provides professional strategic consulting, search engine marketing advisory, and growth architecture exclusively for residential construction companies, custom home builders, turnkey contractors, and luxury remodelers. Services include:
+                Ajith Growth provides professional strategic consulting, search engine marketing advisory, and growth strategy primarily for residential construction companies, with selected work for premium and designer boutiques. Services include:
               </p>
               <ul className="list-disc pl-5 space-y-1.5 text-slate-600 mt-2">
                 <li>Google Ads campaign strategy, architecture, and management</li>

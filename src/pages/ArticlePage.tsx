@@ -1,7 +1,7 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { Calendar, Clock, ArrowLeft, ArrowRight, CheckCircle2, BookOpen, MessageCircle, Sparkles } from 'lucide-react';
+import { Calendar, Clock, ArrowLeft, ArrowRight, CheckCircle2, BookOpen, MessageCircle } from 'lucide-react';
 import { SEO } from '../components/SEO';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { AuthorCard } from '../components/AuthorCard';
@@ -12,11 +12,9 @@ import { Link, useRouter } from '../utils/router';
 import { siteConfig } from '../data/siteConfig';
 import { defaultAuthor } from '../data/authors';
 import { getCategoryBySlug, getCategoryLabel } from '../data/insightCategories';
-import { useArticle } from '../lib/cmsArticles';
+import { getArticleBySlug, getRelatedArticles } from '../generated/insights';
 import { slugify, createHeadingSlugger } from '../utils/slugify';
 import { trackEvent } from '../utils/analytics';
-import { buildArticleSectionsWithImages } from '../utils/articleContent';
-import { ArticleSectionImage } from '../types';
 
 interface ArticlePageProps {
   slug: string;
@@ -33,16 +31,7 @@ function getNodeText(node: any): string {
 
 export function ArticlePage({ slug }: ArticlePageProps) {
   const { navigate } = useRouter();
-  const { article, loading, relatedArticles } = useArticle(slug);
-
-  if (loading) {
-    return (
-      <main id="main-content" className="max-w-4xl mx-auto px-4 py-24 text-center">
-        <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#0D1B2A] mb-4"></div>
-        <p className="text-[#64748B] font-body text-sm">Loading insight...</p>
-      </main>
-    );
-  }
+  const article = getArticleBySlug(slug);
 
   if (!article) {
     return (
@@ -75,19 +64,8 @@ export function ArticlePage({ slug }: ArticlePageProps) {
   const canonicalUrl = `${siteConfig.canonicalDomain}/insights/${article.slug}`;
   const categoryUrl = `${siteConfig.canonicalDomain}/insights/${categorySlug}`;
 
-  const authorName = article.author_name || article.author || defaultAuthor.name;
-  const authorDesignation = article.author_designation || defaultAuthor.role;
-  const authorPhoto = article.author_photo || defaultAuthor.image;
-  const authorBio = article.author_bio || defaultAuthor.bio;
-  const authorInitials = authorName
-    .split(' ')
-    .map((n: string) => n[0])
-    .filter(Boolean)
-    .slice(0, 2)
-    .join('')
-    .toUpperCase() || defaultAuthor.initials;
-
-  const [topAuthorImgError, setTopAuthorImgError] = useState(false);
+  // Automatically generated related articles (exactly 3, same category first, excluding current)
+  const relatedArticles = getRelatedArticles(article.slug, 3);
 
   // Check for verified WhatsApp URL from centralized siteConfig
   const verifiedWhatsAppUrl = siteConfig.whatsappUrl;
@@ -102,51 +80,19 @@ export function ArticlePage({ slug }: ArticlePageProps) {
     { name: article.title, url: canonicalUrl },
   ];
 
-  // Resolve Contextual Section Images (1-4)
-  const sectionImages: ArticleSectionImage[] = useMemo(() => {
-    if (article.sectionImages && article.sectionImages.length > 0) {
-      return article.sectionImages;
-    }
-    return [
-      { url: article.section_image_1, alt: article.section_image_1_alt, caption: article.section_image_1_caption },
-      { url: article.section_image_2, alt: article.section_image_2_alt, caption: article.section_image_2_caption },
-      { url: article.section_image_3, alt: article.section_image_3_alt, caption: article.section_image_3_caption },
-      { url: article.section_image_4, alt: article.section_image_4_alt, caption: article.section_image_4_caption },
-    ].filter((img) => Boolean(img.url && img.url.trim()));
-  }, [
-    article.sectionImages,
-    article.section_image_1,
-    article.section_image_1_alt,
-    article.section_image_1_caption,
-    article.section_image_2,
-    article.section_image_2_alt,
-    article.section_image_2_caption,
-    article.section_image_3,
-    article.section_image_3_alt,
-    article.section_image_3_caption,
-    article.section_image_4,
-    article.section_image_4_alt,
-    article.section_image_4_caption,
-  ]);
-
-  const contentBlocks = useMemo(() => {
-    return buildArticleSectionsWithImages(article.body || '', sectionImages);
-  }, [article.body, sectionImages]);
-
   return (
     <main id="main-content" className="w-full bg-[#F8FAFC]">
       <SEO
         title={article.seoTitle || `${article.title} | Ajith Growth`}
         description={article.metaDescription || article.excerpt}
         canonicalUrl={canonicalUrl}
-        ogImage={article.ogImage || article.og_image || article.featuredImage}
+        ogImage={article.featuredImage}
         ogType="article"
         publishedTime={article.publishedDate}
         modifiedTime={article.updatedDate || article.publishedDate}
-        author={authorName}
+        author={defaultAuthor.name}
         breadcrumbs={breadcrumbs}
         faqs={article.faqs && article.faqs.length > 0 ? article.faqs : undefined}
-        noindex={Boolean(article.noindex)}
         keywords={article.keywords}
         articleSection={categoryLabel}
         imageAlt={article.featuredImageAlt}
@@ -166,7 +112,7 @@ export function ArticlePage({ slug }: ArticlePageProps) {
       </div>
 
       {/* 1. Featured Image */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6 mb-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-10 mb-8">
         <div className="rounded-2xl overflow-hidden shadow-lg border border-[#DCE5EE] bg-slate-900">
           <img
             src={article.featuredImage}
@@ -194,12 +140,6 @@ export function ArticlePage({ slug }: ArticlePageProps) {
           >
             {categoryLabel}
           </Link>
-          {(article.builderSegment || article.builder_segment) && (
-            <span className="px-2.5 py-1 rounded-md bg-sky-100 text-sky-900 border border-sky-200 font-semibold tracking-wide flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-sky-600" />
-              <span>Target: {article.builderSegment || article.builder_segment}</span>
-            </span>
-          )}
           <span className="flex items-center gap-1.5 text-[#64748B]">
             <Calendar className="w-3.5 h-3.5 text-slate-400" />
             <span>Published: {article.publishedDate}</span>
@@ -227,28 +167,16 @@ export function ArticlePage({ slug }: ArticlePageProps) {
 
         {/* Author Line */}
         <div className="flex items-center gap-3 pt-4 border-t border-[#DCE5EE]">
-          {authorPhoto && !topAuthorImgError ? (
-            <img
-              src={authorPhoto}
-              alt={authorName}
-              onError={() => setTopAuthorImgError(true)}
-              className="w-10 h-10 rounded-full object-cover border border-[#DCE5EE] shadow-xs"
-              referrerPolicy="no-referrer"
-            />
-          ) : (
-            <div className="w-10 h-10 rounded-full bg-[#0D1B2A] text-white flex items-center justify-center font-heading font-bold text-sm shadow-xs">
-              {authorInitials}
-            </div>
-          )}
+          <div className="w-10 h-10 rounded-full bg-[#0D1B2A] text-white flex items-center justify-center font-heading font-bold text-sm shadow-xs">
+            {defaultAuthor.initials}
+          </div>
           <div>
             <span className="font-heading font-semibold text-sm text-[#0D1B2A] block">
-              {authorName}
+              {defaultAuthor.name}
             </span>
-            {authorDesignation && (
-              <span className="font-supporting text-xs text-[#64748B]">
-                {authorDesignation}
-              </span>
-            )}
+            <span className="font-supporting text-xs text-[#64748B]">
+              {defaultAuthor.role}
+            </span>
           </div>
         </div>
       </header>
@@ -258,39 +186,20 @@ export function ArticlePage({ slug }: ArticlePageProps) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
           {/* Main Article Column */}
           <article className="lg:col-span-8 bg-white p-6 sm:p-10 rounded-2xl border border-[#DCE5EE] shadow-xs">
-            {/* 4. Quick Summary (Populated from summary[] or quick_summary) */}
-            {((article.summary && article.summary.length > 0) || article.quick_summary) && (
+            {/* 4. Quick Summary (Populated from summary[]) */}
+            {article.summary && article.summary.length > 0 && (
               <div className="bg-[#F3F7FB] border border-[#DCE5EE] rounded-xl p-6 mb-8">
                 <span className="text-xs font-supporting font-bold uppercase tracking-wider text-sky-900 block mb-3">
                   Quick Summary
                 </span>
-                {article.summary && article.summary.length > 0 ? (
-                  <ul className="space-y-2.5 text-xs sm:text-sm font-body text-[#0D1B2A]" role="list">
-                    {article.summary.map((point, i) => (
-                      <li key={i} className="flex items-start gap-2.5">
-                        <CheckCircle2 className="w-4 h-4 text-sky-800 shrink-0 mt-0.5" />
-                        <span>{point}</span>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-xs sm:text-sm font-body text-[#0D1B2A] leading-relaxed">
-                    {article.quick_summary}
-                  </p>
-                )}
-              </div>
-            )}
-
-            {/* Founder's Strategic Perspective Callout */}
-            {(article.strategicTakeaway || article.strategic_takeaway) && (
-              <div className="bg-[#0D1B2A] text-white rounded-xl p-6 mb-8 border border-slate-700 shadow-md">
-                <div className="flex items-center gap-2 text-sky-400 text-xs font-supporting font-bold uppercase tracking-wider mb-2">
-                  <Sparkles className="w-4 h-4 text-sky-400" />
-                  <span>Ajith's Growth Perspective</span>
-                </div>
-                <p className="text-xs sm:text-sm font-body text-slate-200 leading-relaxed italic">
-                  &ldquo;{article.strategicTakeaway || article.strategic_takeaway}&rdquo;
-                </p>
+                <ul className="space-y-2.5 text-xs sm:text-sm font-body text-[#0D1B2A]" role="list">
+                  {article.summary.map((point, i) => (
+                    <li key={i} className="flex items-start gap-2.5">
+                      <CheckCircle2 className="w-4 h-4 text-sky-800 shrink-0 mt-0.5" />
+                      <span>{point}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             )}
 
@@ -323,156 +232,132 @@ export function ArticlePage({ slug }: ArticlePageProps) {
               </div>
             )}
 
-            {/* 6. Main Article Content (ReactMarkdown + remark-gfm + Contextual Section Images) */}
+            {/* 6. Main Article Content (ReactMarkdown + remark-gfm) */}
             <div className="font-body text-[#334155] text-base leading-relaxed">
-              {contentBlocks.map((block, idx) => (
-                <React.Fragment key={idx}>
-                  {block.markdown ? (
-                    <ReactMarkdown
-                      remarkPlugins={[remarkGfm]}
-                      components={{
-                        h2: ({ children, ...props }) => {
-                          const text = getNodeText(children);
-                          const id = headingSlugger(text);
-                          return (
-                            <h2
-                              id={id}
-                              className="text-xl sm:text-2xl font-heading font-bold text-[#0D1B2A] tracking-tight pt-8 pb-2 border-t border-slate-100 scroll-mt-28 sm:scroll-mt-32 first:border-t-0 first:pt-0"
-                              {...props}
-                            >
-                              {children}
-                            </h2>
-                          );
-                        },
-                        h3: ({ children, ...props }) => {
-                          const text = getNodeText(children);
-                          const id = headingSlugger(text);
-                          return (
-                            <h3
-                              id={id}
-                              className="text-lg sm:text-xl font-heading font-semibold text-[#0D1B2A] tracking-tight pt-5 pb-1 scroll-mt-28 sm:scroll-mt-32"
-                              {...props}
-                            >
-                              {children}
-                            </h3>
-                          );
-                        },
-                        h4: ({ children, ...props }) => {
-                          const text = getNodeText(children);
-                          const id = headingSlugger(text);
-                          return (
-                            <h4
-                              id={id}
-                              className="text-base sm:text-lg font-heading font-semibold text-[#0D1B2A] tracking-tight pt-4 pb-1 scroll-mt-28 sm:scroll-mt-32"
-                              {...props}
-                            >
-                              {children}
-                            </h4>
-                          );
-                        },
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                components={{
+                  h2: ({ children, ...props }) => {
+                    const text = getNodeText(children);
+                    const id = headingSlugger(text);
+                    return (
+                      <h2
+                        id={id}
+                        className="text-xl sm:text-2xl font-heading font-bold text-[#0D1B2A] tracking-tight pt-8 pb-2 border-t border-slate-100 scroll-mt-28 sm:scroll-mt-32 first:border-t-0 first:pt-0"
+                        {...props}
+                      >
+                        {children}
+                      </h2>
+                    );
+                  },
+                  h3: ({ children, ...props }) => {
+                    const text = getNodeText(children);
+                    const id = headingSlugger(text);
+                    return (
+                      <h3
+                        id={id}
+                        className="text-lg sm:text-xl font-heading font-semibold text-[#0D1B2A] tracking-tight pt-5 pb-1 scroll-mt-28 sm:scroll-mt-32"
+                        {...props}
+                      >
+                        {children}
+                      </h3>
+                    );
+                  },
+                  h4: ({ children, ...props }) => {
+                    const text = getNodeText(children);
+                    const id = headingSlugger(text);
+                    return (
+                      <h4
+                        id={id}
+                        className="text-base sm:text-lg font-heading font-semibold text-[#0D1B2A] tracking-tight pt-4 pb-1 scroll-mt-28 sm:scroll-mt-32"
+                        {...props}
+                      >
+                        {children}
+                      </h4>
+                    );
+                  },
 
-                        p: ({ children, ...props }) => (
-                          <p className="text-[#334155] leading-relaxed mb-6" {...props}>
-                            {children}
-                          </p>
-                        ),
-                        ul: ({ children, ...props }) => (
-                          <ul className="space-y-2 list-disc list-outside ml-5 text-[#334155] mb-6" {...props}>
-                            {children}
-                          </ul>
-                        ),
-                        ol: ({ children, ...props }) => (
-                          <ol className="space-y-2 list-decimal list-outside ml-5 text-[#334155] mb-6" {...props}>
-                            {children}
-                          </ol>
-                        ),
-                        li: ({ children, ...props }) => (
-                          <li className="leading-relaxed pl-1" {...props}>
-                            {children}
-                          </li>
-                        ),
-                        blockquote: ({ children, ...props }) => (
-                          <blockquote
-                            className="p-4 my-6 rounded-lg bg-[#F8FAFC] border-l-4 border-[#0D1B2A] text-sm italic text-[#0D1B2A]"
-                            {...props}
-                          >
-                            {children}
-                          </blockquote>
-                        ),
-                        table: ({ children, ...props }) => (
-                          <div className="overflow-x-auto my-6 border border-[#DCE5EE] rounded-xl">
-                            <table className="min-w-full divide-y divide-[#DCE5EE] text-sm" {...props}>
-                              {children}
-                            </table>
-                          </div>
-                        ),
-                        th: ({ children, ...props }) => (
-                          <th className="bg-slate-50 px-4 py-3 font-heading font-semibold text-left text-[#0D1B2A]" {...props}>
-                            {children}
-                          </th>
-                        ),
-                        td: ({ children, ...props }) => (
-                          <td className="px-4 py-3 border-t border-[#DCE5EE] text-[#334155]" {...props}>
-                            {children}
-                          </td>
-                        ),
-                        img: ({ src, alt, ...props }) => (
-                          <div className="my-6 rounded-xl overflow-hidden border border-[#DCE5EE]">
-                            <img src={src} alt={alt || ''} className="w-full h-auto object-cover" {...props} />
-                            {alt && <p className="text-[11px] font-supporting text-[#64748B] text-center mt-2 italic">{alt}</p>}
-                          </div>
-                        ),
-                        a: ({ href, children, ...props }) => {
-                          if (!href) return <span {...props}>{children}</span>;
-                          const isInternal = href.startsWith('/') || href.startsWith('#');
-                          if (isInternal) {
-                            return (
-                              <Link
-                                href={href}
-                                className="text-sky-800 font-medium underline decoration-sky-300 underline-offset-2 hover:text-[#0D1B2A] transition-colors"
-                                {...props}
-                              >
-                                {children}
-                              </Link>
-                            );
-                          }
-                          return (
-                            <a
-                              href={href}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-sky-800 font-medium underline decoration-sky-300 underline-offset-2 hover:text-[#0D1B2A] transition-colors"
-                              {...props}
-                            >
-                              {children}
-                            </a>
-                          );
-                        },
-                      }}
+                  p: ({ children, ...props }) => (
+                    <p className="text-[#334155] leading-relaxed mb-6" {...props}>
+                      {children}
+                    </p>
+                  ),
+                  ul: ({ children, ...props }) => (
+                    <ul className="space-y-2 list-disc list-outside ml-5 text-[#334155] mb-6" {...props}>
+                      {children}
+                    </ul>
+                  ),
+                  ol: ({ children, ...props }) => (
+                    <ol className="space-y-2 list-decimal list-outside ml-5 text-[#334155] mb-6" {...props}>
+                      {children}
+                    </ol>
+                  ),
+                  li: ({ children, ...props }) => (
+                    <li className="leading-relaxed pl-1" {...props}>
+                      {children}
+                    </li>
+                  ),
+                  blockquote: ({ children, ...props }) => (
+                    <blockquote
+                      className="p-4 my-6 rounded-lg bg-[#F8FAFC] border-l-4 border-[#0D1B2A] text-sm italic text-[#0D1B2A]"
+                      {...props}
                     >
-                      {block.markdown}
-                    </ReactMarkdown>
-                  ) : null}
-
-                  {/* Contextual Section Image Figure */}
-                  {block.imageAfter && block.imageAfter.url && (
-                    <figure className="my-8 rounded-2xl overflow-hidden border border-[#DCE5EE] bg-[#F8FAFC]">
-                      <img
-                        src={block.imageAfter.url}
-                        alt={block.imageAfter.alt || article.title}
-                        loading="lazy"
-                        className="w-full h-auto object-cover max-h-[500px]"
-                        referrerPolicy="no-referrer"
-                      />
-                      {block.imageAfter.caption && block.imageAfter.caption.trim() && (
-                        <figcaption className="px-4 py-2.5 text-xs text-center text-slate-500 font-body bg-white border-t border-[#DCE5EE] italic">
-                          {block.imageAfter.caption.trim()}
-                        </figcaption>
-                      )}
-                    </figure>
-                  )}
-                </React.Fragment>
-              ))}
+                      {children}
+                    </blockquote>
+                  ),
+                  table: ({ children, ...props }) => (
+                    <div className="overflow-x-auto my-6 border border-[#DCE5EE] rounded-xl">
+                      <table className="min-w-full divide-y divide-[#DCE5EE] text-sm" {...props}>
+                        {children}
+                      </table>
+                    </div>
+                  ),
+                  th: ({ children, ...props }) => (
+                    <th className="bg-slate-50 px-4 py-3 font-heading font-semibold text-left text-[#0D1B2A]" {...props}>
+                      {children}
+                    </th>
+                  ),
+                  td: ({ children, ...props }) => (
+                    <td className="px-4 py-3 border-t border-[#DCE5EE] text-[#334155]" {...props}>
+                      {children}
+                    </td>
+                  ),
+                  img: ({ src, alt, ...props }) => (
+                    <div className="my-6 rounded-xl overflow-hidden border border-[#DCE5EE]">
+                      <img src={src} alt={alt || ''} className="w-full h-auto object-cover" {...props} />
+                      {alt && <p className="text-[11px] font-supporting text-[#64748B] text-center mt-2 italic">{alt}</p>}
+                    </div>
+                  ),
+                  a: ({ href, children, ...props }) => {
+                    if (!href) return <span {...props}>{children}</span>;
+                    const isInternal = href.startsWith('/') || href.startsWith('#');
+                    if (isInternal) {
+                      return (
+                        <Link
+                          href={href}
+                          className="text-sky-800 font-medium underline decoration-sky-300 underline-offset-2 hover:text-[#0D1B2A] transition-colors"
+                          {...props}
+                        >
+                          {children}
+                        </Link>
+                      );
+                    }
+                    return (
+                      <a
+                        href={href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sky-800 font-medium underline decoration-sky-300 underline-offset-2 hover:text-[#0D1B2A] transition-colors"
+                        {...props}
+                      >
+                        {children}
+                      </a>
+                    );
+                  },
+                }}
+              >
+                {article.body}
+              </ReactMarkdown>
             </div>
 
             {/* Inline Consultation Banner */}
@@ -538,13 +423,7 @@ export function ArticlePage({ slug }: ArticlePageProps) {
             )}
 
             {/* Author Box Component */}
-            <AuthorCard
-              compact
-              authorName={authorName}
-              authorRole={authorDesignation}
-              authorImage={authorPhoto}
-              authorBio={authorBio}
-            />
+            <AuthorCard compact />
           </aside>
         </div>
 
@@ -562,12 +441,7 @@ export function ArticlePage({ slug }: ArticlePageProps) {
 
         {/* 8. Full Author Section */}
         <section className="mt-16 bg-[#F8FAFC]">
-          <AuthorCard
-            authorName={authorName}
-            authorRole={authorDesignation}
-            authorImage={authorPhoto}
-            authorBio={authorBio}
-          />
+          <AuthorCard />
         </section>
 
         {/* 9. Related Articles (Exactly 3, same category first, no drafts) */}
@@ -602,7 +476,7 @@ export function ArticlePage({ slug }: ArticlePageProps) {
       <CTASection
         eyebrow="GROWTH ARCHITECTURE"
         title="Transform Your Search Inquiries Into High-Value Contracts"
-        description="Schedule a private consultation with Ajith to build an engineered search client acquisition system designed for residential builders."
+        description="Start with a conversation about your business, your goals and where your current growth system can improve."
         primaryButtonText="Book a Growth Consultation"
         primaryButtonHref="/contact"
         secondaryButtonText="Explore All Services"

@@ -1,10 +1,9 @@
 import React from 'react';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { X, Calendar, Tag, UserCheck, HelpCircle, CheckCircle, Star, EyeOff } from 'lucide-react';
+import { X, Calendar, Tag, UserCheck, HelpCircle, CheckCircle } from 'lucide-react';
 import type { CMSArticle } from '../../types/cms';
 import { CMS_CATEGORIES } from '../../types/cms';
-import { buildArticleSectionsWithImages } from '../../utils/articleContent';
 
 interface ArticlePreviewModalProps {
   article: Partial<CMSArticle>;
@@ -32,15 +31,6 @@ export const ArticlePreviewModal: React.FC<ArticlePreviewModalProps> = ({
     ? new Date().toISOString().split('T')[0]
     : 'Draft (Not published)';
 
-  const sectionImages = [
-    { url: article.section_image_1 || '', alt: article.section_image_1_alt || '', caption: article.section_image_1_caption || '' },
-    { url: article.section_image_2 || '', alt: article.section_image_2_alt || '', caption: article.section_image_2_caption || '' },
-    { url: article.section_image_3 || '', alt: article.section_image_3_alt || '', caption: article.section_image_3_caption || '' },
-    { url: article.section_image_4 || '', alt: article.section_image_4_alt || '', caption: article.section_image_4_caption || '' },
-  ].filter((img) => Boolean(img.url.trim()));
-
-  const contentBlocks = buildArticleSectionsWithImages(article.content || '', sectionImages);
-
   return (
     <div
       role="dialog"
@@ -50,22 +40,13 @@ export const ArticlePreviewModal: React.FC<ArticlePreviewModalProps> = ({
       <div className="bg-white w-full max-w-4xl rounded-2xl shadow-2xl border border-[#DCE5EE] overflow-hidden flex flex-col max-h-[90vh]">
         {/* Modal Top Bar */}
         <div className="bg-[#0D1B2A] text-white px-6 py-4 flex items-center justify-between border-b border-slate-800">
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-3">
             <span className="px-2.5 py-0.5 rounded-full text-xs font-supporting font-semibold uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/40">
               {article.status === 'published' ? 'Preview (Published)' : 'Preview (Private Draft)'}
             </span>
-            {article.is_featured && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-supporting font-semibold uppercase tracking-wider bg-sky-500/20 text-sky-300 border border-sky-500/40">
-                <Star className="w-3 h-3 fill-sky-300 text-sky-300" />
-                Featured
-              </span>
-            )}
-            {article.noindex && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-supporting font-semibold uppercase tracking-wider bg-rose-500/20 text-rose-300 border border-rose-500/40">
-                <EyeOff className="w-3 h-3 text-rose-300" />
-                Noindex
-              </span>
-            )}
+            <span className="text-xs text-slate-400 font-body hidden sm:inline">
+              Not accessible publicly
+            </span>
           </div>
           <button
             onClick={onClose}
@@ -142,62 +123,10 @@ export const ArticlePreviewModal: React.FC<ArticlePreviewModalProps> = ({
           {/* Main Article Content */}
           <div className="article-preview-content prose prose-slate max-w-none text-slate-800 font-body leading-relaxed">
             {article.content ? (
-              contentBlocks.map((block, idx) => (
-                <React.Fragment key={idx}>
-                  {block.markdown ? (
-                    <Markdown remarkPlugins={[remarkGfm]}>{block.markdown}</Markdown>
-                  ) : null}
-
-                  {block.imageAfter && block.imageAfter.url && (
-                    <figure className="my-6 rounded-xl overflow-hidden border border-[#DCE5EE] bg-[#F8FAFC]">
-                      <img
-                        src={block.imageAfter.url}
-                        alt={block.imageAfter.alt || article.title || ''}
-                        className="w-full h-auto object-cover max-h-[400px]"
-                        referrerPolicy="no-referrer"
-                      />
-                      {block.imageAfter.caption && block.imageAfter.caption.trim() && (
-                        <figcaption className="px-4 py-2 text-xs text-center text-slate-500 font-body bg-white border-t border-[#DCE5EE] italic">
-                          {block.imageAfter.caption.trim()}
-                        </figcaption>
-                      )}
-                    </figure>
-                  )}
-                </React.Fragment>
-              ))
+              <Markdown remarkPlugins={[remarkGfm]}>{article.content}</Markdown>
             ) : (
               <p className="text-slate-400 italic">No content written yet.</p>
             )}
-          </div>
-
-          {/* Author Card in Preview */}
-          <div className="p-6 rounded-xl bg-[#F8FAFC] border border-[#DCE5EE] flex flex-col sm:flex-row items-center sm:items-start gap-4">
-            {article.author_photo ? (
-              <img
-                src={article.author_photo}
-                alt={article.author_name || 'Author'}
-                className="w-14 h-14 rounded-xl object-cover border border-[#DCE5EE] shrink-0"
-                referrerPolicy="no-referrer"
-              />
-            ) : (
-              <div className="w-14 h-14 rounded-xl bg-[#0D1B2A] text-white flex items-center justify-center font-heading font-bold text-lg shrink-0">
-                {(article.author_name || 'Ajith')[0]}
-              </div>
-            )}
-            <div className="flex-1 text-center sm:text-left">
-              <span className="text-[11px] font-supporting font-bold uppercase tracking-wider text-sky-800 block mb-0.5">
-                Written by {article.author_name || 'Ajith'}
-              </span>
-              <h4 className="font-heading font-bold text-base text-[#0D1B2A]">
-                {article.author_name || 'Ajith'}
-                {article.author_designation ? ` — ${article.author_designation}` : ''}
-              </h4>
-              {article.author_bio && (
-                <p className="text-xs text-[#64748B] font-body mt-1 leading-relaxed">
-                  {article.author_bio}
-                </p>
-              )}
-            </div>
           </div>
 
           {/* FAQs Preview */}
@@ -236,16 +165,6 @@ export const ArticlePreviewModal: React.FC<ArticlePreviewModalProps> = ({
             <p className="text-xs text-[#64748B]">
               {article.meta_description || article.excerpt || 'Meta description preview...'}
             </p>
-            {article.og_image && (
-              <div className="text-xs text-slate-500 font-body">
-                <span className="font-semibold text-[#0D1B2A]">OG Image:</span> {article.og_image}
-              </div>
-            )}
-            {article.noindex && (
-              <div className="text-xs font-semibold text-rose-600 font-body">
-                Robots Meta: noindex, follow (Excluded from sitemap.xml)
-              </div>
-            )}
           </div>
         </div>
 

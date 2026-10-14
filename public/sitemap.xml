@@ -31,6 +31,18 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://ajithgrowth.com/industries/construction</loc>
+    <lastmod>2026-10-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://ajithgrowth.com/industries/boutiques</loc>
+    <lastmod>2026-10-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://ajithgrowth.com/privacy</loc>
     <lastmod>2026-06-01</lastmod>
     <changefreq>yearly</changefreq>
@@ -49,13 +61,13 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ajithgrowth.com/insights/seo</loc>
+    <loc>https://ajithgrowth.com/insights/seo-local-search</loc>
     <lastmod>2026-09-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ajithgrowth.com/insights/ai-search</loc>
+    <loc>https://ajithgrowth.com/insights/geo-ai-search</loc>
     <lastmod>2026-09-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -67,16 +79,16 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ajithgrowth.com/insights/construction-marketing</loc>
+    <loc>https://ajithgrowth.com/insights/conversion-landing-pages</loc>
     <lastmod>2026-09-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ajithgrowth.com/insights/test-article</loc>
-    <lastmod>2026-09-14</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <loc>https://ajithgrowth.com/insights/business-strategy</loc>
+    <lastmod>2026-09-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://ajithgrowth.com/insights/generative-engine-optimization-ai-search-builders</loc>

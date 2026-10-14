@@ -1,7 +1,7 @@
 ---
 title: "Generative Engine Optimization (GEO): How AI Overviews & Perplexity Change Builder Discovery"
 slug: "generative-engine-optimization-ai-search-builders"
-category: "ai-search"
+category: "geo-ai-search"
 excerpt: "Homeowners are no longer simply typing ten blue links; they are asking AI search engines: 'Who is the best custom builder for modern hillside homes in [City]?' Here is how GEO works."
 featuredImage: "/images/article-geo-ai-search.jpg"
 featuredImageAlt: "Geometric architectural residence with cantilevered deck and floor-to-ceiling glass in evening light"

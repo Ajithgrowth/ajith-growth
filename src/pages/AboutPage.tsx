@@ -1,358 +1,72 @@
-import { ShieldCheck, ArrowRight, Briefcase, Cpu, CheckCircle2, ChevronRight, Compass, Phone, MessageCircle, Building2, Layers, Award, Sparkles, Target, BarChart3 } from 'lucide-react';
+import { ArrowRight, BriefcaseBusiness, Cpu, LineChart, Store, Target, Search, BarChart3, RefreshCw } from 'lucide-react';
 import { SEO } from '../components/SEO';
 import { Link } from '../utils/router';
-import { siteConfig } from '../data/siteConfig';
-import { aboutData } from '../data/about';
 import { staticPagesSeo } from '../data/seoData';
-import { trackEvent } from '../utils/analytics';
 import { CTASection } from '../components/CTASection';
-import { Button } from '../components/Button';
+
+const strengths = [
+  ['01', 'Technology & Systems Thinking', 'Years of experience in technology and management shaped my structured approach to solving problems, understanding complex systems and improving how things work together.', Cpu],
+  ['02', 'Real Business Perspective', 'Working hands-on in a real business taught me that marketing cannot operate in isolation. It must connect with customer needs, business operations, sales and profitability.', BriefcaseBusiness],
+  ['03', 'Google Growth Expertise', 'I bring these perspectives together across Google Ads, SEO, Google Business Profile, landing-page optimization, conversion tracking and evolving search technologies.', LineChart],
+];
+
+const lessons = [
+  ['01', 'Marketing Must Connect to Business Goals', "Clicks and impressions matter, but the ultimate objective is meaningful business growth. Marketing decisions should support the business's actual goals."],
+  ['02', 'Customer Intent Matters', 'Not every enquiry has the same value. Understanding what customers need, what they are looking for and whether the offering suits them is critical.'],
+  ['03', 'Data Should Drive Decisions', 'Campaign performance, search terms, conversions and customer behaviour provide useful information for identifying what is working and what needs improvement.'],
+  ['04', 'Systems Create Consistency', 'A structured, repeatable process is more useful over time than relying only on individual campaigns or short-term tactics.'],
+];
+
+const principles = [
+  ['01', 'Understand Before You Advertise', 'Start with the business, ideal customer, project or service value, target locations and commercial goals before deciding what to promote.'],
+  ['02', 'Intent Over Volume', 'A smaller number of relevant enquiries can be more valuable than a large volume of low-intent leads. The focus should be on attracting people whose needs align with the business.'],
+  ['03', 'Build Systems, Not Campaigns', 'Google Ads, SEO, Google Business Profile, landing pages and conversion tracking should work together rather than operate as isolated activities.'],
+  ['04', 'Measure What Matters', 'Go beyond clicks and impressions. Understand enquiries, qualified opportunities and the actions that contribute to business growth.'],
+  ['05', 'Improve Continuously', 'Search behaviour, technology and customer expectations keep changing. Growth systems should evolve through ongoing measurement, learning and improvement.'],
+];
+
+const approach = [
+  ['01', 'UNDERSTAND', 'Learn the business before choosing the strategy.', Store],
+  ['02', 'ATTRACT', 'Reach the right audience at the right moment.', Target],
+  ['03', 'CONVERT', 'Turn relevant interest into meaningful opportunities.', Search],
+  ['04', 'MEASURE', 'Understand what is actually generating results.', BarChart3],
+  ['05', 'OPTIMIZE', 'Improve based on evidence, not assumptions.', RefreshCw],
+  ['06', 'GROW', 'Build a stronger growth system over time.', LineChart],
+];
+
+function Cards({ items, columns = 'md:grid-cols-3' }: { items: any[]; columns?: string }) {
+  return <div className={`grid ${columns} gap-6`}>{items.map(([number, title, text, Icon]) => <article key={number} className="rounded-2xl border border-[#DCE5EE] bg-white p-7">{Icon && <Icon className="w-6 h-6 text-sky-800 mb-4" />}<span className="text-xs font-bold text-sky-800">{number}</span><h3 className="mt-2 text-lg font-heading font-semibold text-[#0D1B2A]">{title}</h3><p className="mt-3 text-sm text-[#64748B] leading-relaxed">{text}</p></article>)}</div>;
+}
 
 export function AboutPage() {
   const seo = staticPagesSeo['/about'];
-
   return (
-    <main id="main-content" className="w-full bg-white">
-      <SEO
-        title={seo.title}
-        description={seo.description}
-        canonicalUrl={seo.canonicalUrl}
-        ogImage={seo.ogImage}
-        breadcrumbs={seo.breadcrumbs}
-      />
+    <main id="main-content">
+      <SEO title={seo.title} description={seo.description} canonicalUrl={seo.canonicalUrl} ogImage={seo.ogImage} breadcrumbs={seo.breadcrumbs} />
 
-      {/* SECTION 1: HERO */}
-      <section className="bg-[#0D1B2A] text-white pt-8 pb-16 sm:pt-12 sm:pb-24 border-b border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl">
-            {/* Breadcrumb navigation */}
-            <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs font-supporting uppercase tracking-wider text-slate-400 mb-6">
-              <Link href="/" className="hover:text-white transition-colors">Home</Link>
-              <span>/</span>
-              <span className="text-sky-400">About</span>
-            </nav>
+      <section className="bg-[#0D1B2A] text-white py-20 sm:py-24"><div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"><div className="max-w-4xl"><nav className="text-xs text-slate-400 mb-6"><Link href="/">Home</Link> / About</nav><span className="text-xs font-semibold tracking-wider text-sky-400">ABOUT AJITH GROWTH</span><h1 className="mt-3 text-4xl sm:text-5xl font-heading font-bold">Built on Technology. Driven by Business. Focused on Growth.</h1><p className="mt-6 text-lg text-slate-300 leading-relaxed">Ajith Growth is a specialist growth consultancy that helps businesses build stronger visibility on Google, attract the right audience and turn search activity into meaningful business opportunities.</p><p className="mt-3 text-lg text-slate-300">Our primary focus is residential construction, with selected work in premium and designer boutiques.</p><p className="mt-7 text-sm font-semibold text-sky-400">16+ Years in Technology & Management • Hands-on Business Experience • Google Growth</p></div></div></section>
 
-            <span className="inline-block text-xs font-semibold tracking-wider text-sky-400 font-supporting uppercase mb-3">
-              {aboutData.eyebrow}
-            </span>
-            <h1 className="text-3xl sm:text-5xl font-heading font-bold text-white tracking-tight leading-tight mb-6">
-              {aboutData.headline}
-            </h1>
-            <p className="text-base sm:text-lg text-slate-300 font-body leading-relaxed mb-6">
-              {aboutData.supportingText}
-            </p>
+      <section className="py-20 sm:py-24 bg-white border-b border-[#DCE5EE]"><div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"><div className="max-w-4xl"><h2 className="text-3xl sm:text-4xl font-heading font-semibold text-[#0D1B2A]">From Technology & Management to Growth Consulting</h2><div className="mt-6 space-y-4 text-[#64748B] leading-relaxed"><p>My professional journey began in technology, where I spent more than 16 years working across technical and management roles in organizations such as Cognizant, Accenture, Wipro, HP, IBM and Kyndryl. These experiences shaped the way I approach problem-solving, systems, teamwork and business outcomes.</p><p>After moving from the corporate world into entrepreneurship, I became deeply involved in building and growing Shrusara Fashion Boutique with my wife. This gave me the opportunity to apply my experience in a real business environment, including business strategy, operations and digital marketing.</p><p>Working hands-on with Google Ads, Google Business Profile and SEO changed the way I looked at marketing. I learned that generating clicks is only one part of the equation. What matters is connecting the right customer, the right message and the right business outcome.</p><p>That journey led me to establish Ajith Growth — a specialist growth consultancy focused primarily on helping residential construction companies grow through Google, while also working with selected premium and designer boutiques.</p></div></div>
+        <div className="mt-12 grid md:grid-cols-5 gap-4">{[
+          ['16+ Years', 'Technology & Management', 'Building experience in technology, problem-solving, systems and management.'],
+          ['Corporate Experience', 'Cognizant · Accenture · Wipro · HP · IBM · Kyndryl', ''],
+          ['Entrepreneurship', 'Shrusara Fashion Boutique', 'Building and growing Shrusara Fashion Boutique with my wife.'],
+          ['Hands-On Google Growth', 'Google Ads · Google Business Profile · SEO', 'Conversion Optimization'],
+          ['Today', 'Ajith Growth', 'Helping businesses build stronger visibility on Google and turn search activity into meaningful business opportunities, with residential construction as the primary focus.'],
+        ].map(([eyebrow, title, text]) => <article key={eyebrow} className="rounded-2xl bg-[#F3F7FB] border border-[#DCE5EE] p-5"><span className="text-xs font-bold text-sky-800">{eyebrow}</span><h3 className="mt-2 text-sm font-heading font-semibold text-[#0D1B2A]">{title}</h3>{text && <p className="mt-2 text-xs text-[#64748B] leading-relaxed">{text}</p>}</article>)}</div>
+      </div></section>
 
-            {/* Small Credibility Line */}
-            <div className="pt-4 border-t border-slate-800/80">
-              <p className="text-xs sm:text-sm font-supporting font-semibold uppercase tracking-wider text-sky-300">
-                {aboutData.credibilityLine}
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
+      <section className="py-20 sm:py-24 bg-[#F8FAFC] border-b border-[#DCE5EE]"><div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"><div className="max-w-4xl mb-12"><h2 className="text-3xl sm:text-4xl font-heading font-semibold text-[#0D1B2A]">Where Technology Meets Business Growth</h2><p className="mt-4 text-lg text-[#64748B]">My technology background taught me to think in systems. My business experience taught me to think about customers, operations and outcomes.</p><p className="mt-3 text-lg text-[#64748B]">Ajith Growth brings both perspectives together to help businesses build practical, measurable growth systems through Google.</p></div><Cards items={strengths} /><p className="mt-8 text-[#0D1B2A]">Technology helps build the system. Business understanding gives it purpose. Data helps make it better.<br />— Ajith B R, Founder, Ajith Growth</p></div></section>
 
-      {/* SECTION 2: MY JOURNEY */}
-      <section className="py-16 sm:py-24 bg-[#F8FAFC] border-b border-[#DCE5EE]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto">
-            <span className="text-xs font-supporting font-bold uppercase tracking-wider text-sky-800 block mb-2">
-              BACKGROUND & EVOLUTION
-            </span>
-            <h2 className="text-2xl sm:text-4xl font-heading font-bold text-[#0D1B2A] tracking-tight mb-8">
-              {aboutData.journey.headline}
-            </h2>
+      <section className="py-20 sm:py-24 bg-white border-b border-[#DCE5EE]"><div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"><div className="grid lg:grid-cols-12 gap-12"><div className="lg:col-span-5"><span className="text-xs font-semibold tracking-wider text-sky-800">HANDS-ON BUSINESS EXPERIENCE</span><h2 className="mt-3 text-3xl sm:text-4xl font-heading font-semibold text-[#0D1B2A]">Learning Growth by Building a Real Business</h2></div><div className="lg:col-span-7 space-y-4 text-[#64748B] leading-relaxed"><p>Moving from the corporate world into entrepreneurship gave me the opportunity to apply technology, systems thinking and marketing in a real business environment.</p><p>Through my work with Shrusara Fashion Boutique, I have been directly involved in business strategy, people and operations, financial planning and digital marketing. This includes managing Google Ads, optimizing our Google Business Profile, developing SEO strategies and improving the customer journey from search to enquiry.</p><p>Working with a real business has taught me an important lesson: marketing performance cannot be separated from the business itself. The right audience, the right offer, the right message and the right conversion process all need to work together.</p></div></div><div className="mt-12"><Cards items={lessons} columns="md:grid-cols-2 lg:grid-cols-4" /></div><p className="mt-8 text-[#0D1B2A]">I don't approach growth purely from a marketing perspective. I approach it from the perspective of someone who has had to build and grow a real business.</p></div></section>
 
-            {/* Narrative Paragraphs */}
-            <div className="space-y-5 font-body text-base text-[#475569] leading-relaxed mb-14">
-              {aboutData.journey.paragraphs.map((p, idx) => (
-                <p key={idx}>{p}</p>
-              ))}
-            </div>
+      <section className="py-20 sm:py-24 bg-[#F8FAFC] border-b border-[#DCE5EE]"><div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"><div className="max-w-4xl mb-12"><h2 className="text-3xl sm:text-4xl font-heading font-semibold text-[#0D1B2A]">Systems. Search. Measurement. Results.</h2><p className="mt-4 text-lg text-[#64748B]">I believe sustainable growth doesn't come from a single campaign, channel or marketing tactic. It comes from building a connected system where the right audience can find the business, understand its value, take action and be measured throughout the journey.</p></div><Cards items={principles} columns="md:grid-cols-2 lg:grid-cols-3" /><p className="mt-8 text-[#0D1B2A]">The goal isn't simply to generate more traffic. It's to build a system that consistently turns relevant search demand into measurable business opportunities.</p></div></section>
 
-            {/* Visual Timeline */}
-            <div className="bg-white p-6 sm:p-10 rounded-2xl border border-[#DCE5EE] shadow-xs">
-              <h3 className="text-sm font-supporting font-bold uppercase tracking-wider text-[#0D1B2A] mb-8 pb-3 border-b border-[#DCE5EE]">
-                Career Evolution & Experience Timeline
-              </h3>
+      <section className="py-20 sm:py-24 bg-white border-b border-[#DCE5EE]"><div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"><div className="max-w-4xl mb-12"><h2 className="text-3xl sm:text-4xl font-heading font-semibold text-[#0D1B2A]">Focused on the Right Businesses. Built Around Growth.</h2><p className="mt-4 text-lg text-[#64748B]">Ajith Growth works with businesses that want to build a stronger presence on Google and turn relevant search demand into meaningful business opportunities.</p><p className="mt-3 text-lg text-[#64748B]">Our primary focus is residential construction companies looking to attract homeowners with genuine project requirements. We also work selectively with premium and designer boutiques that want to reach customers who value their designs and craftsmanship.</p></div><div className="grid lg:grid-cols-3 gap-6"><article className="lg:col-span-2 rounded-2xl bg-[#0D1B2A] text-white p-8"><span className="text-xs font-bold text-sky-400">PRIMARY FOCUS</span><h3 className="mt-2 text-2xl font-heading font-semibold">Residential Construction Growth</h3><p className="mt-3 text-slate-300">Helping residential construction companies build stronger Google visibility and attract homeowners who are genuinely planning their next project.</p><p className="mt-6 text-sm text-slate-300 leading-relaxed">Turnkey Builders — Companies offering end-to-end residential construction solutions.<br />Villa Construction Companies — Builders serving homeowners planning premium, customized villa projects.<br />Luxury Home Builders — Businesses serving customers who value design, quality, transparency and execution.<br />Premium Residential Construction — Companies competing through quality, trust and value rather than simply the lowest price.</p><p className="mt-5 text-sm text-sky-400">Focus: relevant homeowner searches, Google visibility, enquiry quality and measurable growth.</p><Link href="/industries/construction" className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-sky-400">Explore Construction Growth <ArrowRight className="w-4 h-4" /></Link></article><article className="rounded-2xl border border-[#DCE5EE] bg-[#F8FAFC] p-8"><h3 className="text-xl font-heading font-semibold text-[#0D1B2A]">Premium & Designer Boutique Growth</h3><p className="mt-3 text-sm text-[#64748B]">Helping selected premium and designer boutiques strengthen their Google presence and connect with customers who appreciate their work.</p><p className="mt-5 text-sm text-[#64748B] leading-relaxed">Bridal & Couture Boutiques<br />Designer Wear Boutiques<br />Premium Occasion Wear<br />Custom Fashion Boutiques</p><p className="mt-5 text-sm text-sky-800">Focus: relevant search visibility, customer discovery and a clearer path from search to enquiry.</p><Link href="/industries/boutiques" className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-sky-800">Explore Boutique Growth <ArrowRight className="w-4 h-4" /></Link></article></div><p className="mt-8 text-[#64748B]">Different industries have different customers and buying journeys. My approach begins by understanding those differences and building a Google growth strategy around the business, its ideal customers and its goals.</p></div></section>
 
-              <div className="relative border-l-2 border-sky-800/30 ml-3 sm:ml-4 space-y-8">
-                {aboutData.journey.timeline.map((item, idx) => (
-                  <div key={idx} className="relative pl-6 sm:pl-8 group">
-                    {/* Timeline Node Dot */}
-                    <div className="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-white border-4 border-sky-800 group-hover:scale-110 transition-transform" />
-                    
-                    <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 mb-1">
-                      <span className="text-xs font-supporting font-bold uppercase tracking-wider text-sky-800">
-                        {item.label}
-                      </span>
-                    </div>
+      <section className="py-20 sm:py-24 bg-[#F3F7FB] border-b border-[#DCE5EE]"><div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"><div className="max-w-4xl mb-12"><h2 className="text-3xl sm:text-4xl font-heading font-semibold text-[#0D1B2A]">My Approach to Growth</h2></div><Cards items={approach} columns="md:grid-cols-2 lg:grid-cols-3" /><div className="mt-8 max-w-4xl space-y-3 text-[#64748B]"><p>Every business is different. I start by understanding the business, its ideal customers and its goals before recommending where and how to invest in Google.</p><p>From there, I build, measure and continuously improve the growth system using real data and what we learn along the way.</p><p className="font-semibold text-[#0D1B2A]">Growth is not a one-time campaign. It's a continuous process of understanding, testing, measuring and improving.</p></div></div></section>
 
-                    <h4 className="text-base sm:text-lg font-heading font-bold text-[#0D1B2A] mb-1">
-                      {item.subhead}
-                    </h4>
-
-                    <p className="text-sm font-body text-[#64748B] leading-relaxed">
-                      {item.description}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION 3: WHY AJITH GROWTH */}
-      <section className="py-16 sm:py-24 bg-white border-b border-[#DCE5EE]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto">
-            <span className="text-xs font-supporting font-bold uppercase tracking-wider text-sky-800 block mb-2">
-              FOUNDATIONAL ADVANTAGE
-            </span>
-            <h2 className="text-2xl sm:text-4xl font-heading font-bold text-[#0D1B2A] tracking-tight mb-4">
-              {aboutData.whyAjithGrowth.headline}
-            </h2>
-            <p className="text-base sm:text-lg font-body text-[#475569] leading-relaxed mb-12">
-              {aboutData.whyAjithGrowth.supportingText}
-            </p>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-              {aboutData.whyAjithGrowth.pillars.map((pillar, idx) => {
-                const icons = [Cpu, Briefcase, Target];
-                const Icon = icons[idx] || ShieldCheck;
-                return (
-                  <div key={idx} className="p-6 rounded-xl border border-[#DCE5EE] bg-[#F8FAFC] flex flex-col justify-between">
-                    <div>
-                      <div className="w-10 h-10 rounded-lg bg-sky-100 text-sky-800 flex items-center justify-center mb-4">
-                        <Icon className="w-5 h-5" />
-                      </div>
-                      <h3 className="text-base font-heading font-bold text-[#0D1B2A] mb-2">
-                        {pillar.title}
-                      </h3>
-                      <p className="text-sm font-body text-[#64748B] leading-relaxed">
-                        {pillar.description}
-                      </p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            <div className="p-6 rounded-xl bg-slate-900 text-white text-center">
-              <p className="font-heading font-medium text-base sm:text-lg text-slate-200 italic">
-                "{aboutData.whyAjithGrowth.closingStatement}"
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION 4: HANDS-ON BUSINESS EXPERIENCE */}
-      <section className="py-16 sm:py-24 bg-[#F8FAFC] border-b border-[#DCE5EE]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto">
-            <span className="text-xs font-supporting font-bold uppercase tracking-wider text-sky-800 block mb-2">
-              REAL-WORLD FOUNDATION
-            </span>
-            <h2 className="text-2xl sm:text-4xl font-heading font-bold text-[#0D1B2A] tracking-tight mb-4">
-              {aboutData.handsOnExperience.headline}
-            </h2>
-
-            <div className="space-y-4 font-body text-base text-[#475569] leading-relaxed mb-12">
-              {aboutData.handsOnExperience.supportingText.split('\n\n').map((paragraph, idx) => (
-                <p key={idx}>{paragraph}</p>
-              ))}
-            </div>
-
-            <h3 className="text-sm font-supporting font-bold uppercase tracking-wider text-[#0D1B2A] mb-6">
-              What This Experience Taught Me
-            </h3>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-12">
-              {aboutData.handsOnExperience.lessons.map((lesson, idx) => (
-                <div key={idx} className="p-6 rounded-xl border border-[#DCE5EE] bg-white shadow-xs">
-                  <div className="flex items-center gap-2 mb-2">
-                    <CheckCircle2 className="w-5 h-5 text-sky-800 shrink-0" />
-                    <h4 className="text-base font-heading font-bold text-[#0D1B2A]">
-                      {lesson.title}
-                    </h4>
-                  </div>
-                  <p className="text-sm font-body text-[#64748B] leading-relaxed pl-7">
-                    {lesson.description}
-                  </p>
-                </div>
-              ))}
-            </div>
-
-            <div className="p-6 rounded-xl border border-sky-200 bg-sky-50 text-[#0D1B2A] text-center">
-              <p className="font-heading font-semibold text-base sm:text-lg">
-                "{aboutData.handsOnExperience.closingStatement}"
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION 5: HOW I THINK ABOUT GROWTH (PRINCIPLES) */}
-      <section className="py-16 sm:py-24 bg-white border-b border-[#DCE5EE]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto">
-            <span className="text-xs font-supporting font-bold uppercase tracking-wider text-sky-800 block mb-2">
-              CORE PHILOSOPHY
-            </span>
-            <h2 className="text-2xl sm:text-4xl font-heading font-bold text-[#0D1B2A] tracking-tight mb-4">
-              {aboutData.growthPrinciples.headline}
-            </h2>
-            <p className="text-base sm:text-lg font-body text-[#475569] leading-relaxed mb-12">
-              {aboutData.growthPrinciples.supportingText}
-            </p>
-
-            <div className="space-y-4 mb-12">
-              {aboutData.growthPrinciples.principles.map((principle) => (
-                <div key={principle.number} className="p-6 rounded-xl border border-[#DCE5EE] bg-[#F8FAFC] flex flex-col sm:flex-row sm:items-start gap-4">
-                  <div className="w-10 h-10 rounded-lg bg-[#0D1B2A] text-white flex items-center justify-center font-heading font-bold text-sm shrink-0">
-                    {principle.number}
-                  </div>
-                  <div>
-                    <h3 className="text-base sm:text-lg font-heading font-bold text-[#0D1B2A] mb-1">
-                      {principle.title}
-                    </h3>
-                    <p className="text-sm font-body text-[#64748B] leading-relaxed">
-                      {principle.description}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="p-6 rounded-xl bg-[#0D1B2A] text-white text-center">
-              <p className="font-heading font-medium text-base sm:text-lg text-slate-200">
-                "{aboutData.growthPrinciples.closingStatement}"
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION 6: WHO I WORK WITH */}
-      <section className="py-16 sm:py-24 bg-[#F8FAFC] border-b border-[#DCE5EE]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto">
-            <span className="text-xs font-supporting font-bold uppercase tracking-wider text-sky-800 block mb-2">
-              SPECIALIZATION
-            </span>
-            <h2 className="text-2xl sm:text-4xl font-heading font-bold text-[#0D1B2A] tracking-tight mb-4">
-              {aboutData.whoIWorkWith.headline}
-            </h2>
-            <p className="text-base sm:text-lg font-body text-[#475569] leading-relaxed mb-12">
-              {aboutData.whoIWorkWith.supportingText}
-            </p>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-12">
-              {aboutData.whoIWorkWith.clientTypes.map((type, idx) => (
-                <div key={idx} className="p-6 rounded-xl border border-[#DCE5EE] bg-white shadow-xs">
-                  <div className="flex items-center gap-3 mb-2">
-                    <Building2 className="w-5 h-5 text-sky-800 shrink-0" />
-                    <h3 className="text-base font-heading font-bold text-[#0D1B2A]">
-                      {type.title}
-                    </h3>
-                  </div>
-                  <p className="text-sm font-body text-[#64748B] leading-relaxed pl-8">
-                    {type.description}
-                  </p>
-                </div>
-              ))}
-            </div>
-
-            <div className="p-6 rounded-xl border border-[#DCE5EE] bg-white text-center">
-              <p className="font-body text-sm sm:text-base text-[#0D1B2A] font-medium">
-                {aboutData.whoIWorkWith.closingStatement}
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION 7: MY APPROACH */}
-      <section className="py-16 sm:py-24 bg-white border-b border-[#DCE5EE]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto">
-            <span className="text-xs font-supporting font-bold uppercase tracking-wider text-sky-800 block mb-2">
-              EXECUTION PROCESS
-            </span>
-            <h2 className="text-2xl sm:text-4xl font-heading font-bold text-[#0D1B2A] tracking-tight mb-2">
-              {aboutData.approach.headline}
-            </h2>
-            <p className="text-sm font-supporting font-bold uppercase tracking-wider text-sky-800 mb-4">
-              {aboutData.approach.subhead}
-            </p>
-            <p className="text-base sm:text-lg font-body text-[#475569] leading-relaxed mb-12">
-              {aboutData.approach.intro}
-            </p>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-              {aboutData.approach.steps.map((step) => (
-                <div key={step.number} className="p-6 rounded-xl border border-[#DCE5EE] bg-[#F8FAFC]">
-                  <span className="text-xs font-supporting font-bold uppercase tracking-wider text-sky-800 block mb-1">
-                    Step {step.number}
-                  </span>
-                  <h3 className="text-base font-heading font-bold text-[#0D1B2A] mb-2">
-                    {step.title}
-                  </h3>
-                  <p className="text-xs sm:text-sm font-body text-[#64748B] leading-relaxed">
-                    {step.description}
-                  </p>
-                </div>
-              ))}
-            </div>
-
-            <div className="p-6 rounded-xl border border-[#DCE5EE] bg-[#F8FAFC] text-center">
-              <p className="font-heading font-semibold text-sm sm:text-base text-[#0D1B2A]">
-                "{aboutData.approach.closingStatement}"
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION 8: FINAL CTA */}
-      <section className="py-16 sm:py-24 bg-[#0D1B2A] text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl mx-auto text-center">
-            <span className="text-xs font-supporting font-bold uppercase tracking-wider text-sky-400 block mb-3">
-              TAILORED GROWTH STRATEGY
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-heading font-bold text-white tracking-tight mb-6">
-              {aboutData.finalCta.headline}
-            </h2>
-            <p className="text-base sm:text-lg font-body text-slate-300 leading-relaxed mb-8">
-              {aboutData.finalCta.supportingText}
-            </p>
-
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
-              <Link
-                href="/contact"
-                onClick={() => trackEvent('about_final_cta_click')}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-lg bg-sky-500 hover:bg-sky-400 text-[#0D1B2A] font-body font-semibold text-sm transition-all shadow-xs"
-              >
-                <span>{aboutData.finalCta.primaryButtonText}</span>
-                <ArrowRight className="w-4 h-4 text-[#0D1B2A]" />
-              </Link>
-              <Link
-                href="/services"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-lg border border-slate-700 bg-slate-900/60 hover:bg-slate-800 text-white font-body font-medium text-sm transition-all"
-              >
-                <span>{aboutData.finalCta.secondaryButtonText}</span>
-              </Link>
-            </div>
-
-            <p className="text-xs sm:text-sm font-supporting text-slate-400">
-              {aboutData.finalCta.smallNote}
-            </p>
-          </div>
-        </div>
-      </section>
+      <CTASection title="Let's Build a Better Growth System" description="Whether you're looking to attract better-qualified homeowner enquiries or help the right customers discover your boutique, let's start with a conversation about your business, your goals and where your current growth system can improve." primaryButtonText="Book a Growth Consultation" primaryButtonHref="/contact" secondaryButtonText="Explore Our Services" secondaryButtonHref="/services" supportingLine="No generic packages. No one-size-fits-all approach. Just a growth strategy built around your business." />
     </main>
   );
 }

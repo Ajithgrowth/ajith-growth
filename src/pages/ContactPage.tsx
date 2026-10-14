@@ -1,327 +1,41 @@
-import { Mail, Phone, MapPin, Clock, Linkedin, CheckCircle2, ArrowRight, MessageCircle } from 'lucide-react';
+import { ArrowRight, Mail, MessageCircle, Phone } from 'lucide-react';
 import { SEO } from '../components/SEO';
 import { ContactForm } from '../components/ContactForm';
 import { siteConfig } from '../data/siteConfig';
 import { staticPagesSeo } from '../data/seoData';
-import { trackEvent } from '../utils/analytics';
 import { Link } from '../utils/router';
+
+const Linkedin = ArrowRight;
+
+const qualification = [
+  ['Turnkey Construction Companies', 'Businesses managing residential construction projects from planning through execution and looking to attract suitable homeowner enquiries.'],
+  ['Villa & Premium Home Builders', 'Builders focused on custom homes, premium residences and villa projects who want to reach homeowners planning significant investments.'],
+  ['Duplex & Custom Home Specialists', 'Businesses offering duplex construction, individually designed homes and other specialized residential projects.'],
+  ['Construction Businesses Seeking Better Leads', 'Companies that want to improve lead relevance, strengthen their Google presence and make better-informed marketing decisions.'],
+];
+const discussion = [
+  ['1', 'Your Business & Services', 'Understand your construction services, project types, target locations and business priorities.'],
+  ['2', 'Your Ideal Customers', 'Discuss the types of homeowners and residential projects you want to attract.'],
+  ['3', 'Your Google Visibility', 'Review how potential customers can discover your business through Google Ads, organic search and Google Business Profile.'],
+  ['4', 'Your Website & Enquiry Journey', 'Explore how clearly your website communicates your services and how easily potential customers can enquire.'],
+  ['5', 'Your Current Marketing & Results', 'Discuss your existing marketing activities, enquiry quality and the performance information available.'],
+  ['6', 'Growth Opportunities & Next Steps', 'Identify potential areas for improvement and discuss practical next steps aligned with your business goals.'],
+];
 
 export function ContactPage() {
   const seo = staticPagesSeo['/contact'];
+  return <main id="main-content">
+    <SEO title={seo.title} description={seo.description} canonicalUrl={seo.canonicalUrl} ogImage={seo.ogImage} breadcrumbs={seo.breadcrumbs} includeLocalBusiness />
+    <section className="bg-[#0D1B2A] text-white py-20 sm:py-24"><div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"><div className="max-w-4xl"><nav className="text-xs text-slate-400 mb-6"><Link href="/">Home</Link> / Growth Consultation</nav><span className="text-xs font-semibold tracking-wider text-sky-400">GROWTH CONSULTATION</span><h1 className="mt-3 text-4xl sm:text-5xl font-heading font-bold">Let's Talk About Your Construction Business Growth</h1><p className="mt-6 text-lg text-slate-300 leading-relaxed">Whether you're already running Google Ads, looking to improve local visibility or planning your digital growth strategy, let's start with a conversation about your business and your goals.</p><div className="mt-8 flex flex-col sm:flex-row gap-4"><a href={siteConfig.whatsappUrl} target="_blank" rel="noreferrer" className="inline-flex items-center justify-center gap-2 rounded-lg bg-emerald-600 px-6 py-3.5 font-semibold text-white"><MessageCircle className="w-5 h-5" />Chat on WhatsApp</a><a href="#consultation-form" className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-600 px-6 py-3.5 font-semibold text-white">Book a Growth Consultation <ArrowRight className="w-4 h-4" /></a></div><p className="mt-6 text-sm text-sky-400">Residential Construction • Google Ads • Local SEO • Google Business Profile • AI Search</p></div></div></section>
 
-  return (
-    <main id="main-content" className="w-full bg-white">
-      <SEO
-        title={seo.title}
-        description={seo.description}
-        canonicalUrl={seo.canonicalUrl}
-        ogImage={seo.ogImage}
-        breadcrumbs={seo.breadcrumbs}
-        includeLocalBusiness={true}
-      />
+    <section className="py-20 bg-white border-b border-[#DCE5EE]"><div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"><div className="max-w-4xl mb-10"><h2 className="text-3xl sm:text-4xl font-heading font-semibold text-[#0D1B2A]">This Consultation Is Designed For</h2><p className="mt-4 text-lg text-[#64748B]">Ajith Growth works primarily with residential construction businesses looking to build a stronger Google growth system, improve search visibility and attract better-qualified homeowner opportunities.</p></div><div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">{qualification.map(([title, text]) => <article key={title} className="rounded-2xl border border-[#DCE5EE] bg-[#F8FAFC] p-6"><h3 className="font-heading font-semibold text-[#0D1B2A]">{title}</h3><p className="mt-3 text-sm text-[#64748B] leading-relaxed">{text}</p></article>)}</div><p className="mt-8 font-semibold text-[#0D1B2A]">If your goal is to attract better-qualified residential construction opportunities, this consultation is for you.</p></div></section>
 
-      {/* Hero Header with exact requested eyebrow and H1 */}
-      <section className="bg-[#0D1B2A] text-white pt-8 pb-16 sm:pt-12 sm:pb-20 border-b border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl">
-            {/* Breadcrumb navigation */}
-            <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs font-supporting uppercase tracking-wider text-slate-400 mb-6">
-              <Link href="/" className="hover:text-white transition-colors">Home</Link>
-              <span>/</span>
-              <span className="text-sky-400">Contact</span>
-            </nav>
+    <section className="py-20 bg-[#F8FAFC] border-b border-[#DCE5EE]"><div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"><div className="max-w-4xl mb-10"><h2 className="text-3xl sm:text-4xl font-heading font-semibold text-[#0D1B2A]">What We'll Discuss During the Consultation</h2><p className="mt-4 text-lg text-[#64748B]">Every consultation starts with understanding your business before discussing marketing solutions.</p></div><div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">{discussion.map(([number, title, text]) => <article key={number} className="rounded-2xl border border-[#DCE5EE] bg-white p-7"><span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#0D1B2A] text-xs font-bold text-white">{number}</span><h3 className="mt-4 font-heading font-semibold text-[#0D1B2A]">{title}</h3><p className="mt-2 text-sm text-[#64748B] leading-relaxed">{text}</p></article>)}</div><p className="mt-8 text-[#0D1B2A]">The consultation is about understanding your business first—not selling a generic marketing package.</p></div></section>
 
-            <span className="inline-block text-xs font-semibold tracking-wider text-sky-400 font-supporting uppercase mb-3">
-              DIRECT FOUNDER CONSULTATION
-            </span>
-            <h1 className="text-3xl sm:text-5xl font-heading font-bold text-white tracking-tight leading-tight mb-6">
-              Let's Talk About What's Actually Happening in Your Business
-            </h1>
-            <p className="text-base sm:text-lg text-slate-300 font-body leading-relaxed mb-8">
-              No boilerplate agency sales pitch. A direct, honest 30-minute conversation with Ajith to review your current search visibility, identify where unqualified leads are wasting your time, and map out a growth system tailored for residential construction.
-            </p>
+    <section className="py-20 bg-white border-b border-[#DCE5EE]"><div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"><div className="max-w-4xl mb-10"><h2 className="text-3xl sm:text-4xl font-heading font-semibold text-[#0D1B2A]">Choose the Way You'd Like to Connect</h2><p className="mt-4 text-lg text-[#64748B]">Reach out through the channel that's most convenient for you.</p></div><div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6"><a href={siteConfig.whatsappUrl} target="_blank" rel="noreferrer" className="rounded-2xl border border-emerald-200 bg-emerald-50 p-7"><MessageCircle className="w-6 h-6 text-emerald-700" /><h3 className="mt-4 font-heading font-semibold text-[#0D1B2A]">Chat on WhatsApp</h3><p className="mt-2 text-sm text-[#64748B]">Start a conversation about your construction business, current challenges and growth goals.</p><span className="mt-4 block text-xs font-bold text-emerald-700">PRIMARY CONTACT OPTION</span></a><a href={siteConfig.phoneTel} className="rounded-2xl border border-[#DCE5EE] bg-[#F8FAFC] p-7"><Phone className="w-6 h-6 text-sky-800" /><h3 className="mt-4 font-heading font-semibold text-[#0D1B2A]">Call Ajith</h3><p className="mt-2 text-sm text-[#64748B]">Speak directly to discuss your business and explore whether Ajith Growth is the right fit.</p></a><a href={siteConfig.emailMailto} className="rounded-2xl border border-[#DCE5EE] bg-[#F8FAFC] p-7"><Mail className="w-6 h-6 text-sky-800" /><h3 className="mt-4 font-heading font-semibold text-[#0D1B2A]">Send an Email</h3><p className="mt-2 text-sm text-[#64748B]">Share your requirements or questions in writing.</p></a>{siteConfig.socialProfiles.linkedin ? <a href={siteConfig.socialProfiles.linkedin} target="_blank" rel="noreferrer" className="rounded-2xl border border-[#DCE5EE] bg-[#F8FAFC] p-7"><Linkedin className="w-6 h-6 text-sky-800" /><h3 className="mt-4 font-heading font-semibold text-[#0D1B2A]">Connect on LinkedIn</h3><p className="mt-2 text-sm text-[#64748B]">Connect professionally and learn more about Ajith's work and business insights.</p></a> : <div className="rounded-2xl border border-dashed border-[#DCE5EE] bg-[#F8FAFC] p-7"><Linkedin className="w-6 h-6 text-slate-400" /><h3 className="mt-4 font-heading font-semibold text-[#0D1B2A]">Connect on LinkedIn</h3><p className="mt-2 text-sm text-[#64748B]">Verified profile link to be added.</p></div>}</div><p className="mt-8 text-[#64748B]">Choose the channel that's most comfortable for you. Every enquiry receives a personal response from Ajith.</p></div></section>
 
-            {/* Primary & Secondary CTAs */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-              <a
-                href="#consultation-form"
-                onClick={() => trackEvent('consultation_cta_click', { location: 'contact_hero_primary' })}
-                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg bg-sky-500 hover:bg-sky-400 text-[#0D1B2A] font-body font-semibold text-sm transition-all shadow-xs"
-              >
-                <span>Request Growth Consultation</span>
-                <ArrowRight className="w-4 h-4 text-[#0D1B2A]" />
-              </a>
+    <section id="consultation-form" className="py-20 bg-[#F8FAFC] border-b border-[#DCE5EE] scroll-mt-24"><div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8"><ContactForm /></div></section>
 
-              <a
-                href={siteConfig.phoneTel}
-                onClick={() => trackEvent('phone_click', { location: 'contact_hero_secondary' })}
-                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg border border-slate-700 bg-slate-900/60 hover:bg-slate-800 text-white font-body font-medium text-sm transition-all"
-              >
-                <Phone className="w-4 h-4 text-sky-400" />
-                <span>Call {siteConfig.phone}</span>
-              </a>
-
-              <a
-                href={siteConfig.whatsappUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => trackEvent('whatsapp_click', { location: 'contact_hero_tertiary' })}
-                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg border border-emerald-600/70 bg-emerald-950/40 hover:bg-emerald-900/60 text-emerald-300 font-body font-medium text-sm transition-all"
-              >
-                <MessageCircle className="w-4 h-4 text-emerald-400" />
-                <span>Chat on WhatsApp</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Main Content Grid: Qualification + Agenda + Ways to Connect + Form */}
-      <section className="py-16 sm:py-24 bg-[#F8FAFC] border-b border-[#DCE5EE]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-            {/* Left Column: Who This Is For + Agenda + Ways to Connect */}
-            <div className="lg:col-span-6 space-y-10">
-              {/* 1. Who consultation is for */}
-              <div className="bg-white p-7 rounded-2xl border border-[#DCE5EE] shadow-xs">
-                <span className="text-xs font-supporting font-bold uppercase tracking-wider text-sky-800 block mb-2">
-                  QUALIFICATION CRITERIA
-                </span>
-                <h2 className="text-xl sm:text-2xl font-heading font-bold text-[#0D1B2A] mb-4">
-                  Who This Consultation Is For
-                </h2>
-                <div className="space-y-3 font-body text-sm text-[#64748B]">
-                  <div className="flex items-start gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-sky-800 shrink-0 mt-0.5" />
-                    <span>
-                      <strong className="text-[#0D1B2A]">Residential Construction Companies:</strong> Turnkey home builders, villa contractors and residential construction firms looking for serious projects.
-                    </span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-sky-800 shrink-0 mt-0.5" />
-                    <span>
-                      <strong className="text-[#0D1B2A]">Focus on Inquiry Quality:</strong> Companies looking for better-qualified homeowner enquiries—not simply more cheap clicks or budget shoppers.
-                    </span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-sky-800 shrink-0 mt-0.5" />
-                    <span>
-                      <strong className="text-[#0D1B2A]">Google Search Expansion:</strong> Builders looking to improve visibility across Google Ads, Local SEO, and Google Business Profile in their target territories.
-                    </span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-sky-800 shrink-0 mt-0.5" />
-                    <span>
-                      <strong className="text-[#0D1B2A]">Commitment to Growth Systems:</strong> Business owners who want a structured, measurable growth system rather than disconnected marketing tactics.
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* 2. What we’ll discuss */}
-              <div className="bg-white p-7 rounded-2xl border border-[#DCE5EE] shadow-xs">
-                <span className="text-xs font-supporting font-bold uppercase tracking-wider text-sky-800 block mb-2">
-                  CONSULTATION AGENDA
-                </span>
-                <h2 className="text-xl sm:text-2xl font-heading font-bold text-[#0D1B2A] mb-4">
-                  What We'll Discuss
-                </h2>
-                <div className="space-y-4 font-body text-sm text-[#64748B]">
-                  <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-md bg-[#0D1B2A] text-white flex items-center justify-center font-heading font-bold text-xs shrink-0 mt-0.5">
-                      1
-                    </div>
-                    <div>
-                      <h3 className="font-heading font-bold text-[#0D1B2A]">
-                        Your Business & Ideal Projects
-                      </h3>
-                      <p className="text-xs text-[#64748B] mt-0.5">
-                        What types of construction projects you want more of and where your best margins and customer relationships come from.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-md bg-[#0D1B2A] text-white flex items-center justify-center font-heading font-bold text-xs shrink-0 mt-0.5">
-                      2
-                    </div>
-                    <div>
-                      <h3 className="font-heading font-bold text-[#0D1B2A]">
-                        Your Current Google Presence
-                      </h3>
-                      <p className="text-xs text-[#64748B] mt-0.5">
-                        Where your business currently appears across Google Ads, local search, Google Maps, and organic search relative to local competitors.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-md bg-[#0D1B2A] text-white flex items-center justify-center font-heading font-bold text-xs shrink-0 mt-0.5">
-                      3
-                    </div>
-                    <div>
-                      <h3 className="font-heading font-bold text-[#0D1B2A]">
-                        Enquiry Quality & Conversion
-                      </h3>
-                      <p className="text-xs text-[#64748B] mt-0.5">
-                        Why website visitors may not be turning into qualified calls or consultation requests, and where budget shoppers are slipping in.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-md bg-[#0D1B2A] text-white flex items-center justify-center font-heading font-bold text-xs shrink-0 mt-0.5">
-                      4
-                    </div>
-                    <div>
-                      <h3 className="font-heading font-bold text-[#0D1B2A]">
-                        Strategic Opportunities
-                      </h3>
-                      <p className="text-xs text-[#64748B] mt-0.5">
-                        Clear, actionable recommendations on what to prioritize next—with an honest assessment of whether an Ajith Growth partnership is a fit.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* 3. Ways to connect & Verified Business Information */}
-              <div className="bg-white p-7 rounded-2xl border border-[#DCE5EE] shadow-xs">
-                <span className="text-xs font-supporting font-bold uppercase tracking-wider text-sky-800 block mb-2">
-                  DIRECT CONTACT CHANNELS
-                </span>
-                <h2 className="text-xl sm:text-2xl font-heading font-bold text-[#0D1B2A] mb-4">
-                  Ways to Connect
-                </h2>
-                <div className="space-y-3.5">
-                  {/* Direct Phone */}
-                  <a
-                    href={siteConfig.phoneTel}
-                    onClick={() => trackEvent('phone_click', { location: 'contact_page_list' })}
-                    className="flex items-start gap-3 p-3.5 rounded-xl border border-[#DCE5EE] bg-[#F8FAFC] hover:bg-slate-100 transition-colors group"
-                  >
-                    <div className="w-10 h-10 rounded-lg bg-sky-100 text-sky-800 flex items-center justify-center shrink-0 mt-0.5">
-                      <Phone className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <span className="font-heading font-semibold text-sm text-[#0D1B2A] block group-hover:text-sky-800">
-                        Direct Phone
-                      </span>
-                      <span className="text-xs text-[#64748B]">
-                        {siteConfig.phone}
-                      </span>
-                    </div>
-                  </a>
-
-                  {/* WhatsApp Chat */}
-                  <a
-                    href={siteConfig.whatsappUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={() => trackEvent('whatsapp_click', { location: 'contact_page_list' })}
-                    className="flex items-start gap-3 p-3.5 rounded-xl border border-emerald-200 bg-emerald-50/50 hover:bg-emerald-50 transition-colors group"
-                  >
-                    <div className="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 mt-0.5">
-                      <MessageCircle className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <span className="font-heading font-semibold text-sm text-[#0D1B2A] block group-hover:text-emerald-800">
-                        WhatsApp Chat
-                      </span>
-                      <span className="text-xs text-[#64748B]">
-                        {siteConfig.phone} (Quick inquiries)
-                      </span>
-                    </div>
-                  </a>
-
-                  {/* Direct Email */}
-                  <a
-                    href={siteConfig.emailMailto}
-                    onClick={() => trackEvent('email_click', { location: 'contact_page_list' })}
-                    className="flex items-start gap-3 p-3.5 rounded-xl border border-[#DCE5EE] bg-[#F8FAFC] hover:bg-slate-100 transition-colors group"
-                  >
-                    <div className="w-10 h-10 rounded-lg bg-sky-100 text-sky-800 flex items-center justify-center shrink-0 mt-0.5">
-                      <Mail className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <span className="font-heading font-semibold text-sm text-[#0D1B2A] block group-hover:text-sky-800">
-                        Direct Email
-                      </span>
-                      <span className="text-xs text-[#64748B] break-all">
-                        {siteConfig.email}
-                      </span>
-                    </div>
-                  </a>
-
-                  {/* Office Address */}
-                  <div className="flex items-start gap-3 p-3.5 rounded-xl border border-[#DCE5EE] bg-[#F8FAFC]">
-                    <div className="w-10 h-10 rounded-lg bg-slate-100 text-[#0D1B2A] flex items-center justify-center shrink-0 mt-0.5">
-                      <MapPin className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <span className="font-heading font-semibold text-sm text-[#0D1B2A] block">
-                        Registered Office
-                      </span>
-                      <address className="text-xs text-[#64748B] not-italic leading-relaxed">
-                        {siteConfig.address.formatted}
-                      </address>
-                    </div>
-                  </div>
-
-                  {/* Hours */}
-                  <div className="flex items-start gap-3 p-3.5 rounded-xl border border-[#DCE5EE] bg-[#F8FAFC]">
-                    <div className="w-10 h-10 rounded-lg bg-slate-100 text-[#0D1B2A] flex items-center justify-center shrink-0 mt-0.5">
-                      <Clock className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <span className="font-heading font-semibold text-sm text-[#0D1B2A] block">
-                        Opening Hours
-                      </span>
-                      <span className="text-xs text-[#64748B]">
-                        {siteConfig.openingHours} ({siteConfig.openingHoursDisplay})
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Founder LinkedIn */}
-                  {siteConfig.socialProfiles.linkedin ? (
-                    <a
-                      href={siteConfig.socialProfiles.linkedin}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-start gap-3 p-3.5 rounded-xl border border-[#DCE5EE] bg-[#F8FAFC] hover:bg-slate-100 transition-colors group"
-                    >
-                      <div className="w-10 h-10 rounded-lg bg-slate-100 text-[#0D1B2A] flex items-center justify-center shrink-0 mt-0.5">
-                        <Linkedin className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <span className="font-heading font-semibold text-sm text-[#0D1B2A] block group-hover:text-sky-800">
-                          Founder LinkedIn
-                        </span>
-                        <span className="text-xs text-[#64748B]">
-                          Connect directly with Ajith
-                        </span>
-                      </div>
-                    </a>
-                  ) : null}
-                </div>
-              </div>
-            </div>
-
-            {/* Right Column: Qualification form */}
-            <div id="consultation-form" className="lg:col-span-6 scroll-mt-28">
-              <ContactForm />
-            </div>
-          </div>
-
-          {/* Final Statement */}
-          <div className="mt-16 pt-10 border-t border-[#DCE5EE] text-center max-w-2xl mx-auto">
-            <p className="text-lg sm:text-xl font-heading font-semibold text-[#0D1B2A] tracking-tight">
-              A conversation first. A strategy next. Growth built around your business.
-            </p>
-          </div>
-        </div>
-      </section>
-    </main>
-  );
+    <section className="py-20 sm:py-24 bg-[#0D1B2A] text-white"><div className="max-w-5xl mx-auto px-4 text-center"><h2 className="text-3xl sm:text-4xl font-heading font-bold">Let's Build a Better Google Growth System Together</h2><p className="mt-5 text-lg text-slate-300">If you're serious about improving your construction company's visibility, attracting qualified homeowner enquiries and building measurable long-term growth, I'd be happy to start with a conversation.</p><div className="mt-8 flex flex-col sm:flex-row justify-center gap-4"><a href={siteConfig.whatsappUrl} target="_blank" rel="noreferrer" className="inline-flex items-center justify-center gap-2 rounded-lg bg-emerald-600 px-6 py-3.5 font-semibold text-white"><MessageCircle className="w-5 h-5" />Chat on WhatsApp</a><a href="#consultation-form" className="inline-flex items-center justify-center rounded-lg border border-slate-600 px-6 py-3.5 font-semibold">Request a Growth Consultation</a></div><p className="mt-6 text-sm text-sky-400">A conversation first. A strategy next. Growth built around your business.</p></div></section>
+  </main>;
 }

@@ -1,6 +1,5 @@
-import { ArrowRight, ChevronRight, Mail, MessageCircle } from 'lucide-react';
+import { ArrowRight, ChevronRight } from 'lucide-react';
 import { Button } from './Button';
-import { siteConfig } from '../data/siteConfig';
 import { trackEvent } from '../utils/analytics';
 
 export interface CTASectionProps {
@@ -11,17 +10,19 @@ export interface CTASectionProps {
   primaryButtonHref?: string;
   secondaryButtonText?: string;
   secondaryButtonHref?: string;
+  supportingLine?: string;
   className?: string;
 }
 
 export function CTASection({
-  eyebrow = "DIRECT STRATEGIC CONSULTATION",
-  title = "Ready to Build a Predictable Google Pipeline for Your Construction Firm?",
-  description = "Speak directly with Ajith. We will review your current search visibility, analyze your local market competitors, and identify the exact levers to capture qualified custom builds.",
+  eyebrow,
+  title = "Let's Build a Better Growth System",
+  description = "If you're looking to attract better-quality enquiries through Google, let's start with a conversation about your business, your goals and where your current growth system can improve.",
   primaryButtonText = "Book a Growth Consultation",
   primaryButtonHref = "/contact",
   secondaryButtonText = "Explore Our Services",
   secondaryButtonHref = "/services",
+  supportingLine,
   className = "",
 }: CTASectionProps) {
   return (
@@ -63,30 +64,8 @@ export function CTASection({
             </Button>
           )}
 
-          <a
-            href={siteConfig.whatsappUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={() => trackEvent('whatsapp_click', { location: 'cta_section' })}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-lg border border-emerald-700/60 bg-emerald-950/30 hover:bg-emerald-900/40 text-emerald-300 font-body text-sm font-medium hover:text-white transition-colors"
-          >
-            <MessageCircle className="w-4 h-4 text-emerald-400" />
-            <span>WhatsApp</span>
-          </a>
-
-          <a
-            href={siteConfig.emailMailto}
-            onClick={() => trackEvent('email_click', { location: 'cta_section' })}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-lg border border-slate-700 hover:border-slate-500 text-slate-300 font-body text-sm font-medium hover:text-white transition-colors"
-          >
-            <Mail className="w-4 h-4 text-sky-400" />
-            <span>Email Directly</span>
-          </a>
         </div>
-
-        <p className="text-xs font-supporting text-slate-400 mt-6">
-          Confidential review • Tailored to residential builders & luxury remodelers • No pressure sales
-        </p>
+        {supportingLine && <p className="text-xs font-supporting text-slate-400 mt-6">{supportingLine}</p>}
       </div>
     </section>
   );

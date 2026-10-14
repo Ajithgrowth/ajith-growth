@@ -246,7 +246,7 @@ export function AdminPage() {
       }
 
       // Payload strictly aligned with existing Supabase articles table
-      const payload: any = {
+      const payload = {
         title: articleData.title,
         slug: articleData.slug,
         category: articleData.category,
@@ -261,84 +261,42 @@ export function AdminPage() {
         status,
         published_at: published_at || null, // TIMESTAMPTZ
         author_name: articleData.author_name || 'Ajith', // TEXT
-        author_designation: articleData.author_designation || null, // TEXT
-        author_photo: articleData.author_photo || null, // TEXT
-        author_bio: articleData.author_bio || null, // TEXT
-        is_featured: Boolean(articleData.is_featured), // BOOLEAN
-        og_image: articleData.og_image || null, // TEXT
-        noindex: Boolean(articleData.noindex), // BOOLEAN
-
-        // Personal Brand, Builder ICP & Authority Strategy Fields
-        target_keyword: articleData.target_keyword || null,
-        builder_segment: articleData.builder_segment || null,
-        strategic_takeaway: articleData.strategic_takeaway || null,
-        primary_service_cta: articleData.primary_service_cta || null,
-        linkedin_post_summary: articleData.linkedin_post_summary || null,
-
-        // Contextual Section Images (1-4)
-        section_image_1: articleData.section_image_1 || null,
-        section_image_1_alt: articleData.section_image_1_alt || null,
-        section_image_1_caption: articleData.section_image_1_caption || null,
-        section_image_2: articleData.section_image_2 || null,
-        section_image_2_alt: articleData.section_image_2_alt || null,
-        section_image_2_caption: articleData.section_image_2_caption || null,
-        section_image_3: articleData.section_image_3 || null,
-        section_image_3_alt: articleData.section_image_3_alt || null,
-        section_image_3_caption: articleData.section_image_3_caption || null,
-        section_image_4: articleData.section_image_4 || null,
-        section_image_4_alt: articleData.section_image_4_alt || null,
-        section_image_4_caption: articleData.section_image_4_caption || null,
-
         updated_at: now,
       };
 
-      // Resilient save helper: if schema migration hasn't been executed in Supabase yet,
-      // fall back to base columns so saving never crashes.
-      const executeSave = async (dataToSave: any) => {
-        if (articleData.id) {
-          const updateRes = await supabase
+      if (articleData.id) {
+        // Update existing record
+        const { data, error } = await supabase
+          .from('articles')
+          .update(payload)
+          .eq('id', articleData.id)
+          .select()
+          .single();
+
+        if (error) {
+          // If update by ID fails because of schema column mismatch, attempt slug update
+          const slugUpdate = await supabase
             .from('articles')
-            .update(dataToSave)
-            .eq('id', articleData.id)
+            .update(payload)
+            .eq('slug', articleData.slug)
             .select()
             .single();
 
-          if (updateRes.error) {
-            // Slug fallback
-            return await supabase
-              .from('articles')
-              .update(dataToSave)
-              .eq('slug', articleData.slug)
-              .select()
-              .single();
+          if (slugUpdate.error) {
+            return { success: false, error: slugUpdate.error.message };
           }
-          return updateRes;
-        } else {
-          return await supabase
-            .from('articles')
-            .insert([dataToSave])
-            .select()
-            .single();
         }
-      };
+      } else {
+        // Insert new record
+        const { data, error } = await supabase
+          .from('articles')
+          .insert([payload])
+          .select()
+          .single();
 
-      let saveResult = await executeSave(payload);
-
-      // If missing column error (user has not run migration yet in Supabase SQL editor),
-      // retry with base schema so content is safely saved.
-      if (saveResult.error && saveResult.error.message.includes('column')) {
-        console.warn('Supabase column not detected; retrying with legacy schema:', saveResult.error.message);
-        const legacyPayload = { ...payload };
-        delete legacyPayload.target_keyword;
-        delete legacyPayload.builder_segment;
-        delete legacyPayload.strategic_takeaway;
-        delete legacyPayload.primary_service_cta;
-        delete legacyPayload.linkedin_post_summary;
-        saveResult = await executeSave(legacyPayload);
-      }
-
-      if (saveResult.error) {
-        return { success: false, error: saveResult.error.message };
+        if (error) {
+          return { success: false, error: error.message };
+        }
       }
 
       // Success: refresh list and return to dashboard

@@ -27,13 +27,13 @@ export function Footer() {
             </Link>
 
             <p className="text-sm font-body text-slate-300 leading-relaxed max-w-sm pt-2">
-              Building Growth Systems That Deliver Qualified Leads and Measurable Results for residential construction companies, custom home builders, and luxury remodelers.
+              Building practical Google Growth Systems around your business, your customers and measurable growth.
             </p>
 
             <div className="pt-2 text-xs font-supporting text-slate-400 space-y-2">
               <div className="flex items-center gap-2">
                 <Shield className="w-3.5 h-3.5 text-sky-400 shrink-0" />
-                <span>16+ Years Enterprise Technology & Systems Rigor</span>
+                <span>16+ Years in Technology & Management</span>
               </div>
               <div className="flex items-center gap-2">
                 <Phone className="w-3.5 h-3.5 text-sky-400 shrink-0" />
@@ -191,7 +191,7 @@ export function Footer() {
         {/* Bottom Legal & Copyright Bar */}
         <div className="pt-8 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-supporting text-slate-400">
           <div>
-            © {currentYear} {siteConfig.brandName}. All rights reserved. Helping Residential Construction Companies Grow Through Google.
+            © {currentYear} {siteConfig.brandName}. All rights reserved.
           </div>
 
           <div className="flex items-center gap-5">

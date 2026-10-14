@@ -7,7 +7,7 @@ export const publishedArticles: Article[] = [
   {
     "title": "Generative Engine Optimization (GEO): How AI Overviews & Perplexity Change Builder Discovery",
     "slug": "generative-engine-optimization-ai-search-builders",
-    "category": "ai-search",
+    "category": "geo-ai-search",
     "excerpt": "Homeowners are no longer simply typing ten blue links; they are asking AI search engines: 'Who is the best custom builder for modern hillside homes in [City]?' Here is how GEO works.",
     "featuredImage": "/images/article-geo-ai-search.jpg",
     "featuredImageAlt": "Geometric architectural residence with cantilevered deck and floor-to-ceiling glass in evening light",
@@ -80,7 +80,7 @@ export const publishedArticles: Article[] = [
   {
     "title": "Closed-Loop Conversion Tracking: Connecting Google Clicks to CRM Offline Contracts",
     "slug": "conversion-tracking-custom-builders-offline-crm",
-    "category": "construction-marketing",
+    "category": "conversion-landing-pages",
     "excerpt": "Because the sales cycle in custom home building lasts 3 to 12 months, tracking website form fills alone blinds your marketing. Here is how closed-loop CRM attribution works.",
     "featuredImage": "/images/article-conversion-tracking.jpg",
     "featuredImageAlt": "Contemporary luxury home interior featuring clean architectural lines and warm natural wood finishes",
@@ -153,7 +153,7 @@ export const publishedArticles: Article[] = [
   {
     "title": "Landing Page Architecture for Residential Builders: Converting High-Value Homeowner Inquiries",
     "slug": "high-ticket-remodeling-landing-page-architecture",
-    "category": "construction-marketing",
+    "category": "conversion-landing-pages",
     "excerpt": "When prospective clients consider a major custom build or substantial residential renovation, generic marketing funnels fail. Here is how to engineer landing pages that convey architectural caliber and convert qualified homeowners.",
     "featuredImage": "/images/article-landing-pages.jpg",
     "featuredImageAlt": "Minimalist luxury bathroom with freestanding soaking tub overlooking private courtyard",
@@ -299,7 +299,7 @@ export const publishedArticles: Article[] = [
   {
     "title": "The Local SEO Framework for Residential Construction Companies",
     "slug": "local-seo-framework-custom-home-builders",
-    "category": "seo",
+    "category": "seo-local-search",
     "excerpt": "Ranking in a broad metro area for vanity terms is inefficient; ranking in target communities where residential projects are commissioned is business growth. Here is the hyper-local SEO blueprint.",
     "featuredImage": "/images/article-local-seo.jpg",
     "featuredImageAlt": "Striking modern luxury villa exterior with warm architectural lighting at twilight",

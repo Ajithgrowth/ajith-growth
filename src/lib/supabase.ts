@@ -1,26 +1,12 @@
 import { createClient } from '@supabase/supabase-js';
 
-const getEnvVar = (key: string): string | undefined => {
-  if (typeof process !== 'undefined' && process.env && process.env[key]) {
-    return process.env[key];
-  }
-  try {
-    if (typeof import.meta !== 'undefined' && (import.meta as any).env) {
-      return (import.meta as any).env[key];
-    }
-  } catch {
-    // ignore
-  }
-  return undefined;
-};
-
 const SUPABASE_URL =
-  getEnvVar('VITE_SUPABASE_URL') ||
+  (import.meta.env.VITE_SUPABASE_URL as string) ||
   'https://iiquspioabbsclltqjme.supabase.co';
 
 const SUPABASE_ANON_KEY =
-  getEnvVar('VITE_SUPABASE_ANON_KEY') ||
-  getEnvVar('VITE_SUPABASE_PUBLISHABLE_KEY') ||
+  (import.meta.env.VITE_SUPABASE_ANON_KEY as string) ||
+  (import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string) ||
   'sb_publishable_vbHgxPgYNGSS62ksvD9VnQ_yDYbrgb8';
 
 /**

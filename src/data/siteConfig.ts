@@ -27,11 +27,11 @@ export const siteConfig = {
   siteUrl: "https://ajithgrowth.com",
   websiteUrl: "https://ajithgrowth.com",
   canonicalDomain: "https://ajithgrowth.com",
-  positioning: "Google Growth Consultant for Residential Construction Companies",
+  positioning: "Google Growth Consultant for Residential Construction",
   primaryTagline: "Helping Residential Construction Companies Grow Through Google",
   heroH1: "Helping Residential Construction Companies Grow Through Google",
   heroSupportingCopy: "We build Google Growth Systems that help residential construction companies attract qualified homeowner enquiries, improve conversion, and measure what actually drives growth.",
-  secondaryStatement: "Building Growth Systems That Deliver Qualified Leads and Measurable Results.",
+  secondaryStatement: "Technology Experience. Business Thinking. Search Growth.",
   founderName: "Ajith B R",
   location: "Bangalore, Karnataka, India",
   email: "ajithgrowth.consulting@gmail.com",
@@ -59,9 +59,9 @@ export const siteConfig = {
     name: "Ajith B R",
     title: "Founder — Ajith Growth",
     role: "Founder — Ajith Growth",
-    positioning: "Google Ads • SEO • AI Search • Google Business Profile Consultant",
-    experience: "16+ Years in Technology Leadership & Management",
-    bio: "Ajith is a technology and business professional focused on helping residential construction companies build measurable growth systems through Google. His background combines 16+ years in IT leadership with hands-on business growth experience.",
+    positioning: "Technology • Business • Google Growth",
+    experience: "16+ Years in Technology & Management",
+    bio: "Ajith is a technology and business professional focused on helping residential construction companies build measurable growth systems through Google.",
     statement: "I believe marketing works best when technology, business understanding and measurable execution come together.",
   },
   primaryServices: [
@@ -85,6 +85,7 @@ export const siteConfig = {
     { name: "Landing Pages", href: "/services#landing-pages" },
     { name: "Conversion Tracking", href: "/services#conversion-tracking" },
     { name: "GEO & AI Search", href: "/services#geo-ai-search" },
+    { name: "Growth Strategy", href: "/services#growth-strategy" },
   ] as NavItem[],
   socialProfiles: {
     linkedin: "",
@@ -151,4 +152,3 @@ export const SCHEMA_IDS = {
   website: `${siteConfig.canonicalDomain}/#website`,
   localBusiness: `${siteConfig.canonicalDomain}/#localbusiness`,
 } as const;
-
