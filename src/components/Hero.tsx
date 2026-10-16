@@ -18,9 +18,9 @@ export function Hero({
   eyebrow = siteConfig.positioning,
   title = (
     <>
-      Helping Residential Construction Companies{' '}
+      Turning Google Visibility Into{' '}
       <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-sky-300 to-white">
-        Grow Through Google
+        Meaningful Business Growth
       </span>
     </>
   ),
@@ -31,8 +31,8 @@ export function Hero({
   secondaryCtaHref = '#growth-system',
   trustPoints = [
     'Specialist Google Growth Consultant',
-    'Residential Construction Only',
-    'Signed Contracts Over Vanity Clicks',
+    'Construction as the Primary Focus',
+    'Selected Premium Boutique Growth',
     'Systems-Led Engineering Discipline'
   ],
 }: HeroProps) {

@@ -34,8 +34,8 @@ export const staticPagesSeo: Record<string, SeoRouteData> = {
     lastmod: '2026-10-16',
     changefreq: 'weekly',
     priority: '1.0',
-    noscriptHeading: 'Helping Residential Construction Companies Grow Through Google',
-    noscriptBody: '<p>We build Google Growth Systems that help residential construction companies attract qualified homeowner enquiries, improve conversion, and measure what actually drives growth.</p><p>Ajith Growth also works selectively with premium and designer boutiques that want to strengthen their Google presence and create a clearer path from search to enquiry.</p><p><a href="/services">View Services</a> | <a href="/industries/boutiques">Explore Boutique Growth</a> | <a href="/insights">Read Insights</a> | <a href="/contact">Book Consultation</a></p>'
+    noscriptHeading: 'Turning Google Visibility Into Meaningful Business Growth',
+    noscriptBody: '<p><strong>For residential construction companies and selected premium and designer boutiques.</strong></p><p>Ajith Growth connects Google Ads, SEO, local search, landing pages and conversion tracking to help the right customers discover your business, understand its value and take the next step.</p><p><a href="/industries/construction">Explore Construction Growth</a> | <a href="/industries/boutiques">Explore Boutique Growth</a> | <a href="/services">View Services</a> | <a href="/contact">Book Consultation</a></p>'
   },
   '/about': {
     path: '/about',
