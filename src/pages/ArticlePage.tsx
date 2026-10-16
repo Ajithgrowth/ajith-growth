@@ -363,13 +363,13 @@ export function ArticlePage({ slug }: ArticlePageProps) {
             {/* Inline Consultation Banner */}
             <div className="mt-12 pt-8 border-t border-[#DCE5EE] bg-[#F8FAFC] -mx-6 sm:-mx-10 -mb-6 sm:-mb-10 p-6 sm:p-8 rounded-b-2xl">
               <span className="text-xs font-supporting font-bold uppercase tracking-wider text-sky-800 block mb-1">
-                EXECUTIVE CONSULTATION
+                GROWTH CONSULTATION
               </span>
               <h3 className="text-lg sm:text-xl font-heading font-bold text-[#0D1B2A] mb-2">
-                Evaluate Your Growth System with Ajith
+                Let's Build a Better Growth System
               </h3>
               <p className="text-xs sm:text-sm text-[#64748B] font-body mb-5 leading-relaxed">
-                Ready to engineer these principles into your residential construction business? Book a confidential growth consultation to assess your specific metro territory and qualified homeowner pipeline.
+                Start with a conversation about your business, your goals and where your current growth system can improve.
               </p>
               <div className="flex flex-col sm:flex-row items-center gap-3">
                 <Link
@@ -433,8 +433,8 @@ export function ArticlePage({ slug }: ArticlePageProps) {
             <FAQSection
               items={article.faqs}
               title={`Frequently Asked Questions on ${article.title}`}
-              eyebrow="EXPERT CLARITY"
-              description="Direct, technical answers addressing the most common questions surrounding this strategy."
+              eyebrow="FREQUENTLY ASKED QUESTIONS"
+              description="Clear answers to common questions related to this topic."
             />
           </div>
         )}
@@ -453,7 +453,7 @@ export function ArticlePage({ slug }: ArticlePageProps) {
                   CONTINUE READING
                 </span>
                 <h2 className="text-xl sm:text-2xl font-heading font-bold text-[#0D1B2A]">
-                  Related Strategic Analyses
+                  Related Insights
                 </h2>
               </div>
               <Link
@@ -474,8 +474,8 @@ export function ArticlePage({ slug }: ArticlePageProps) {
 
       {/* 10. Book Consultation CTA */}
       <CTASection
-        eyebrow="GROWTH ARCHITECTURE"
-        title="Transform Your Search Inquiries Into High-Value Contracts"
+        eyebrow="GROWTH CONSULTATION"
+        title="Let's Build a Better Growth System"
         description="Start with a conversation about your business, your goals and where your current growth system can improve."
         primaryButtonText="Book a Growth Consultation"
         primaryButtonHref="/contact"
@@ -493,7 +493,7 @@ export function ArticlePage({ slug }: ArticlePageProps) {
             href="/contact"
             className="flex-1 py-2.5 px-4 rounded-xl bg-[#0D1B2A] text-white text-xs font-supporting font-semibold uppercase tracking-wider text-center shadow-xs hover:bg-sky-900 transition-colors"
           >
-            Book Free Consultation
+            Book a Growth Consultation
           </Link>
           {verifiedWhatsAppUrl && (
             <a

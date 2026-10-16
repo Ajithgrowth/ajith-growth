@@ -82,7 +82,7 @@ export function ArticleCard({ article, featured = false }: ArticleCardProps) {
               onClick={handleClick}
               className="inline-flex items-center gap-1.5 text-xs font-semibold font-supporting uppercase tracking-wider text-[#0D1B2A] group-hover:text-sky-700 transition-colors"
             >
-              <span>Read Analysis</span>
+              <span>Read Article</span>
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
@@ -146,7 +146,7 @@ export function ArticleCard({ article, featured = false }: ArticleCardProps) {
             onClick={handleClick}
             className="inline-flex items-center gap-1.5 text-xs font-semibold font-supporting uppercase tracking-wider text-[#0D1B2A] group-hover:text-sky-800 transition-colors"
           >
-            <span>Read Strategy</span>
+            <span>Read Article</span>
             <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>

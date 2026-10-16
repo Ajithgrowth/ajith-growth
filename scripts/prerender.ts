@@ -50,14 +50,14 @@ function buildSchemaGraph(route: typeof routes[0]) {
       '@id': SCHEMA_IDS.person,
     },
     knowsAbout: [
-      'Google Ads for Residential Construction',
-      'Local SEO for Custom Home Builders',
-      'Google Business Profile for Contractors',
-      'Landing Pages for Construction Companies',
-      'Conversion Tracking for Construction Companies',
-      'Generative Engine Optimization for Builders',
-      'AI Search for Residential Construction',
-      'Residential Construction Marketing',
+      'Google Ads',
+      'SEO and Local Search',
+      'Google Business Profile',
+      'Landing Page Optimization',
+      'Conversion Tracking',
+      'GEO and AI Search',
+      'Residential Construction Growth',
+      'Premium and Designer Boutique Growth',
     ],
   };
 
@@ -77,12 +77,14 @@ function buildSchemaGraph(route: typeof routes[0]) {
     description: siteConfig.founder.bio,
     knowsAbout: [
       'Google Growth Consulting',
-      'Google Ads for Residential Construction',
-      'Local SEO for Custom Home Builders',
+      'Google Ads',
+      'SEO and Local Search',
       'Google Business Profile Optimization',
-      'Conversion Rate Optimization & Landing Pages',
-      'Closed-Loop Attribution & Construction CRM',
-      'Generative Engine Optimization (GEO)',
+      'Landing Page Optimization',
+      'Conversion Tracking',
+      'GEO and AI Search',
+      'Residential Construction Growth',
+      'Premium and Designer Boutique Growth',
     ],
   };
 
@@ -158,10 +160,6 @@ function buildSchemaGraph(route: typeof routes[0]) {
         provider: {
           '@type': 'Organization',
           '@id': SCHEMA_IDS.organization,
-        },
-        areaServed: {
-          '@type': 'Country',
-          name: 'India',
         },
       });
     });

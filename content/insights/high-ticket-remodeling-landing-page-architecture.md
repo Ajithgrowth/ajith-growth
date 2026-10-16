@@ -7,7 +7,7 @@ featuredImage: "/images/article-landing-pages.jpg"
 featuredImageAlt: "Minimalist luxury bathroom with freestanding soaking tub overlooking private courtyard"
 author: "Ajith B R"
 publishedDate: "2026-08-01"
-updatedDate: "2026-08-30"
+updatedDate: "2026-10-16"
 featured: false
 draft: false
 keywords:
@@ -48,7 +48,7 @@ Every high-performing residential construction landing page requires four founda
 
 Many marketing agencies focus purely on "reducing form fields to maximize volume". In residential construction, maximizing raw inquiries often leads to an inundated estimating team dealing with misaligned project budgets.
 
-By adding intentional qualification questions—such as "Estimated Project Scope", "Target Timeframe", and "Property Location"—you filter out mismatched inquiries before they consume valuable time. This ensures that paid traffic from your [Google Ads campaigns](/services#google-ads) yields genuine prospects.
+Relevant qualification questions—such as project scope, target timeframe and property location—can help a business understand whether an enquiry fits its services. They should be balanced with usability and do not guarantee that paid traffic from [Google Ads campaigns](/services#google-ads) will produce a particular type or volume of enquiry.
 
 ## Designing the High-Value Consultation CTA
 

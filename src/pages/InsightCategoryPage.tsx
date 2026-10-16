@@ -101,7 +101,7 @@ export function InsightCategoryPage({ categorySlug }: InsightCategoryPageProps) 
           <div className="max-w-4xl">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-sky-950 text-sky-300 text-xs font-supporting font-semibold uppercase tracking-wider border border-sky-800/40 mb-4">
               <Layers className="w-3.5 h-3.5" />
-              <span>CATEGORY CLUSTER</span>
+              <span>INSIGHT TOPIC</span>
             </span>
             <h1 className="text-3xl sm:text-5xl font-heading font-bold text-white tracking-tight leading-tight mb-6">
               {category.label}
@@ -119,10 +119,10 @@ export function InsightCategoryPage({ categorySlug }: InsightCategoryPageProps) 
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
             <div>
               <span className="text-xs font-supporting font-bold uppercase tracking-wider text-[#64748B] block mb-1">
-                TOPICAL ARCHIVE
+                ARTICLES
               </span>
               <h2 className="text-xl sm:text-2xl font-heading font-bold text-[#0D1B2A] tracking-tight">
-                {categoryArticles.length} {categoryArticles.length === 1 ? 'Strategic Article' : 'Strategic Articles'}
+                {categoryArticles.length} {categoryArticles.length === 1 ? 'Article' : 'Articles'}
               </h2>
             </div>
             <Link
@@ -138,10 +138,10 @@ export function InsightCategoryPage({ categorySlug }: InsightCategoryPageProps) 
             <div className="text-center py-20 bg-[#F8FAFC] rounded-2xl border border-dashed border-[#DCE5EE]">
               <BookOpen className="w-10 h-10 text-slate-400 mx-auto mb-3" />
               <h3 className="text-lg font-heading font-semibold text-[#0D1B2A] mb-2">
-                New Research Under Preparation
+                New Insights Under Preparation
               </h3>
               <p className="text-sm text-[#64748B] font-body max-w-md mx-auto mb-6">
-                Strategic research and editorial analyses for {category.label} are currently being finalized.
+                Practical insights for {category.label} are currently being prepared.
               </p>
               <Link
                 href="/insights"
@@ -224,8 +224,8 @@ export function InsightCategoryPage({ categorySlug }: InsightCategoryPageProps) 
 
       {/* Final Call to Action */}
       <CTASection
-        eyebrow="STRATEGIC CONSULTATION"
-        title={`Accelerate Your Growth in ${category.label}`}
+        eyebrow="GROWTH CONSULTATION"
+        title="Let's Build a Better Growth System"
         description="Start with a conversation about your business, your goals and where your current growth system can improve."
         primaryButtonText="Book a Growth Consultation"
         primaryButtonHref="/contact"

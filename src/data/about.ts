@@ -1,55 +1,34 @@
+/**
+ * Approved reusable About-page content.
+ * The rendered page currently keeps its layout copy colocated in AboutPage.tsx.
+ */
 export const aboutData = {
-  headline: "Helping Residential Construction Companies Grow Through Google",
-  introduction: "Ajith B R founded Ajith Growth as a specialist consultancy dedicated to residential construction companies. After starting in digital marketing and observing construction business owners consistently frustrated with low-quality leads, wasted ad spend, and generic agency promises, Ajith focused deeply on Google search intent to build practical, measurable growth systems that connect builders with serious homeowners.",
+  headline: 'Built on Technology. Driven by Business. Focused on Growth.',
+  introduction: 'Ajith Growth is a specialist growth consultancy that helps businesses build stronger visibility on Google, attract the right audience and turn search activity into meaningful business opportunities. Our primary focus is residential construction, with selected work in premium and designer boutiques.',
   story: [
     {
-      title: "The Problem with Traditional Agencies",
-      content: "Many generalist marketing agencies treat residential construction like any other local business. They optimize for clicks and generic form fills, leaving builders and contractors to sift through budget shoppers and unqualified inquiries that drain estimating resources."
+      title: 'Technology & Management',
+      content: 'More than 16 years working across technical and management roles in organizations such as Cognizant, Accenture, Wipro, HP, IBM and Kyndryl.',
     },
     {
-      title: "Focusing Exclusively on Google",
-      content: "High-value home building decisions start with intent-driven searches on Google. By focusing deeply on Google Ads, Google Business Profile, Local SEO, and conversion-focused landing pages, Ajith developed specialized frameworks tailored specifically to the sales cycles of residential construction."
+      title: 'Hands-On Business Experience',
+      content: 'Building and growing Shrusara Fashion Boutique with hands-on involvement in business strategy, operations and digital marketing.',
     },
     {
-      title: "A Dedicated Growth Consultancy",
-      content: "Ajith Growth was structured from the beginning as a focused, consultative partnership. Rather than handing clients off to junior account managers, builders work directly with Ajith to evaluate their market territory, eliminate advertising waste, and build sustainable client acquisition systems."
-    }
+      title: 'Ajith Growth',
+      content: 'A specialist growth consultancy focused primarily on helping residential construction companies grow through Google, while also working with selected premium and designer boutiques.',
+    },
   ],
   milestones: [
-    {
-      phase: "Phase 1",
-      title: "Digital Marketing Foundation",
-      description: "Hands-on experience executing paid search, search engine optimization, and conversion optimization across competitive local markets."
-    },
-    {
-      phase: "Phase 2",
-      title: "Recognizing the Construction Gap",
-      description: "Identified that residential builders were underserved by generalist agencies pushing vanity traffic instead of qualified project opportunities."
-    },
-    {
-      phase: "Phase 3",
-      title: "Google Growth Specialization",
-      description: "Deep focus on Google Ads intent stratification, local 3-pack visibility, negative keyword protection, and closed-loop conversion tracking."
-    },
-    {
-      phase: "Phase 4",
-      title: "Ajith Growth Consultancy",
-      description: "Established a specialist consultancy exclusively serving residential construction companies with direct, accountable growth systems."
-    }
+    { phase: '16+ Years', title: 'Technology & Management', description: 'Building experience in technology, problem-solving, systems and management.' },
+    { phase: 'Corporate Experience', title: 'Cognizant · Accenture · Wipro · HP · IBM · Kyndryl', description: '' },
+    { phase: 'Entrepreneurship', title: 'Shrusara Fashion Boutique', description: 'Building and growing Shrusara Fashion Boutique with my wife.' },
+    { phase: 'Hands-On Google Growth', title: 'Google Ads · Google Business Profile · SEO', description: 'Conversion Optimization' },
+    { phase: 'Today', title: 'Ajith Growth', description: 'Helping businesses build stronger visibility on Google and turn search activity into meaningful business opportunities, with residential construction as the primary focus.' },
   ],
   pillars: [
-    {
-      title: "Google Search Specialization",
-      description: "Focused mastery of Google Ads, Google Business Profile, Local SEO, and conversion tracking engineered for construction search intent."
-    },
-    {
-      title: "Residential Construction Focus",
-      description: "Tailored strategies for turnkey builders, villa developers, and luxury home contractors who require qualified inquiries rather than generic lead volume."
-    },
-    {
-      title: "Direct Consultative Partnership",
-      description: "Work directly with Ajith. Transparent communication, regular strategic reviews, and zero layers of agency bureaucracy."
-    }
-  ]
+    { title: 'Technology & Systems Thinking', description: 'A structured approach to solving problems, understanding complex systems and improving how things work together.' },
+    { title: 'Real Business Perspective', description: 'Marketing must connect with customer needs, business operations, sales and profitability.' },
+    { title: 'Google Growth Expertise', description: 'Google Ads, SEO, Google Business Profile, landing-page optimization, conversion tracking and evolving search technologies.' },
+  ],
 };
-

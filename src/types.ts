@@ -12,6 +12,7 @@ export type Category =
   | 'Conversion & Landing Pages'
   | 'Construction Growth'
   | 'GEO & AI Search'
+  | 'Boutique Growth'
   | 'Business Strategy';
 
 export interface TableOfContentsItem {
@@ -94,6 +95,7 @@ export interface TimelineMilestone {
 }
 
 export interface ConsultationFormData {
+  industry: 'residential-construction' | 'premium-designer-boutiques';
   name: string;
   businessName: string;
   website: string;

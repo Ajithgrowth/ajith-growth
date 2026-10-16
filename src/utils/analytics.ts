@@ -22,6 +22,7 @@ export type AnalyticsEventName =
   | 'consultation_form_submit'
   | 'article_click'
   | 'category_filter_click'
+  | 'industry_selection'
   | 'service_cta_click';
 
 export function initAnalytics() {

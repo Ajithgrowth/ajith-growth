@@ -31,11 +31,11 @@ export const staticPagesSeo: Record<string, SeoRouteData> = {
     canonicalUrl: siteConfig.canonicalDomain,
     ogImage: `${siteConfig.canonicalDomain}/images/og-default.jpg`,
     ogType: 'website',
-    lastmod: '2026-09-10',
+    lastmod: '2026-10-16',
     changefreq: 'weekly',
     priority: '1.0',
     noscriptHeading: 'Helping Residential Construction Companies Grow Through Google',
-    noscriptBody: '<p>We build Google Growth Systems that help residential construction companies attract qualified homeowner enquiries, improve conversion, and measure what actually drives growth.</p><p><a href="/services">View Services</a> | <a href="/insights">Read Insights</a> | <a href="/contact">Book Consultation</a></p>'
+    noscriptBody: '<p>We build Google Growth Systems that help residential construction companies attract qualified homeowner enquiries, improve conversion, and measure what actually drives growth.</p><p>Ajith Growth also works selectively with premium and designer boutiques that want to strengthen their Google presence and create a clearer path from search to enquiry.</p><p><a href="/services">View Services</a> | <a href="/industries/boutiques">Explore Boutique Growth</a> | <a href="/insights">Read Insights</a> | <a href="/contact">Book Consultation</a></p>'
   },
   '/about': {
     path: '/about',
@@ -44,7 +44,7 @@ export const staticPagesSeo: Record<string, SeoRouteData> = {
     canonicalUrl: `${siteConfig.canonicalDomain}/about`,
     ogImage: `${siteConfig.canonicalDomain}/images/og-about.jpg`,
     ogType: 'website',
-    lastmod: '2026-08-15',
+    lastmod: '2026-10-16',
     changefreq: 'monthly',
     priority: '0.8',
     breadcrumbs: [
@@ -61,40 +61,26 @@ export const staticPagesSeo: Record<string, SeoRouteData> = {
     canonicalUrl: `${siteConfig.canonicalDomain}/services`,
     ogImage: `${siteConfig.canonicalDomain}/images/article-google-ads.jpg`,
     ogType: 'website',
-    lastmod: '2026-09-09',
+    lastmod: '2026-10-16',
     changefreq: 'monthly',
     priority: '0.9',
     breadcrumbs: [
       { name: 'Home', url: siteConfig.canonicalDomain },
       { name: 'Services', url: `${siteConfig.canonicalDomain}/services` }
     ],
-    faqs: [
-      {
-        question: 'Why choose a specialist consultant over a generic marketing agency?',
-        answer: 'Generic agencies deploy boilerplate templates across unrelated industries. A specialist consultant understands residential construction sales cycles, qualification friction, and builds customized search architectures tied directly to signed construction contracts.'
-      },
-      {
-        question: 'How does Google Ads perform for residential construction companies?',
-        answer: 'Google Ads can help builders reach homeowners actively searching for construction services when targeting, landing pages and conversion measurement are structured correctly.'
-      },
-      {
-        question: 'What types of residential construction firms do you work with?',
-        answer: 'We work with established residential construction companies, including turnkey builders, villa construction specialists, luxury custom home builders, and major residential remodelers.'
-      }
-    ],
     noscriptHeading: 'Google Growth Services for Residential Construction Companies',
     noscriptBody: `
       <p>Google Ads, SEO, Google Business Profile, landing pages and conversion tracking connected around the business, its customers and its goals.</p>
       <ul>
-        <li><a href="/services#google-ads"><strong>Google Ads for Residential Construction:</strong> High-intent search campaigns targeting homeowners actively searching for residential building and remodeling services.</a></li>
-        <li><a href="/services#local-seo"><strong>Local SEO for Custom Home Builders:</strong> Improve local organic search visibility in key neighborhoods and service areas.</a></li>
-        <li><a href="/services#google-business-profile"><strong>Google Business Profile Optimization:</strong> Map pack ranking, verified local citations, and trust signals for luxury contractors.</a></li>
+        <li><a href="/services#google-ads"><strong>Google Ads:</strong> Reach people who are actively searching for the products or services your business offers.</a></li>
+        <li><a href="/services#local-seo"><strong>SEO & Local Search:</strong> Build visibility beyond paid advertising.</a></li>
+        <li><a href="/services#google-business-profile"><strong>Google Business Profile:</strong> Help potential customers discover accurate business information in Google Search and Maps.</a></li>
         <li><a href="/services#landing-pages"><strong>Landing Page Optimization:</strong> A clearer journey from search to enquiry.</a></li>
-        <li><a href="/services#conversion-tracking"><strong>Conversion Tracking & Revenue Loop:</strong> Connect offline CRM milestones and signed construction contracts directly to Google search terms.</a></li>
-        <li><a href="/services#growth-strategy"><strong>Residential Growth Architecture:</strong> Holistic search and sales alignment for sustainable contractor growth.</a></li>
-        <li><a href="/services#geo-ai-search"><strong>Generative Engine Optimization (GEO):</strong> Structured entity architecture positioning your firm for AI Overviews and answer engines.</a></li>
+        <li><a href="/services#conversion-tracking"><strong>Conversion Tracking:</strong> Measure calls, forms, WhatsApp enquiries and other meaningful actions.</a></li>
+        <li><a href="/services#growth-strategy"><strong>Growth Strategy:</strong> Connect search, visibility, conversion and measurement around your business goals.</a></li>
+        <li><a href="/services#geo-ai-search"><strong>GEO & AI Search:</strong> Build clear business information and a well-structured website for evolving search experiences.</a></li>
       </ul>
-      <p><a href="/contact">Book a Growth Consultation</a> | <a href="/insights">Explore Strategic Insights</a></p>
+      <p><a href="/industries/boutiques">Explore Boutique Growth</a> | <a href="/contact">Book a Growth Consultation</a> | <a href="/insights">Explore Growth Insights</a></p>
     `
   },
   '/insights': {
@@ -104,32 +90,32 @@ export const staticPagesSeo: Record<string, SeoRouteData> = {
     canonicalUrl: `${siteConfig.canonicalDomain}/insights`,
     ogImage: `${siteConfig.canonicalDomain}/images/article-google-business-profile.jpg`,
     ogType: 'website',
-    lastmod: '2026-09-08',
+    lastmod: '2026-10-16',
     changefreq: 'weekly',
     priority: '0.9',
     breadcrumbs: [
       { name: 'Home', url: siteConfig.canonicalDomain },
       { name: 'Insights', url: `${siteConfig.canonicalDomain}/insights` }
     ],
-    noscriptHeading: 'Construction Growth Insights & Technical Strategy',
-    noscriptBody: '<p>In-depth technical guides for residential contractors and custom builders covering Google Ads, Local SEO, GBP optimization, conversion architecture, and AI search.</p>'
+    noscriptHeading: 'Ajith Growth Insights',
+    noscriptBody: '<p>Practical insights on Google Ads, SEO, Google Business Profile, AI Search and business growth, with construction as the primary focus and selected boutique-growth topics.</p>'
   },
   '/contact': {
     path: '/contact',
     title: 'Book a Growth Consultation | Ajith Growth',
-    description: 'Start a conversation with Ajith about your construction business, Google visibility, enquiry journey and growth goals.',
+    description: 'Start a growth consultation with Ajith about your construction company or premium boutique, Google visibility, enquiry journey and business goals.',
     canonicalUrl: `${siteConfig.canonicalDomain}/contact`,
     ogImage: `${siteConfig.canonicalDomain}/images/article-landing-pages.jpg`,
     ogType: 'website',
-    lastmod: '2026-08-18',
+    lastmod: '2026-10-16',
     changefreq: 'monthly',
     priority: '0.8',
     breadcrumbs: [
       { name: 'Home', url: siteConfig.canonicalDomain },
       { name: 'Contact', url: `${siteConfig.canonicalDomain}/contact` }
     ],
-    noscriptHeading: 'Schedule a Confidential Construction Growth Consultation',
-    noscriptBody: `<p>Direct communication with Ajith: email <a href="mailto:${siteConfig.email}">${siteConfig.email}</a> or submit the preliminary consultation request form.</p>`
+    noscriptHeading: 'Book a Growth Consultation',
+    noscriptBody: `<p>Start with a conversation about your business, ideal customers, Google visibility and growth goals. Email <a href="mailto:${siteConfig.email}">${siteConfig.email}</a> or use the consultation form.</p>`
   },
 
   '/industries/construction': {
@@ -137,16 +123,16 @@ export const staticPagesSeo: Record<string, SeoRouteData> = {
     title: 'Residential Construction Growth | Ajith Growth',
     description: 'Google growth strategy for residential construction companies seeking stronger visibility and better homeowner enquiries.',
     canonicalUrl: `${siteConfig.canonicalDomain}/industries/construction`,
-    ogImage: `${siteConfig.canonicalDomain}/images/hero-home.jpg`, ogType: 'website', lastmod: '2026-10-14', changefreq: 'monthly', priority: '0.8',
+    ogImage: `${siteConfig.canonicalDomain}/images/hero-home.jpg`, ogType: 'website', lastmod: '2026-10-16', changefreq: 'monthly', priority: '0.8',
     breadcrumbs: [{ name: 'Home', url: siteConfig.canonicalDomain }, { name: 'Construction Growth', url: `${siteConfig.canonicalDomain}/industries/construction` }],
     noscriptHeading: 'Residential Construction Growth', noscriptBody: '<p>Helping residential construction companies build stronger Google visibility and attract homeowners who are genuinely planning their next project.</p>'
   },
   '/industries/boutiques': {
     path: '/industries/boutiques',
     title: 'Premium & Designer Boutique Growth | Ajith Growth',
-    description: 'Google growth strategy for selected premium and designer boutiques seeking stronger visibility and customer discovery.',
+    description: 'Google growth support for selected premium and designer boutiques seeking stronger visibility and more relevant customer enquiries.',
     canonicalUrl: `${siteConfig.canonicalDomain}/industries/boutiques`,
-    ogImage: `${siteConfig.canonicalDomain}/images/og-default.jpg`, ogType: 'website', lastmod: '2026-10-14', changefreq: 'monthly', priority: '0.6',
+    ogImage: `${siteConfig.canonicalDomain}/images/og-default.jpg`, ogType: 'website', lastmod: '2026-10-16', changefreq: 'monthly', priority: '0.6',
     breadcrumbs: [{ name: 'Home', url: siteConfig.canonicalDomain }, { name: 'Boutique Growth', url: `${siteConfig.canonicalDomain}/industries/boutiques` }],
     noscriptHeading: 'Premium & Designer Boutique Growth', noscriptBody: '<p>Helping selected premium and designer boutiques strengthen their Google presence and connect with customers who appreciate their work.</p>'
   },

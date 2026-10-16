@@ -1,25 +1,30 @@
-import { useEffect } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { RouterProvider, useRouter } from './utils/router';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { HomePage } from './pages/HomePage';
-import { AboutPage } from './pages/AboutPage';
-import { ServicesPage } from './pages/ServicesPage';
-import { InsightsPage } from './pages/InsightsPage';
-import { InsightCategoryPage } from './pages/InsightCategoryPage';
-import { ArticlePage } from './pages/ArticlePage';
-import { ContactPage } from './pages/ContactPage';
-import { PrivacyPage } from './pages/PrivacyPage';
-import { TermsPage } from './pages/TermsPage';
-import { NotFoundPage } from './pages/NotFoundPage';
-import { ConstructionIndustryPage } from './pages/ConstructionIndustryPage';
-import { BoutiquesIndustryPage } from './pages/BoutiquesIndustryPage';
 import { isCategorySlug } from './data/insightCategories';
 import { initAnalytics } from './utils/analytics';
+
+const AboutPage = lazy(() => import('./pages/AboutPage').then((module) => ({ default: module.AboutPage })));
+const ServicesPage = lazy(() => import('./pages/ServicesPage').then((module) => ({ default: module.ServicesPage })));
+const InsightsPage = lazy(() => import('./pages/InsightsPage').then((module) => ({ default: module.InsightsPage })));
+const InsightCategoryPage = lazy(() => import('./pages/InsightCategoryPage').then((module) => ({ default: module.InsightCategoryPage })));
+const ArticlePage = lazy(() => import('./pages/ArticlePage').then((module) => ({ default: module.ArticlePage })));
+const ContactPage = lazy(() => import('./pages/ContactPage').then((module) => ({ default: module.ContactPage })));
+const PrivacyPage = lazy(() => import('./pages/PrivacyPage').then((module) => ({ default: module.PrivacyPage })));
+const TermsPage = lazy(() => import('./pages/TermsPage').then((module) => ({ default: module.TermsPage })));
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage').then((module) => ({ default: module.NotFoundPage })));
+const ConstructionIndustryPage = lazy(() => import('./pages/ConstructionIndustryPage').then((module) => ({ default: module.ConstructionIndustryPage })));
+const BoutiquesIndustryPage = lazy(() => import('./pages/BoutiquesIndustryPage').then((module) => ({ default: module.BoutiquesIndustryPage })));
 
 function AdminRedirect() {
   useEffect(() => { window.location.replace('/admin/index.html'); }, []);
   return <main className="min-h-screen flex items-center justify-center text-sm text-slate-600">Opening the content manager…</main>;
+}
+
+function PageLoader() {
+  return <main className="min-h-[60vh] flex items-center justify-center text-sm text-slate-600" role="status">Loading page…</main>;
 }
 
 function AppContent() {
@@ -112,7 +117,9 @@ function AppContent() {
 
       <Header />
       <div className="flex-1 w-full">
-        {renderRoute()}
+        <Suspense fallback={<PageLoader />}>
+          {renderRoute()}
+        </Suspense>
       </div>
       <Footer />
     </div>

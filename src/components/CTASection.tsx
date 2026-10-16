@@ -11,6 +11,7 @@ export interface CTASectionProps {
   secondaryButtonText?: string;
   secondaryButtonHref?: string;
   supportingLine?: string;
+  trackingLocation?: string;
   className?: string;
 }
 
@@ -23,6 +24,7 @@ export function CTASection({
   secondaryButtonText = "Explore Our Services",
   secondaryButtonHref = "/services",
   supportingLine,
+  trackingLocation = 'cta_section_primary',
   className = "",
 }: CTASectionProps) {
   return (
@@ -45,7 +47,7 @@ export function CTASection({
             href={primaryButtonHref}
             variant="primary"
             size="lg"
-            onClick={() => trackEvent('consultation_cta_click', { location: 'cta_section_primary' })}
+            onClick={() => trackEvent('consultation_cta_click', { location: trackingLocation })}
             className="w-full sm:w-auto"
           >
             <span>{primaryButtonText}</span>
