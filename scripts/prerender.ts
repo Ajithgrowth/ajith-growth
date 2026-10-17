@@ -43,7 +43,7 @@ function buildSchemaGraph(route: typeof routes[0]) {
     },
     audience: {
       '@type': 'Audience',
-      audienceType: 'Residential Construction Companies and selected Premium & Designer Boutiques',
+      audienceType: 'Residential Construction Companies and selected Premium Bridal & Designer Boutiques',
     },
     founder: {
       '@type': 'Person',
@@ -57,7 +57,7 @@ function buildSchemaGraph(route: typeof routes[0]) {
       'Conversion Tracking',
       'GEO and AI Search',
       'Residential Construction Growth',
-      'Premium and Designer Boutique Growth',
+      'Premium Bridal and Designer Boutique Growth',
     ],
   };
 
@@ -84,7 +84,7 @@ function buildSchemaGraph(route: typeof routes[0]) {
       'Conversion Tracking',
       'GEO and AI Search',
       'Residential Construction Growth',
-      'Premium and Designer Boutique Growth',
+      'Premium Bridal and Designer Boutique Growth',
     ],
   };
 

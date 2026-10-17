@@ -18,7 +18,7 @@ The production content manager is available at `/admin/`. Publishing an Insights
 
 The form posts to `/api/contact`. Configure `RESEND_API_KEY` and `CONTACT_FROM_EMAIL` in the deployment environment to enable email delivery. A Vercel API handler and an equivalent Netlify Function are included; Netlify redirects `/api/contact` to that function before the single-page-app fallback.
 
-The form supports Residential Construction and Premium & Designer Boutiques. Boutique CTAs open `/contact?industry=boutiques#consultation-form`, which preselects the boutique-specific consultation journey.
+The form supports Residential Construction and Premium Bridal & Designer Boutiques. Boutique CTAs open `/contact?industry=boutiques#consultation-form`, which preselects the boutique-specific consultation journey.
 
 ## Pre-launch verification
 

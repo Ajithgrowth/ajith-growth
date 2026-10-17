@@ -25,7 +25,7 @@ export async function handler(event: any) {
   }
 
   const safe = (value: string) => value.replace(/[<>]/g, '');
-  const industryLabel = industry === 'premium-designer-boutiques' ? 'Premium & Designer Boutiques' : 'Residential Construction';
+  const industryLabel = industry === 'premium-designer-boutiques' ? 'Premium Bridal & Designer Boutiques' : 'Residential Construction';
   const delivery = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },

@@ -9,7 +9,7 @@ export const INSIGHT_CATEGORIES: InsightCategory[] = [
   { slug: 'conversion-landing-pages', label: 'Conversion & Landing Pages', description: 'Website experience, enquiry journeys and conversion improvement.' },
   { slug: 'construction-growth', label: 'Construction Growth', description: 'Homeowner enquiries, project opportunities and residential construction marketing.' },
   { slug: 'geo-ai-search', label: 'GEO & AI Search', description: 'Search evolution, structured data and AI-search readiness.' },
-  { slug: 'boutique-growth', label: 'Boutique Growth', description: 'Google marketing, premium customer acquisition and growth strategies for selected fashion boutiques.' },
+  { slug: 'boutique-growth', label: 'Boutique Growth', description: 'Google marketing, customer acquisition and growth strategies for selected premium bridal and designer boutiques.' },
   { slug: 'business-strategy', label: 'Business Strategy', description: 'Business development, customer experience, decision-making and sustainable growth.' },
 ];
 

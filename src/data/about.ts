@@ -4,7 +4,7 @@
  */
 export const aboutData = {
   headline: 'Built on Technology. Driven by Business. Focused on Growth.',
-  introduction: 'Ajith Growth is a specialist growth consultancy that helps businesses build stronger visibility on Google, attract the right audience and turn search activity into meaningful business opportunities. Our primary focus is residential construction, with selected work in premium and designer boutiques.',
+  introduction: 'Ajith Growth is a specialist growth consultancy that helps businesses build stronger visibility on Google, attract the right audience and turn search activity into meaningful business opportunities. Our primary focus is residential construction, with selected work in premium bridal and designer boutiques.',
   story: [
     {
       title: 'Technology & Management',
@@ -16,7 +16,7 @@ export const aboutData = {
     },
     {
       title: 'Ajith Growth',
-      content: 'A specialist growth consultancy focused primarily on helping residential construction companies grow through Google, while also working with selected premium and designer boutiques.',
+      content: 'A specialist growth consultancy focused primarily on helping residential construction companies grow through Google, while also working with selected premium bridal and designer boutiques.',
     },
   ],
   milestones: [

@@ -64,7 +64,7 @@ export function TermsPage() {
                 2. Scope of Services
               </h2>
               <p>
-                Ajith Growth provides professional strategic consulting, search engine marketing advisory, and growth strategy primarily for residential construction companies, with selected work for premium and designer boutiques. Services include:
+                Ajith Growth provides professional strategic consulting, search engine marketing advisory, and growth strategy primarily for residential construction companies, with selected work for premium bridal and designer boutiques. Services include:
               </p>
               <ul className="list-disc pl-5 space-y-1.5 text-slate-600 mt-2">
                 <li>Google Ads campaign strategy, architecture, and management</li>

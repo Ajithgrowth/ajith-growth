@@ -17,7 +17,7 @@ import { trackEvent } from '../utils/analytics';
 
 const businesses = [
   ['Bridal & Couture Boutiques', 'Custom bridal wear and specialized designer creations.'],
-  ['Premium & Designer Fashion Boutiques', 'Distinctive, customized fashion for customers who value design and craftsmanship.'],
+  ['Premium Bridal & Designer Boutiques', 'Distinctive, customized fashion for customers who value design and craftsmanship.'],
   ['Customization-Led Boutiques', 'Made-to-measure outfits, personalized design and specialized craftsmanship.'],
   ['Occasion-Wear & Designer-Wear Businesses', 'Selected businesses specializing in special-occasion and designer outfits.'],
 ];
@@ -69,8 +69,8 @@ export function BoutiquesIndustryPage() {
           <div className="max-w-4xl">
             <nav className="text-xs text-slate-400 mb-6"><Link href="/">Home</Link> / Industries / Boutiques</nav>
             <span className="text-xs font-semibold tracking-wider text-sky-400">BOUTIQUE GROWTH</span>
-            <h1 className="mt-3 text-4xl sm:text-5xl font-heading font-bold">Premium & Designer Boutique Growth</h1>
-            <p className="mt-6 text-lg text-slate-300 leading-relaxed">Helping selected premium and designer boutiques strengthen their Google presence, reach relevant customers and create a clearer path from search to enquiry.</p>
+            <h1 className="mt-3 text-4xl sm:text-5xl font-heading font-bold">Premium Bridal & Designer Boutique Growth</h1>
+            <p className="mt-6 text-lg text-slate-300 leading-relaxed">Helping selected premium bridal and designer boutiques strengthen their Google presence, reach relevant customers and create a clearer path from search to enquiry.</p>
             <div className="mt-8 flex flex-col sm:flex-row gap-4">
               <Button href="/contact?industry=boutiques#consultation-form" size="lg" onClick={() => trackEvent('consultation_cta_click', { location: 'boutique_hero', industry: 'premium-designer-boutiques' })}>Discuss Boutique Growth <ArrowRight className="w-5 h-5" /></Button>
               <Button href="#shrusara-case-study" variant="outline" size="lg">See Hands-On Experience</Button>
@@ -83,7 +83,7 @@ export function BoutiquesIndustryPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mb-12">
             <h2 className="text-3xl sm:text-4xl font-heading font-semibold text-[#0D1B2A]">Who We Help</h2>
-            <p className="mt-4 text-lg text-[#64748B]">Ajith Growth works selectively with premium, designer and customization-led boutiques that want to strengthen their Google presence and connect with customers who appreciate their work.</p>
+            <p className="mt-4 text-lg text-[#64748B]">Ajith Growth works selectively with premium bridal, designer and customization-led boutiques that want to strengthen their Google presence and connect with customers who appreciate their work.</p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {businesses.map(([title, text]) => <article key={title} className="rounded-2xl border border-[#DCE5EE] bg-[#F8FAFC] p-6"><h3 className="font-heading font-semibold text-[#0D1B2A]">{title}</h3><p className="mt-3 text-sm text-[#64748B] leading-relaxed">{text}</p></article>)}

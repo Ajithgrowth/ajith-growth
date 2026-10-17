@@ -32,7 +32,7 @@ export function Hero({
   trustPoints = [
     'Specialist Google Growth Consultant',
     'Construction as the Primary Focus',
-    'Selected Premium Boutique Growth',
+    'Selected Premium Bridal & Designer Boutique Growth',
     'Systems-Led Engineering Discipline'
   ],
 }: HeroProps) {

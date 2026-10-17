@@ -55,7 +55,7 @@ export function PrivacyPage() {
                 1. Commitment to Client Confidentiality
               </h2>
               <p>
-                At Ajith Growth, we provide strategic Google growth consulting primarily to residential construction companies, with selected work for premium and designer boutiques. We recognize that business, customer and marketing information represents proprietary business assets. We maintain high standards of data security and confidentiality.
+                At Ajith Growth, we provide strategic Google growth consulting primarily to residential construction companies, with selected work for premium bridal and designer boutiques. We recognize that business, customer and marketing information represents proprietary business assets. We maintain high standards of data security and confidentiality.
               </p>
             </div>
 

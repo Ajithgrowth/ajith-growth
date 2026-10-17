@@ -27,7 +27,7 @@ export const staticPagesSeo: Record<string, SeoRouteData> = {
   '/': {
     path: '/',
     title: 'Ajith Growth | Google Growth Systems for Business',
-    description: 'Ajith Growth helps residential construction companies and selected premium boutiques build Google visibility, improve conversion and measure growth.',
+    description: 'Ajith Growth helps residential construction companies and selected premium bridal and designer boutiques build Google visibility, improve conversion and measure growth.',
     canonicalUrl: siteConfig.canonicalDomain,
     ogImage: `${siteConfig.canonicalDomain}/images/og-default.jpg`,
     ogType: 'website',
@@ -35,7 +35,7 @@ export const staticPagesSeo: Record<string, SeoRouteData> = {
     changefreq: 'weekly',
     priority: '1.0',
     noscriptHeading: 'Turning Google Visibility Into Meaningful Business Growth',
-    noscriptBody: '<p><strong>For residential construction companies and selected premium and designer boutiques.</strong></p><p>Ajith Growth connects Google Ads, SEO, local search, landing pages and conversion tracking to help the right customers discover your business, understand its value and take the next step.</p><p><a href="/industries/construction">Explore Construction Growth</a> | <a href="/industries/boutiques">Explore Boutique Growth</a> | <a href="/services">View Services</a> | <a href="/contact">Book Consultation</a></p>'
+    noscriptBody: '<p><strong>For residential construction companies and selected premium bridal and designer boutiques.</strong></p><p>Ajith Growth connects Google Ads, SEO, local search, landing pages and conversion tracking to help the right customers discover your business, understand its value and take the next step.</p><p><a href="/industries/construction">Explore Construction Growth</a> | <a href="/industries/boutiques">Explore Boutique Growth</a> | <a href="/services">View Services</a> | <a href="/contact">Book Consultation</a></p>'
   },
   '/about': {
     path: '/about',
@@ -103,7 +103,7 @@ export const staticPagesSeo: Record<string, SeoRouteData> = {
   '/contact': {
     path: '/contact',
     title: 'Book a Growth Consultation | Ajith Growth',
-    description: 'Start a growth consultation with Ajith about your construction company or premium boutique, Google visibility, enquiry journey and business goals.',
+    description: 'Start a growth consultation with Ajith about your construction company or premium bridal or designer boutique, Google visibility, enquiry journey and business goals.',
     canonicalUrl: `${siteConfig.canonicalDomain}/contact`,
     ogImage: `${siteConfig.canonicalDomain}/images/article-landing-pages.jpg`,
     ogType: 'website',
@@ -129,12 +129,12 @@ export const staticPagesSeo: Record<string, SeoRouteData> = {
   },
   '/industries/boutiques': {
     path: '/industries/boutiques',
-    title: 'Premium & Designer Boutique Growth | Ajith Growth',
-    description: 'Google growth support for selected premium and designer boutiques seeking stronger visibility and more relevant customer enquiries.',
+    title: 'Premium Bridal & Designer Boutique Growth | Ajith Growth',
+    description: 'Google growth support for selected premium bridal and designer boutiques seeking stronger visibility and more relevant customer enquiries.',
     canonicalUrl: `${siteConfig.canonicalDomain}/industries/boutiques`,
     ogImage: `${siteConfig.canonicalDomain}/images/og-default.jpg`, ogType: 'website', lastmod: '2026-10-16', changefreq: 'monthly', priority: '0.6',
     breadcrumbs: [{ name: 'Home', url: siteConfig.canonicalDomain }, { name: 'Boutique Growth', url: `${siteConfig.canonicalDomain}/industries/boutiques` }],
-    noscriptHeading: 'Premium & Designer Boutique Growth', noscriptBody: '<p>Helping selected premium and designer boutiques strengthen their Google presence and connect with customers who appreciate their work.</p>'
+    noscriptHeading: 'Premium Bridal & Designer Boutique Growth', noscriptBody: '<p>Helping selected premium bridal and designer boutiques strengthen their Google presence and connect with customers who appreciate their work.</p>'
   },
   '/privacy': {
     path: '/privacy',
