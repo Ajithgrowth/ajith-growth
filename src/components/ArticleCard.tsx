@@ -46,12 +46,9 @@ export function ArticleCard({ article, featured = false }: ArticleCardProps) {
         <div className="lg:col-span-5 p-6 sm:p-8 flex flex-col justify-between">
           <div>
             <div className="flex items-center gap-3 text-xs text-[#5F6B7A] font-supporting mb-3">
-              <Link
-                href={`/insights/${article.category}`}
-                className="text-[#0D1B2A] hover:text-sky-800 font-semibold transition-colors"
-              >
+              <span className="text-[#0D1B2A] font-semibold">
                 {categoryLabel}
-              </Link>
+              </span>
               <span>•</span>
               <span className="flex items-center gap-1">
                 <Clock className="w-3.5 h-3.5" />
@@ -104,12 +101,9 @@ export function ArticleCard({ article, featured = false }: ArticleCardProps) {
             className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
           />
           <div className="absolute top-3 left-3">
-            <Link
-              href={`/insights/${article.category}`}
-              className="px-2.5 py-0.5 rounded bg-white/95 hover:bg-white text-[#0D1B2A] hover:text-sky-800 text-[11px] font-supporting font-semibold uppercase tracking-wider shadow-xs transition-colors"
-            >
+            <span className="px-2.5 py-0.5 rounded bg-white/95 text-[#0D1B2A] text-[11px] font-supporting font-semibold uppercase tracking-wider shadow-xs">
               {categoryLabel}
-            </Link>
+            </span>
           </div>
 
         </div>

@@ -71,7 +71,7 @@ export const ArticlePreviewModal: React.FC<ArticlePreviewModalProps> = ({
               </span>
               <span className="inline-flex items-center gap-1 text-slate-600 font-medium">
                 <UserCheck className="w-3.5 h-3.5 text-slate-400" />
-                {article.author_name || 'Ajith'}
+                {article.author_name || 'Ajith B R'}
               </span>
             </div>
 

@@ -1,6 +1,6 @@
 import { siteConfig } from './siteConfig';
 import { Article } from '../types';
-import { INSIGHT_CATEGORIES, getCategoryBySlug, getCategoryLabel } from './insightCategories';
+import { getCategoryLabel } from './insightCategories';
 
 export interface SeoRouteData {
   path: string;
@@ -175,7 +175,6 @@ export const staticPagesSeo: Record<string, SeoRouteData> = {
 export function getArticleSeo(article: Article): SeoRouteData {
   const canonicalUrl = `${siteConfig.canonicalDomain}/insights/${article.slug}`;
   const categoryLabel = getCategoryLabel(article.category);
-  const categoryUrl = `${siteConfig.canonicalDomain}/insights/${article.category}`;
 
   // Generate accessible semantic HTML for static crawlability
   const sectionsHtml = article.content
@@ -212,7 +211,6 @@ export function getArticleSeo(article: Article): SeoRouteData {
     ${sectionsHtml}
     <p style="margin-top:2rem;border-top:1px solid #E2E8F0;padding-top:1rem;">
       <a href="/insights">← Back to all Insights</a> | 
-      <a href="${categoryUrl}">More in ${categoryLabel}</a> | 
       <a href="/contact">Book a Growth Consultation</a> | 
       <a href="/services">Explore Growth Services</a>
     </p>
@@ -238,7 +236,6 @@ export function getArticleSeo(article: Article): SeoRouteData {
     breadcrumbs: [
       { name: 'Home', url: siteConfig.canonicalDomain },
       { name: 'Insights', url: `${siteConfig.canonicalDomain}/insights` },
-      { name: categoryLabel, url: categoryUrl },
       { name: article.title, url: canonicalUrl }
     ],
     faqs: article.faqs && article.faqs.length > 0 ? article.faqs : undefined,
@@ -250,43 +247,9 @@ export function getArticleSeo(article: Article): SeoRouteData {
   };
 }
 
-export function getCategorySeo(categorySlug: string): SeoRouteData | null {
-  const category = getCategoryBySlug(categorySlug);
-  if (!category) return null;
-
-  const canonicalUrl = `${siteConfig.canonicalDomain}/insights/${category.slug}`;
-
-  return {
-    path: `/insights/${category.slug}`,
-    title: category.seoTitle || `${category.label} | Ajith Growth Insights`,
-    description: category.metaDescription || category.description,
-    canonicalUrl,
-    ogImage: `${siteConfig.canonicalDomain}/images/og-default.jpg`,
-    ogType: 'website',
-    lastmod: '2026-09-12',
-    changefreq: 'weekly',
-    priority: '0.8',
-    breadcrumbs: [
-      { name: 'Home', url: siteConfig.canonicalDomain },
-      { name: 'Insights', url: `${siteConfig.canonicalDomain}/insights` },
-      { name: category.label, url: canonicalUrl }
-    ],
-    noscriptHeading: `${category.label} Insights`,
-    noscriptBody: `<p>${category.description}</p><p><a href="/insights">← Back to All Insights</a></p>`
-  };
-}
-
 export function getAllSeoRoutes(articles: Article[]): SeoRouteData[] {
   const publishedArticles = articles.filter((a) => !a.draft);
   const staticList = Object.values(staticPagesSeo);
-
-  // Only include categories that have at least 1 published article in the sitemap/prerender
-  const categoryList = INSIGHT_CATEGORIES.map((cat) => {
-    const hasPublished = publishedArticles.some((a) => a.category === cat.slug);
-    if (!hasPublished) return null;
-    return getCategorySeo(cat.slug);
-  }).filter((item): item is SeoRouteData => item !== null);
-
   const articleList = publishedArticles.map(getArticleSeo);
-  return [...staticList, ...categoryList, ...articleList];
+  return [...staticList, ...articleList];
 }

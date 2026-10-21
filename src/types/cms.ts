@@ -7,7 +7,9 @@
  * - faqs: JSONB
  */
 
-export type CMSArticleStatus = 'draft' | 'published';
+import { INSIGHT_CATEGORIES } from '../data/insightCategories';
+
+export type CMSArticleStatus = 'draft' | 'scheduled' | 'published';
 
 export interface CMSArticleFAQ {
   question: string;
@@ -21,6 +23,8 @@ export interface CMSArticle {
   category: string;
   featured_image?: string;
   featured_image_alt?: string;
+  og_image?: string;
+  noindex?: boolean;
   excerpt?: string;
   quick_summary?: string; // Plain TEXT
   content?: string;
@@ -29,7 +33,13 @@ export interface CMSArticle {
   faqs?: CMSArticleFAQ[]; // JSONB
   status: CMSArticleStatus;
   published_at?: string | null; // TIMESTAMPTZ
-  author_name?: string; // Plain TEXT ("Ajith")
+  scheduled_at?: string | null;
+  is_featured?: boolean;
+  keywords?: string[];
+  canonical_override?: string | null;
+  author_id?: string | null;
+  featured_media_id?: string | null;
+  author_name?: string; // Plain TEXT ("Ajith B R")
   created_at?: string;
   updated_at?: string;
 }
@@ -39,16 +49,10 @@ export interface CMSCategoryOption {
   label: string;
 }
 
-export const CMS_CATEGORIES: CMSCategoryOption[] = [
-  { label: 'Google Ads', value: 'google-ads' },
-  { label: 'SEO & Local Search', value: 'seo-local-search' },
-  { label: 'Google Business Profile', value: 'google-business-profile' },
-  { label: 'Conversion & Landing Pages', value: 'conversion-landing-pages' },
-  { label: 'Construction Growth', value: 'construction-growth' },
-  { label: 'GEO & AI Search', value: 'geo-ai-search' },
-  { label: 'Boutique Growth', value: 'boutique-growth' },
-  { label: 'Business Strategy', value: 'business-strategy' },
-];
+export const CMS_CATEGORIES: CMSCategoryOption[] = INSIGHT_CATEGORIES.map(({ label, slug }) => ({
+  label,
+  value: slug,
+}));
 
 /**
  * Normalizes title into an SEO-friendly URL slug:

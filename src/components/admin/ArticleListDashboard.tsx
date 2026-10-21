@@ -13,6 +13,7 @@ import {
   AlertCircle,
   Eye,
   RefreshCw,
+  Copy,
 } from 'lucide-react';
 import type { CMSArticle, CMSArticleStatus } from '../../types/cms';
 import { CMS_CATEGORIES } from '../../types/cms';
@@ -20,13 +21,14 @@ import { CMS_CATEGORIES } from '../../types/cms';
 interface ArticleListDashboardProps {
   articles: CMSArticle[];
   isLoading: boolean;
-  filter: 'all' | 'draft' | 'published';
-  onFilterChange: (filter: 'all' | 'draft' | 'published') => void;
+  filter: 'all' | 'draft' | 'scheduled' | 'published';
+  onFilterChange: (filter: 'all' | 'draft' | 'scheduled' | 'published') => void;
   onNewArticle: () => void;
   onEditArticle: (article: CMSArticle) => void;
   onDeleteArticle: (id?: string) => void;
   onRefresh: () => void;
   onPreviewArticle: (article: CMSArticle) => void;
+  onDuplicateArticle: (article: CMSArticle) => void;
 }
 
 export const ArticleListDashboard: React.FC<ArticleListDashboardProps> = ({
@@ -39,8 +41,10 @@ export const ArticleListDashboard: React.FC<ArticleListDashboardProps> = ({
   onDeleteArticle,
   onRefresh,
   onPreviewArticle,
+  onDuplicateArticle,
 }) => {
   const [searchTerm, setSearchTerm] = React.useState<string>('');
+  const [categoryFilter, setCategoryFilter] = React.useState<string>('all');
 
   // Calculate dashboard counts
   const totalCount = articles.length;
@@ -50,8 +54,9 @@ export const ArticleListDashboard: React.FC<ArticleListDashboardProps> = ({
   const publishedCount = articles.filter(
     (a) =>
       (a.status as string) === 'published' ||
-      ((a as any).draft === false && (a as any).status !== 'draft')
+      ((a as any).draft === false && !(a as any).status)
   ).length;
+  const scheduledCount = articles.filter((a) => (a.status as string) === 'scheduled').length;
 
   // Filter and search
   const filteredArticles = articles.filter((article) => {
@@ -59,10 +64,13 @@ export const ArticleListDashboard: React.FC<ArticleListDashboardProps> = ({
       (article.status as string) === 'draft' || (article as any).draft === true;
     const isPublished =
       (article.status as string) === 'published' ||
-      ((article as any).draft === false && (article as any).status !== 'draft');
+      ((article as any).draft === false && !(article as any).status);
+    const isScheduled = (article.status as string) === 'scheduled';
 
     if (filter === 'draft' && !isDraft) return false;
     if (filter === 'published' && !isPublished) return false;
+    if (filter === 'scheduled' && !isScheduled) return false;
+    if (categoryFilter !== 'all' && article.category !== categoryFilter) return false;
 
     if (searchTerm.trim()) {
       const q = searchTerm.toLowerCase();
@@ -84,7 +92,7 @@ export const ArticleListDashboard: React.FC<ArticleListDashboardProps> = ({
   return (
     <div className="space-y-8">
       {/* 1. Dashboard Metrics Cards */}
-      <section className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Total Articles */}
         <div
           onClick={() => onFilterChange('all')}
@@ -159,6 +167,22 @@ export const ArticleListDashboard: React.FC<ArticleListDashboardProps> = ({
             Unpublished and private drafts
           </p>
         </div>
+
+        <div
+          onClick={() => onFilterChange('scheduled')}
+          className={`p-6 rounded-2xl border transition-all cursor-pointer ${
+            filter === 'scheduled'
+              ? 'bg-white border-violet-700 ring-2 ring-violet-700/10 shadow-xs'
+              : 'bg-white border-[#DCE5EE] hover:border-slate-300'
+          }`}
+        >
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs font-supporting font-bold uppercase tracking-wider text-slate-500">Scheduled</span>
+            <div className="w-9 h-9 rounded-lg bg-violet-50 text-violet-800 flex items-center justify-center"><Calendar className="w-5 h-5" /></div>
+          </div>
+          <div className="text-3xl font-heading font-bold text-[#0D1B2A]">{scheduledCount}</div>
+          <p className="text-xs text-[#64748B] font-body mt-1">Queued for automatic publication</p>
+        </div>
       </section>
 
       {/* 2. Management Toolbar & Table Container */}
@@ -178,6 +202,16 @@ export const ArticleListDashboard: React.FC<ArticleListDashboardProps> = ({
                 className="w-full pl-9 pr-3 py-2 rounded-xl border border-[#DCE5EE] bg-[#F8FAFC] text-xs font-body text-[#0D1B2A] placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-800/20"
               />
             </div>
+
+            <select
+              aria-label="Filter by category"
+              value={categoryFilter}
+              onChange={(event) => setCategoryFilter(event.target.value)}
+              className="w-full sm:w-56 px-3 py-2 rounded-xl border border-[#DCE5EE] bg-[#F8FAFC] text-xs text-[#0D1B2A] focus:outline-none"
+            >
+              <option value="all">All categories</option>
+              {CMS_CATEGORIES.map((category) => <option key={category.value} value={category.value}>{category.label}</option>)}
+            </select>
 
             {/* Filter Pills: All / Drafts / Published */}
             <div className="flex items-center gap-1 bg-[#F1F5F9] p-1 rounded-xl text-xs font-supporting">
@@ -213,6 +247,13 @@ export const ArticleListDashboard: React.FC<ArticleListDashboardProps> = ({
                 }`}
               >
                 Published ({publishedCount})
+              </button>
+              <button
+                type="button"
+                onClick={() => onFilterChange('scheduled')}
+                className={`px-3 py-1.5 rounded-lg transition-colors font-medium ${filter === 'scheduled' ? 'bg-white text-[#0D1B2A] shadow-xs' : 'text-slate-600 hover:text-[#0D1B2A]'}`}
+              >
+                Scheduled ({scheduledCount})
               </button>
             </div>
           </div>
@@ -285,7 +326,10 @@ export const ArticleListDashboard: React.FC<ArticleListDashboardProps> = ({
                 filteredArticles.map((article) => {
                   const isDraft =
                     (article.status as string) === 'draft' || (article as any).draft === true;
-                  const pubDate = article.published_at
+                  const isScheduled = (article.status as string) === 'scheduled';
+                  const pubDate = isScheduled && article.scheduled_at
+                    ? article.scheduled_at.split('T')[0]
+                    : article.published_at
                     ? article.published_at.split('T')[0]
                     : isDraft
                     ? 'Draft'
@@ -327,6 +371,10 @@ export const ArticleListDashboard: React.FC<ArticleListDashboardProps> = ({
                             <Clock className="w-3 h-3 text-amber-700" />
                             Draft
                           </span>
+                        ) : isScheduled ? (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-supporting font-semibold bg-violet-50 text-violet-800 border border-violet-200">
+                            <Calendar className="w-3 h-3" /> Scheduled
+                          </span>
                         ) : (
                           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-supporting font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">
                             <CheckCircle2 className="w-3 h-3 text-emerald-700" />
@@ -367,6 +415,15 @@ export const ArticleListDashboard: React.FC<ArticleListDashboardProps> = ({
                           >
                             <Edit3 className="w-3.5 h-3.5" />
                             <span>Edit</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => onDuplicateArticle(article)}
+                            className="p-1.5 rounded-lg border border-[#DCE5EE] hover:bg-slate-100 text-slate-600 transition-colors"
+                            title="Duplicate as Draft"
+                          >
+                            <Copy className="w-3.5 h-3.5" />
                           </button>
 
                           {/* Delete button */}

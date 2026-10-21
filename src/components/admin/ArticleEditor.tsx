@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import {
   ArrowLeft,
   Save,
@@ -19,14 +19,14 @@ import {
 } from 'lucide-react';
 import type { CMSArticle, CMSArticleFAQ, CMSArticleStatus } from '../../types/cms';
 import { CMS_CATEGORIES, generateSlug } from '../../types/cms';
-import { uploadBlogImage } from '../../lib/cmsStorage';
+import { listBlogImages, uploadBlogImage, type BlogMediaItem } from '../../lib/cmsStorage';
 import { MarkdownEditor } from './MarkdownEditor';
 import { ArticlePreviewModal } from './ArticlePreviewModal';
 
 interface ArticleEditorProps {
   initialArticle?: CMSArticle | null;
   existingSlugs?: string[];
-  onSave: (articleData: Partial<CMSArticle>, publish: boolean) => Promise<{ success: boolean; error?: string }>;
+  onSave: (articleData: Partial<CMSArticle>, status: CMSArticleStatus) => Promise<{ success: boolean; error?: string }>;
   onDelete?: (id?: string) => Promise<void>;
   onCancel: () => void;
   isSaving: boolean;
@@ -55,6 +55,8 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
   const [featuredImageAlt, setFeaturedImageAlt] = useState<string>(
     initialArticle?.featured_image_alt || ''
   );
+  const [ogImage, setOgImage] = useState<string>(initialArticle?.og_image || '');
+  const [noindex, setNoindex] = useState(Boolean(initialArticle?.noindex));
   const [excerpt, setExcerpt] = useState<string>(initialArticle?.excerpt || '');
   const [quickSummary, setQuickSummary] = useState<string>(
     initialArticle?.quick_summary || ''
@@ -73,8 +75,15 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
     }
     return '';
   });
+  const [scheduledAtInput, setScheduledAtInput] = useState<string>(() =>
+    initialArticle?.scheduled_at ? initialArticle.scheduled_at.slice(0, 16) : ''
+  );
+  const [isFeatured, setIsFeatured] = useState(Boolean(initialArticle?.is_featured));
+  const [keywords, setKeywords] = useState((initialArticle?.keywords || []).join(', '));
+  const [canonicalOverride, setCanonicalOverride] = useState(initialArticle?.canonical_override || '');
+  const [featuredMediaId, setFeaturedMediaId] = useState(initialArticle?.featured_media_id || '');
   const [authorName, setAuthorName] = useState<string>(
-    initialArticle?.author_name || 'Ajith'
+    initialArticle?.author_name || 'Ajith B R'
   );
   const [faqs, setFaqs] = useState<CMSArticleFAQ[]>(() => {
     if (initialArticle?.faqs && Array.isArray(initialArticle.faqs)) {
@@ -89,6 +98,57 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
   const [slugError, setSlugError] = useState<string | null>(null);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [showPreviewModal, setShowPreviewModal] = useState<boolean>(false);
+  const [mediaLibrary, setMediaLibrary] = useState<BlogMediaItem[]>([]);
+
+  useEffect(() => {
+    listBlogImages().then(setMediaLibrary);
+  }, []);
+
+  const initialSnapshot = useMemo(() => JSON.stringify({
+    title: initialArticle?.title || '',
+    slug: initialArticle?.slug || '',
+    category: initialArticle?.category || CMS_CATEGORIES[0].value,
+    featuredImage: initialArticle?.featured_image || '',
+    featuredImageAlt: initialArticle?.featured_image_alt || '',
+    ogImage: initialArticle?.og_image || '',
+    noindex: Boolean(initialArticle?.noindex),
+    excerpt: initialArticle?.excerpt || '',
+    quickSummary: initialArticle?.quick_summary || '',
+    content: initialArticle?.content || '',
+    seoTitle: initialArticle?.seo_title || '',
+    metaDescription: initialArticle?.meta_description || '',
+    status: initialArticle?.status || 'draft',
+    publishDateInput: initialArticle?.published_at?.split('T')[0] || '',
+    scheduledAtInput: initialArticle?.scheduled_at?.slice(0, 16) || '',
+    isFeatured: Boolean(initialArticle?.is_featured),
+    keywords: (initialArticle?.keywords || []).join(', '),
+    canonicalOverride: initialArticle?.canonical_override || '',
+    authorName: initialArticle?.author_name || 'Ajith B R',
+    faqs: initialArticle?.faqs || [],
+  }), [initialArticle]);
+
+  const currentSnapshot = JSON.stringify({
+    title, slug, category, featuredImage, featuredImageAlt, ogImage, noindex, excerpt, quickSummary,
+    content, seoTitle, metaDescription, status, publishDateInput, scheduledAtInput,
+    isFeatured, keywords, canonicalOverride, authorName, faqs,
+  });
+  const isDirty = currentSnapshot !== initialSnapshot;
+
+  useEffect(() => {
+    const warnBeforeLeaving = (event: BeforeUnloadEvent) => {
+      if (!isDirty) return;
+      event.preventDefault();
+      event.returnValue = '';
+    };
+    window.addEventListener('beforeunload', warnBeforeLeaving);
+    return () => window.removeEventListener('beforeunload', warnBeforeLeaving);
+  }, [isDirty]);
+
+  const handleCancel = () => {
+    if (!isDirty || window.confirm('Discard unsaved changes and return to the dashboard?')) {
+      onCancel();
+    }
+  };
 
   // Auto-generate slug from title unless manually edited
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -147,6 +207,7 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
       setUploadError(res.error);
     } else if (res.url) {
       setFeaturedImage(res.url);
+      setFeaturedMediaId(res.mediaId || '');
       if (!featuredImageAlt) {
         setFeaturedImageAlt(title || file.name.replace(/\.[^/.]+$/, ''));
       }
@@ -197,6 +258,8 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
       category: category.trim(),
       featured_image: featuredImage.trim(),
       featured_image_alt: featuredImageAlt.trim(),
+      og_image: ogImage.trim() || featuredImage.trim(),
+      noindex,
       excerpt: excerpt.trim(),
       quick_summary: quickSummary.trim(), // Stored as plain TEXT
       content: content.trim(),
@@ -205,7 +268,14 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
       faqs: faqs.filter((f) => f.question.trim() && f.answer.trim()), // JSONB
       status: finalStatus,
       published_at: finalPublishedAt, // TIMESTAMPTZ
-      author_name: (authorName.trim() || 'Ajith'), // Plain TEXT
+      scheduled_at: finalStatus === 'scheduled' && scheduledAtInput
+        ? new Date(scheduledAtInput).toISOString()
+        : null,
+      is_featured: isFeatured,
+      keywords: keywords.split(',').map((keyword) => keyword.trim()).filter(Boolean),
+      canonical_override: canonicalOverride.trim() || null,
+      featured_media_id: featuredMediaId || null,
+      author_name: (authorName.trim() || 'Ajith B R'), // Plain TEXT
       updated_at: nowIso,
     };
   };
@@ -234,9 +304,25 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
       return;
     }
 
+    if (targetStatus !== 'draft' && (!excerpt.trim() || !featuredImage.trim() || !featuredImageAlt.trim())) {
+      setValidationError('Published and scheduled articles require a short description, featured image and meaningful image alt text.');
+      return;
+    }
+
+    if (targetStatus === 'scheduled') {
+      if (!scheduledAtInput) {
+        setValidationError('Choose a future publication date and time before scheduling.');
+        return;
+      }
+      if (new Date(scheduledAtInput).getTime() <= Date.now()) {
+        setValidationError('Scheduled publication time must be in the future.');
+        return;
+      }
+    }
+
     setStatus(targetStatus);
     const payload = buildArticlePayload(targetStatus);
-    const result = await onSave(payload, targetStatus === 'published');
+    const result = await onSave(payload, targetStatus);
     if (!result.success && result.error) {
       setValidationError(result.error);
     }
@@ -249,7 +335,7 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
         <div className="flex items-center gap-3">
           <button
             type="button"
-            onClick={onCancel}
+            onClick={handleCancel}
             className="p-2 rounded-xl border border-[#DCE5EE] hover:bg-slate-100 text-slate-600 transition-colors"
             title="Back to Dashboard"
           >
@@ -306,6 +392,17 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
               <Save className="w-4 h-4 text-slate-600" />
             )}
             <span>Save Draft</span>
+          </button>
+
+          {/* Publish / Update Button */}
+          <button
+            type="button"
+            disabled={isSaving}
+            onClick={() => handleSubmit('scheduled')}
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-sky-700 text-sky-900 font-heading font-semibold text-xs transition-colors disabled:opacity-50 cursor-pointer"
+          >
+            <Calendar className="w-4 h-4" />
+            <span>Schedule</span>
           </button>
 
           {/* Publish / Update Button */}
@@ -559,9 +656,34 @@ Targeting specific territories with customized project portfolios improves consu
                 className="w-full px-3.5 py-2.5 rounded-xl border border-[#DCE5EE] bg-[#F8FAFC] text-sm font-medium text-[#0D1B2A] focus:outline-none focus:ring-2 focus:ring-sky-800/20"
               >
                 <option value="draft">Draft (Private, not public)</option>
+                <option value="scheduled">Scheduled (Publishes automatically)</option>
                 <option value="published">Published</option>
               </select>
             </div>
+
+            <div>
+              <label htmlFor="scheduled-at" className="block text-xs font-supporting font-semibold uppercase tracking-wider text-[#0D1B2A] mb-1.5">
+                Scheduled Date &amp; Time
+              </label>
+              <input
+                id="scheduled-at"
+                type="datetime-local"
+                value={scheduledAtInput}
+                onChange={(e) => setScheduledAtInput(e.target.value)}
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#DCE5EE] bg-[#F8FAFC] text-sm text-[#0D1B2A] focus:outline-none focus:ring-2 focus:ring-sky-800/20"
+              />
+              <p className="text-[11px] text-slate-400 mt-1 font-body">Required only when using Schedule.</p>
+            </div>
+
+            <label className="flex items-start gap-3 rounded-xl border border-[#DCE5EE] bg-[#F8FAFC] p-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={isFeatured}
+                onChange={(e) => setIsFeatured(e.target.checked)}
+                className="mt-0.5 h-4 w-4 accent-sky-800"
+              />
+              <span><strong className="block text-xs text-[#0D1B2A]">Featured Insight</strong><span className="mt-1 block text-[11px] text-slate-500">Up to three published articles may be featured.</span></span>
+            </label>
 
             {/* Publish Date (sets published_at TIMESTAMPTZ) */}
             <div>
@@ -590,11 +712,11 @@ Targeting specific territories with customized project portfolios improves consu
                 type="text"
                 value={authorName}
                 onChange={(e) => setAuthorName(e.target.value)}
-                placeholder="Ajith"
+                placeholder="Ajith B R"
                 className="w-full px-3.5 py-2.5 rounded-xl border border-[#DCE5EE] bg-[#F8FAFC] text-sm text-[#0D1B2A] focus:outline-none focus:ring-2 focus:ring-sky-800/20 font-body"
               />
               <p className="text-[11px] text-slate-400 mt-1 font-body">
-                Stored in &ldquo;author_name&rdquo; (TEXT). Defaults to &ldquo;Ajith&rdquo;.
+                Defaults to the approved Ajith B R author profile.
               </p>
             </div>
           </div>
@@ -647,6 +769,28 @@ Targeting specific territories with customized project portfolios improves consu
                 <p className="text-xs text-red-600 mt-1 font-body">{uploadError}</p>
               )}
             </div>
+
+            {/* Direct URL input fallback */}
+            {mediaLibrary.length > 0 && (
+              <div>
+                <label htmlFor="media-library" className="block text-xs font-supporting font-semibold uppercase tracking-wider text-[#0D1B2A] mb-1">
+                  Reuse Existing Media
+                </label>
+                <select
+                  id="media-library"
+                  value={featuredMediaId}
+                  onChange={(e) => {
+                    const media = mediaLibrary.find((item) => item.id === e.target.value);
+                    setFeaturedMediaId(e.target.value);
+                    if (media) setFeaturedImage(media.public_url);
+                  }}
+                  className="w-full px-3 py-2 rounded-lg border border-[#DCE5EE] bg-[#F8FAFC] text-xs text-[#0D1B2A] focus:outline-none"
+                >
+                  <option value="">Select an uploaded image</option>
+                  {mediaLibrary.map((media) => <option key={media.id} value={media.id}>{media.filename}</option>)}
+                </select>
+              </div>
+            )}
 
             {/* Direct URL input fallback */}
             <div>
@@ -750,6 +894,59 @@ Targeting specific territories with customized project portfolios improves consu
                 </span>
               </div>
             </div>
+
+            <div>
+              <label htmlFor="article-keywords" className="block text-xs font-supporting font-semibold uppercase tracking-wider text-[#0D1B2A] mb-1">
+                Keywords
+              </label>
+              <textarea
+                id="article-keywords"
+                rows={2}
+                value={keywords}
+                onChange={(e) => setKeywords(e.target.value)}
+                placeholder="construction marketing, Google Ads, local SEO"
+                className="w-full px-3 py-2 rounded-lg border border-[#DCE5EE] bg-[#F8FAFC] text-xs font-body text-[#0D1B2A] focus:outline-none"
+              />
+              <p className="text-[10px] text-slate-400 mt-1">Separate keywords with commas.</p>
+            </div>
+
+            <div>
+              <label htmlFor="canonical-override" className="block text-xs font-supporting font-semibold uppercase tracking-wider text-[#0D1B2A] mb-1">
+                Canonical Override (Optional)
+              </label>
+              <input
+                id="canonical-override"
+                type="url"
+                value={canonicalOverride}
+                onChange={(e) => setCanonicalOverride(e.target.value)}
+                placeholder="Leave blank to use the article URL automatically"
+                className="w-full px-3 py-2 rounded-lg border border-[#DCE5EE] bg-[#F8FAFC] text-xs font-body text-[#0D1B2A] focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="og-image" className="block text-xs font-supporting font-semibold uppercase tracking-wider text-[#0D1B2A] mb-1">
+                Social Share Image (Optional)
+              </label>
+              <input
+                id="og-image"
+                type="url"
+                value={ogImage}
+                onChange={(e) => setOgImage(e.target.value)}
+                placeholder="Leave blank to use the featured image"
+                className="w-full px-3 py-2 rounded-lg border border-[#DCE5EE] bg-[#F8FAFC] text-xs font-body text-[#0D1B2A] focus:outline-none"
+              />
+            </div>
+
+            <label className="flex items-start gap-3 rounded-xl border border-[#DCE5EE] bg-[#F8FAFC] p-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={noindex}
+                onChange={(e) => setNoindex(e.target.checked)}
+                className="mt-0.5 h-4 w-4 accent-sky-800"
+              />
+              <span><strong className="block text-xs text-[#0D1B2A]">Keep out of search engines</strong><span className="mt-1 block text-[11px] text-slate-500">Use only when a published article should remain noindex.</span></span>
+            </label>
           </div>
         </div>
       </div>

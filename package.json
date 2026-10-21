@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite --port=3000 --host=0.0.0.0",
     "generate-insights": "tsx scripts/generate-insights.ts",
+    "generate-cms-seed": "tsx scripts/generate-supabase-seed.ts",
     "optimize-images": "tsx scripts/optimize-images.ts",
     "build": "npm run generate-insights && vite build && tsx scripts/prerender.ts",
     "preview": "vite preview",

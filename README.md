@@ -12,7 +12,11 @@ React and Vite website for Ajith Growth.
 
 ## Content management
 
-The production content manager is available at `/admin/`. Publishing an Insights article updates `content/insights/`; the deployment build refreshes article listings, categories and the sitemap.
+The secure Supabase content manager is available at `/admin`. Published and due scheduled articles are read dynamically from the `published_articles` database view, so routine publishing does not require a code change or redeployment. Existing Markdown articles remain as a safe build-time fallback.
+
+Apply `supabase/migrations/20261021_cms_dynamic_blog_v21.sql`, followed by `supabase/migrations/20261021_seed_existing_insights.sql`, before deploying this release. Follow `docs/SUPABASE-SQL-STEPS.md` for the exact order, verification queries, Auth setup and backup checklist.
+
+The Insights hub uses in-place category filters, combined title/summary search, featured fallback and Load More. Individual article URLs remain `/insights/article-slug`; category landing pages are intentionally not generated.
 
 ## Consultation form
 

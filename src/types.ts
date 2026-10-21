@@ -33,6 +33,8 @@ export interface Article {
   excerpt: string;
   featuredImage: string;
   featuredImageAlt?: string;
+  ogImage?: string;
+  noindex?: boolean;
   author?: string;
   publishedDate?: string;
   updatedDate?: string;

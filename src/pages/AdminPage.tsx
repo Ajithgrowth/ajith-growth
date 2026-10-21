@@ -37,13 +37,14 @@ export function AdminPage() {
   const [viewMode, setViewMode] = useState<AdminViewMode>('list');
   const [editingArticle, setEditingArticle] = useState<CMSArticle | null>(null);
   const [previewArticle, setPreviewArticle] = useState<CMSArticle | null>(null);
-  const [filter, setFilter] = useState<'all' | 'draft' | 'published'>('all');
+  const [filter, setFilter] = useState<'all' | 'draft' | 'scheduled' | 'published'>('all');
 
   // Articles Data State
   const [articles, setArticles] = useState<CMSArticle[]>([]);
   const [isLoadingArticles, setIsLoadingArticles] = useState<boolean>(false);
   const [isSavingArticle, setIsSavingArticle] = useState<boolean>(false);
   const [dbNotice, setDbNotice] = useState<string | null>(null);
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
   // Check auth session
   useEffect(() => {
@@ -228,7 +229,7 @@ export function AdminPage() {
   // Save / Update Article in Supabase
   const handleSaveArticle = async (
     articleData: Partial<CMSArticle>,
-    publish: boolean
+    targetStatus: CMSArticleStatus
   ): Promise<{ success: boolean; error?: string }> => {
     if (!user) {
       return { success: false, error: 'User session expired. Please log in again.' };
@@ -237,7 +238,7 @@ export function AdminPage() {
     setIsSavingArticle(true);
     try {
       const now = new Date().toISOString();
-      const status: CMSArticleStatus = publish ? 'published' : 'draft';
+      const status: CMSArticleStatus = targetStatus;
 
       // Calculate published_at: when published for the first time, set appropriately
       let published_at = articleData.published_at;
@@ -252,6 +253,8 @@ export function AdminPage() {
         category: articleData.category,
         featured_image: articleData.featured_image || null,
         featured_image_alt: articleData.featured_image_alt || null,
+        og_image: articleData.og_image || articleData.featured_image || null,
+        noindex: Boolean(articleData.noindex),
         excerpt: articleData.excerpt || null,
         quick_summary: articleData.quick_summary || null, // TEXT
         content: articleData.content || null,
@@ -260,7 +263,12 @@ export function AdminPage() {
         faqs: articleData.faqs || [], // JSONB
         status,
         published_at: published_at || null, // TIMESTAMPTZ
-        author_name: articleData.author_name || 'Ajith', // TEXT
+        scheduled_at: articleData.scheduled_at || null,
+        is_featured: Boolean(articleData.is_featured),
+        keywords: articleData.keywords || [],
+        canonical_override: articleData.canonical_override || null,
+        featured_media_id: articleData.featured_media_id || null,
+        author_name: articleData.author_name || 'Ajith B R', // TEXT
         updated_at: now,
       };
 
@@ -303,6 +311,13 @@ export function AdminPage() {
       await fetchArticles();
       setViewMode('list');
       setEditingArticle(null);
+      setStatusMessage(
+        status === 'published'
+          ? 'Article published successfully.'
+          : status === 'scheduled'
+          ? 'Article scheduled successfully.'
+          : 'Draft saved successfully.'
+      );
       return { success: true };
     } catch (err: any) {
       return {
@@ -323,11 +338,11 @@ export function AdminPage() {
     }
 
     try {
-      // Attempt delete by id first, or fallback to slug
-      const { error } = await supabase
-        .from('articles')
-        .delete()
-        .or(`id.eq.${identifier},slug.eq.${identifier}`);
+      const target = articles.find((article) => article.id === identifier || article.slug === identifier);
+      const deleteQuery = supabase.from('articles').delete();
+      const { error } = target?.id
+        ? await deleteQuery.eq('id', target.id)
+        : await deleteQuery.eq('slug', identifier);
 
       if (error) {
         alert(`Failed to delete: ${error.message}`);
@@ -336,6 +351,7 @@ export function AdminPage() {
 
       // Refresh list
       await fetchArticles();
+      setStatusMessage('Article deleted. A database revision is retained for recovery.');
       if (viewMode === 'editor') {
         setViewMode('list');
         setEditingArticle(null);
@@ -343,6 +359,23 @@ export function AdminPage() {
     } catch (err: any) {
       alert(`Error deleting article: ${err?.message || 'Unknown error'}`);
     }
+  };
+
+  const handleDuplicateArticle = (article: CMSArticle) => {
+    const timestamp = Date.now().toString().slice(-6);
+    setEditingArticle({
+      ...article,
+      id: undefined,
+      title: `${article.title} (Copy)`,
+      slug: `${article.slug}-copy-${timestamp}`,
+      status: 'draft',
+      published_at: null,
+      scheduled_at: null,
+      is_featured: false,
+      created_at: undefined,
+      updated_at: undefined,
+    });
+    setViewMode('editor');
   };
 
   // 1. Loading State
@@ -583,6 +616,13 @@ export function AdminPage() {
           </div>
         )}
 
+        {statusMessage && (
+          <div role="status" className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 flex items-start justify-between gap-3 text-xs font-body">
+            <span>{statusMessage}</span>
+            <button type="button" onClick={() => setStatusMessage(null)} className="font-semibold">Dismiss</button>
+          </div>
+        )}
+
         {/* View Switcher: List Dashboard OR Editor */}
         {viewMode === 'list' ? (
           <ArticleListDashboard
@@ -601,6 +641,7 @@ export function AdminPage() {
             onDeleteArticle={handleDeleteArticle}
             onRefresh={fetchArticles}
             onPreviewArticle={(art) => setPreviewArticle(art)}
+            onDuplicateArticle={handleDuplicateArticle}
           />
         ) : (
           <ArticleEditor

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Calendar, Clock, ArrowLeft, ArrowRight, CheckCircle2, BookOpen, MessageCircle } from 'lucide-react';
@@ -8,13 +8,18 @@ import { AuthorCard } from '../components/AuthorCard';
 import { FAQSection } from '../components/FAQSection';
 import { ArticleCard } from '../components/ArticleCard';
 import { CTASection } from '../components/CTASection';
-import { Link, useRouter } from '../utils/router';
+import { Link } from '../utils/router';
 import { siteConfig } from '../data/siteConfig';
 import { defaultAuthor } from '../data/authors';
-import { getCategoryBySlug, getCategoryLabel } from '../data/insightCategories';
-import { getArticleBySlug, getRelatedArticles } from '../generated/insights';
-import { slugify, createHeadingSlugger } from '../utils/slugify';
+import { getCategoryLabel } from '../data/insightCategories';
+import {
+  getArticleBySlug as getStaticArticleBySlug,
+  getRelatedArticles as getStaticRelatedArticles,
+} from '../generated/insights';
+import { fetchPublishedArticle, fetchRelatedArticles } from '../lib/publicArticles';
+import { createHeadingSlugger } from '../utils/slugify';
 import { trackEvent } from '../utils/analytics';
+import type { Article } from '../types';
 
 interface ArticlePageProps {
   slug: string;
@@ -30,8 +35,47 @@ function getNodeText(node: any): string {
 }
 
 export function ArticlePage({ slug }: ArticlePageProps) {
-  const { navigate } = useRouter();
-  const article = getArticleBySlug(slug);
+  const initialArticle = getStaticArticleBySlug(slug);
+  const [article, setArticle] = useState<Article | undefined>(initialArticle);
+  const [relatedArticles, setRelatedArticles] = useState<Article[]>(
+    initialArticle ? getStaticRelatedArticles(initialArticle.slug, 3) : []
+  );
+  const [isLoading, setIsLoading] = useState(!initialArticle);
+
+  useEffect(() => {
+    let cancelled = false;
+    const staticArticle = getStaticArticleBySlug(slug);
+    setArticle(staticArticle);
+    setRelatedArticles(staticArticle ? getStaticRelatedArticles(staticArticle.slug, 3) : []);
+    setIsLoading(!staticArticle);
+
+    fetchPublishedArticle(slug).then(async (result) => {
+      if (cancelled) return;
+      if (result.redirectTo) {
+        window.location.replace(`/insights/${result.redirectTo}`);
+        return;
+      }
+      setArticle(result.article);
+      setIsLoading(false);
+      if (result.article) {
+        setRelatedArticles(await fetchRelatedArticles(result.article, 3));
+      } else {
+        setRelatedArticles([]);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [slug]);
+
+  if (isLoading) {
+    return (
+      <main id="main-content" className="min-h-[60vh] flex items-center justify-center text-sm text-[#64748B]" role="status">
+        Loading article…
+      </main>
+    );
+  }
 
   if (!article) {
     return (
@@ -60,12 +104,7 @@ export function ArticlePage({ slug }: ArticlePageProps) {
 
   const categorySlug = article.category;
   const categoryLabel = getCategoryLabel(categorySlug);
-  const categoryData = getCategoryBySlug(categorySlug);
-  const canonicalUrl = `${siteConfig.canonicalDomain}/insights/${article.slug}`;
-  const categoryUrl = `${siteConfig.canonicalDomain}/insights/${categorySlug}`;
-
-  // Automatically generated related articles (exactly 3, same category first, excluding current)
-  const relatedArticles = getRelatedArticles(article.slug, 3);
+  const canonicalUrl = article.canonicalUrl || `${siteConfig.canonicalDomain}/insights/${article.slug}`;
 
   // Check for verified WhatsApp URL from centralized siteConfig
   const verifiedWhatsAppUrl = siteConfig.whatsappUrl;
@@ -76,7 +115,6 @@ export function ArticlePage({ slug }: ArticlePageProps) {
   const breadcrumbs = [
     { name: 'Home', url: siteConfig.canonicalDomain },
     { name: 'Insights', url: `${siteConfig.canonicalDomain}/insights` },
-    { name: categoryLabel, url: categoryUrl },
     { name: article.title, url: canonicalUrl },
   ];
 
@@ -86,7 +124,7 @@ export function ArticlePage({ slug }: ArticlePageProps) {
         title={article.seoTitle || `${article.title} | Ajith Growth`}
         description={article.metaDescription || article.excerpt}
         canonicalUrl={canonicalUrl}
-        ogImage={article.featuredImage}
+        ogImage={article.ogImage || article.featuredImage}
         ogType="article"
         publishedTime={article.publishedDate}
         modifiedTime={article.updatedDate || article.publishedDate}
@@ -96,15 +134,15 @@ export function ArticlePage({ slug }: ArticlePageProps) {
         keywords={article.keywords}
         articleSection={categoryLabel}
         imageAlt={article.featuredImageAlt}
+        noindex={article.noindex}
       />
 
-      {/* Breadcrumb Navigation: Home -> Insights -> Category -> Article Title */}
+      {/* Breadcrumb Navigation: Home -> Insights -> Article Title */}
       <div className="bg-white border-b border-[#DCE5EE]">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <Breadcrumb
             items={[
               { label: 'Insights', href: '/insights' },
-              { label: categoryLabel, href: `/insights/${categorySlug}` },
               { label: article.title },
             ]}
           />
@@ -134,12 +172,9 @@ export function ArticlePage({ slug }: ArticlePageProps) {
       <header className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mb-10">
         {/* 2. Category + Published Date + Reading Time */}
         <div className="flex flex-wrap items-center gap-3 mb-4 text-xs font-supporting">
-          <Link
-            href={`/insights/${categorySlug}`}
-            className="px-3 py-1 rounded-md bg-[#0D1B2A] text-white font-semibold uppercase tracking-wider hover:bg-sky-900 transition-colors"
-          >
+          <span className="px-3 py-1 rounded-md bg-[#0D1B2A] text-white font-semibold uppercase tracking-wider">
             {categoryLabel}
-          </Link>
+          </span>
           <span className="flex items-center gap-1.5 text-[#64748B]">
             <Calendar className="w-3.5 h-3.5 text-slate-400" />
             <span>Published: {article.publishedDate}</span>
@@ -457,10 +492,10 @@ export function ArticlePage({ slug }: ArticlePageProps) {
                 </h2>
               </div>
               <Link
-                href={`/insights/${categorySlug}`}
+                href="/insights"
                 className="text-xs font-supporting font-semibold uppercase tracking-wider text-sky-800 hover:text-[#0D1B2A] transition-colors"
               >
-                More in {categoryLabel} →
+                View all insights →
               </Link>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

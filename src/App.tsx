@@ -3,13 +3,11 @@ import { RouterProvider, useRouter } from './utils/router';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { HomePage } from './pages/HomePage';
-import { isCategorySlug } from './data/insightCategories';
 import { initAnalytics } from './utils/analytics';
 
 const AboutPage = lazy(() => import('./pages/AboutPage').then((module) => ({ default: module.AboutPage })));
 const ServicesPage = lazy(() => import('./pages/ServicesPage').then((module) => ({ default: module.ServicesPage })));
 const InsightsPage = lazy(() => import('./pages/InsightsPage').then((module) => ({ default: module.InsightsPage })));
-const InsightCategoryPage = lazy(() => import('./pages/InsightCategoryPage').then((module) => ({ default: module.InsightCategoryPage })));
 const ArticlePage = lazy(() => import('./pages/ArticlePage').then((module) => ({ default: module.ArticlePage })));
 const ContactPage = lazy(() => import('./pages/ContactPage').then((module) => ({ default: module.ContactPage })));
 const PrivacyPage = lazy(() => import('./pages/PrivacyPage').then((module) => ({ default: module.PrivacyPage })));
@@ -17,11 +15,7 @@ const TermsPage = lazy(() => import('./pages/TermsPage').then((module) => ({ def
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage').then((module) => ({ default: module.NotFoundPage })));
 const ConstructionIndustryPage = lazy(() => import('./pages/ConstructionIndustryPage').then((module) => ({ default: module.ConstructionIndustryPage })));
 const BoutiquesIndustryPage = lazy(() => import('./pages/BoutiquesIndustryPage').then((module) => ({ default: module.BoutiquesIndustryPage })));
-
-function AdminRedirect() {
-  useEffect(() => { window.location.replace('/admin/index.html'); }, []);
-  return <main className="min-h-screen flex items-center justify-center text-sm text-slate-600">Opening the content manager…</main>;
-}
+const AdminPage = lazy(() => import('./pages/AdminPage').then((module) => ({ default: module.AdminPage })));
 
 function PageLoader() {
   return <main className="min-h-[60vh] flex items-center justify-center text-sm text-slate-600" role="status">Loading page…</main>;
@@ -76,9 +70,6 @@ function AppContent() {
     }
     if (normalized.startsWith('/insights/')) {
       const slug = normalized.replace('/insights/', '');
-      if (isCategorySlug(slug)) {
-        return <InsightCategoryPage categorySlug={slug} />;
-      }
       return <ArticlePage slug={slug} />;
     }
     if (normalized === '/contact') {
@@ -91,7 +82,7 @@ function AppContent() {
       return <TermsPage />;
     }
     if (normalized === '/admin' || normalized.startsWith('/admin/')) {
-      return <AdminRedirect />;
+      return <AdminPage />;
     }
 
     return <NotFoundPage />;
@@ -102,7 +93,7 @@ function AppContent() {
   const isAdmin = normalized === '/admin' || normalized.startsWith('/admin/');
 
   if (isAdmin) {
-    return <AdminRedirect />;
+    return <Suspense fallback={<PageLoader />}><AdminPage /></Suspense>;
   }
 
   return (

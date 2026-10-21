@@ -6,7 +6,29 @@ const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
 export interface UploadImageResult {
   url?: string;
+  mediaId?: string;
   error?: string;
+}
+
+export interface BlogMediaItem {
+  id: string;
+  filename: string;
+  public_url: string;
+  mime_type?: string;
+  file_size?: number;
+  width?: number;
+  height?: number;
+}
+
+async function getImageDimensions(file: File): Promise<{ width?: number; height?: number }> {
+  try {
+    const image = await createImageBitmap(file);
+    const dimensions = { width: image.width, height: image.height };
+    image.close();
+    return dimensions;
+  } catch {
+    return {};
+  }
 }
 
 /**
@@ -59,10 +81,35 @@ export async function uploadBlogImage(file: File): Promise<UploadImageResult> {
       return { error: 'Failed to obtain public URL from Supabase Storage.' };
     }
 
-    return { url: publicData.publicUrl };
+    const dimensions = await getImageDimensions(file);
+    const { data: mediaRecord } = await supabase
+      .from('media_assets')
+      .insert({
+        filename: file.name,
+        storage_path: data?.path || filePath,
+        public_url: publicData.publicUrl,
+        mime_type: file.type,
+        file_size: file.size,
+        width: dimensions.width || null,
+        height: dimensions.height || null,
+      })
+      .select('id')
+      .maybeSingle();
+
+    return { url: publicData.publicUrl, mediaId: mediaRecord?.id };
   } catch (err: any) {
     return {
       error: err?.message || 'An unexpected error occurred during image upload.',
     };
   }
+}
+
+export async function listBlogImages(): Promise<BlogMediaItem[]> {
+  const { data, error } = await supabase
+    .from('media_assets')
+    .select('id,filename,public_url,mime_type,file_size,width,height')
+    .order('created_at', { ascending: false })
+    .limit(100);
+  if (error || !data) return [];
+  return data as BlogMediaItem[];
 }

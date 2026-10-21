@@ -16,7 +16,7 @@ if (!fs.existsSync(BASE_HTML_PATH)) {
 
 const baseTemplate = fs.readFileSync(BASE_HTML_PATH, 'utf8');
 
-// Combine static routes, category archive routes, and dynamic article routes
+// Combine static routes and individual article routes. Category filtering stays on /insights/.
 const allArticles = getAllArticles();
 const routes = getAllSeoRoutes(allArticles);
 
@@ -370,8 +370,10 @@ ${routes
 `;
 
 fs.writeFileSync(path.join(DIST_DIR, 'sitemap.xml'), sitemapXml, 'utf8');
+fs.writeFileSync(path.join(DIST_DIR, 'sitemap-static.xml'), sitemapXml, 'utf8');
 if (fs.existsSync(PUBLIC_DIR)) {
   fs.writeFileSync(path.join(PUBLIC_DIR, 'sitemap.xml'), sitemapXml, 'utf8');
+  fs.writeFileSync(path.join(PUBLIC_DIR, 'sitemap-static.xml'), sitemapXml, 'utf8');
 }
 
 console.log(`prerender.ts: Successfully generated sitemap.xml with ${routes.length} URLs in both dist/ and public/.`);
