@@ -4,6 +4,7 @@ import App from './App.tsx';
 import { RouterProvider } from './utils/router';
 import './index.css';
 
+// Render the CMS independently so /admin never falls through to the public-site 404 page.
 const AdminPage = lazy(() => import('./pages/AdminPage').then((module) => ({ default: module.AdminPage })));
 const path = window.location.pathname.replace(/\/+$/, '') || '/';
 const isAdminRoute = path === '/admin' || path.startsWith('/admin/');
