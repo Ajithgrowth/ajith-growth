@@ -55,8 +55,19 @@ export const ArticleListDashboard: React.FC<ArticleListDashboardProps> = ({
   const [categoryFilter, setCategoryFilter] = React.useState<string>('all');
   const [copiedSlug, setCopiedSlug] = React.useState<string | null>(null);
 
+  /**
+   * Builds a share-safe public URL. This deliberately removes whitespace from
+   * both parts so an accidental space/new line in a deployment setting, or in
+   * a pasted slug, can never make its way into the copied link.
+   */
+  const publicArticleUrl = (slug: string) => {
+    const domain = String(siteConfig.canonicalDomain).replace(/\s+/g, '').replace(/\/+$/, '');
+    const cleanSlug = String(slug).trim().replace(/\s+/g, '').replace(/^\/+|\/+$/g, '');
+    return `${domain}/insights/${encodeURIComponent(cleanSlug)}`;
+  };
+
   const copyPublishedUrl = async (article: CMSArticle) => {
-    const url = `${siteConfig.canonicalDomain}/insights/${article.slug}`;
+    const url = publicArticleUrl(article.slug);
     try {
       await navigator.clipboard.writeText(url);
       setCopiedSlug(article.slug);
@@ -67,7 +78,7 @@ export const ArticleListDashboard: React.FC<ArticleListDashboardProps> = ({
   };
 
   const openPublishedArticle = (article: CMSArticle) => {
-    window.open(`${siteConfig.canonicalDomain}/insights/${article.slug}`, '_blank', 'noopener,noreferrer');
+    window.open(publicArticleUrl(article.slug), '_blank', 'noopener,noreferrer');
   };
 
   // Calculate dashboard counts
