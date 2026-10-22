@@ -12,7 +12,7 @@ import {
   Loader2,
   AlertTriangle,
 } from 'lucide-react';
-import { supabase, AUTHORIZED_CMS_EMAIL, isAuthorizedEmail } from '../lib/supabase';
+import { supabase, AUTHORIZED_CMS_EMAIL, isAuthorizedEmail, isSupabaseConfigured } from '../lib/supabase';
 import { SEO } from '../components/SEO';
 import { useRouter } from '../utils/router';
 import type { CMSArticle, CMSArticleStatus } from '../types/cms';
@@ -52,6 +52,12 @@ export function AdminPage() {
 
     async function checkSession() {
       setIsLoading(true);
+      if (!isSupabaseConfigured) {
+        setUser(null);
+        setErrorMessage('CMS setup is incomplete. Add the new Supabase Project URL and Publishable key in Vercel, then redeploy.');
+        setIsLoading(false);
+        return;
+      }
       try {
         const {
           data: { session },
@@ -162,6 +168,11 @@ export function AdminPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
+
+    if (!isSupabaseConfigured) {
+      setErrorMessage('CMS setup is incomplete. Add the new Supabase Project URL and Publishable key in Vercel, then redeploy.');
+      return;
+    }
 
     const cleanEmail = email.trim().toLowerCase();
 

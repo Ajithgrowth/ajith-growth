@@ -1,13 +1,18 @@
 import { createClient } from '@supabase/supabase-js';
 
-const SUPABASE_URL =
-  (import.meta.env.VITE_SUPABASE_URL as string) ||
-  'https://iiquspioabbsclltqjme.supabase.co';
+const configuredUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined;
+const configuredPublishableKey =
+  (import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined) ||
+  (import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string | undefined);
 
-const SUPABASE_ANON_KEY =
-  (import.meta.env.VITE_SUPABASE_ANON_KEY as string) ||
-  (import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string) ||
-  'sb_publishable_vbHgxPgYNGSS62ksvD9VnQ_yDYbrgb8';
+/** True only when the deployment has been configured for its current Supabase project. */
+export const isSupabaseConfigured = Boolean(configuredUrl && configuredPublishableKey);
+
+// These placeholders deliberately prevent an unconfigured deployment from
+// connecting to a previous Supabase project. Configure the two VITE_ variables
+// in Vercel before using the CMS.
+const SUPABASE_URL = configuredUrl || 'https://supabase-not-configured.invalid';
+const SUPABASE_ANON_KEY = configuredPublishableKey || 'supabase-not-configured';
 
 /**
  * Reusable Supabase client configured with the public project URL

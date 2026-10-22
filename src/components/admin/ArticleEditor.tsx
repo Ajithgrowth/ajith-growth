@@ -802,7 +802,7 @@ Targeting specific territories with customized project portfolios improves consu
                 type="text"
                 value={featuredImage}
                 onChange={(e) => setFeaturedImage(e.target.value)}
-                placeholder="https://iiquspioabbsclltqjme.supabase.co/storage/v1/..."
+                placeholder="https://your-project.supabase.co/storage/v1/..."
                 className="w-full px-3 py-2 rounded-lg border border-[#DCE5EE] bg-[#F8FAFC] text-xs font-mono text-[#0D1B2A] focus:outline-none"
               />
             </div>

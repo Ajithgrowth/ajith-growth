@@ -5,7 +5,7 @@ import {
   getAllArticles as getStaticArticles,
   getArticleBySlug as getStaticArticleBySlug,
 } from '../generated/insights';
-import { supabase } from './supabase';
+import { isSupabaseConfigured, supabase } from './supabase';
 
 const DEFAULT_IMAGE = '/images/og-default.jpg';
 const PAGE_SIZE = 12;
@@ -104,6 +104,13 @@ export async function fetchPublishedArticles({
   offset = 0,
   limit = PAGE_SIZE,
 }: ArticleQuery = {}): Promise<{ articles: Article[]; hasMore: boolean }> {
+  if (!isSupabaseConfigured) {
+    const filtered = getStaticArticles()
+      .filter((article) => !article.draft)
+      .filter((article) => staticMatches(article, category, search));
+    return { articles: filtered.slice(offset, offset + limit), hasMore: filtered.length > offset + limit };
+  }
+
   let query = supabase
     .from('published_articles')
     .select('*')
@@ -144,6 +151,11 @@ export async function fetchPublishedArticles({
 }
 
 export async function fetchFeaturedArticles(category = 'all', search = ''): Promise<Article[]> {
+  if (!isSupabaseConfigured) {
+    const fallback = await fetchPublishedArticles({ category, search, limit: 3 });
+    return fallback.articles;
+  }
+
   let query = supabase
     .from('published_articles')
     .select('*')
@@ -176,6 +188,11 @@ export async function fetchFeaturedArticles(category = 'all', search = ''): Prom
 export async function fetchPublishedArticle(
   slug: string
 ): Promise<{ article?: Article; redirectTo?: string }> {
+  if (!isSupabaseConfigured) {
+    const staticArticle = getStaticArticleBySlug(slug);
+    return staticArticle && !staticArticle.draft ? { article: staticArticle } : {};
+  }
+
   const { data, error } = await supabase
     .from('published_articles')
     .select('*')
@@ -195,6 +212,13 @@ export async function fetchPublishedArticle(
 }
 
 export async function fetchRelatedArticles(article: Article, limit = 3): Promise<Article[]> {
+  if (!isSupabaseConfigured) {
+    return getStaticArticles()
+      .filter((candidate) => candidate.slug !== article.slug && !candidate.draft)
+      .sort((a, b) => Number(b.category === article.category) - Number(a.category === article.category))
+      .slice(0, limit);
+  }
+
   const { data, error } = await supabase
     .from('published_articles')
     .select('*')

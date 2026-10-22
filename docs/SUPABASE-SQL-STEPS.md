@@ -130,10 +130,10 @@ The row-level policies permit CMS writes only when the signed-in JWT email is ex
 Add these variables to the selected Vercel or Netlify project. Use the project values shown in Supabase **Settings → API**:
 
 ```text
-VITE_SUPABASE_URL
-VITE_SUPABASE_ANON_KEY
-SUPABASE_URL
-SUPABASE_ANON_KEY
+VITE_SUPABASE_URL (new project URL)
+VITE_SUPABASE_ANON_KEY (new project publishable/anon key)
+SUPABASE_URL (new project URL)
+SUPABASE_ANON_KEY (new project publishable/anon key)
 ```
 
 The anon/publishable key is intended for browser use and is constrained by row-level security. Never add the Supabase service-role key to the browser build.

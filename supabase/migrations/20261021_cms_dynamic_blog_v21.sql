@@ -10,7 +10,7 @@ create or replace function public.is_cms_admin()
 returns boolean
 language sql
 stable
-security definer
+security invoker
 set search_path = public
 as $$
   select lower(coalesce(auth.jwt() ->> 'email', '')) = 'ajithgrowth.consulting@gmail.com';
@@ -290,6 +290,9 @@ begin
 end;
 $$;
 
+-- This function is invoked only by the articles trigger. It is not an RPC API.
+revoke all on function public.capture_article_revision() from public, anon, authenticated;
+
 drop trigger if exists articles_set_updated_at on public.articles;
 create trigger articles_set_updated_at
 before update on public.articles
@@ -407,10 +410,9 @@ on conflict (id) do update set
   file_size_limit = excluded.file_size_limit,
   allowed_mime_types = excluded.allowed_mime_types;
 
+-- The bucket is public, so direct object URLs remain readable without granting
+-- clients the ability to enumerate every image through storage.objects.
 drop policy if exists blog_images_public_read on storage.objects;
-create policy blog_images_public_read on storage.objects
-for select to anon, authenticated
-using (bucket_id = 'blog-images');
 
 drop policy if exists blog_images_admin_insert on storage.objects;
 create policy blog_images_admin_insert on storage.objects

@@ -1,11 +1,13 @@
 const SUPABASE_URL =
   process.env.SUPABASE_URL ||
   process.env.VITE_SUPABASE_URL ||
-  'https://iiquspioabbsclltqjme.supabase.co';
+  '';
 const SUPABASE_ANON_KEY =
   process.env.SUPABASE_ANON_KEY ||
   process.env.VITE_SUPABASE_ANON_KEY ||
-  'sb_publishable_vbHgxPgYNGSS62ksvD9VnQ_yDYbrgb8';
+  '';
+
+const isServerSupabaseConfigured = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
 
 const headers = {
   apikey: SUPABASE_ANON_KEY,
@@ -13,6 +15,7 @@ const headers = {
 };
 
 export async function getPublishedArticleRecord(slug: string): Promise<any | null> {
+  if (!isServerSupabaseConfigured) return null;
   const query = new URL('/rest/v1/published_articles', SUPABASE_URL);
   query.searchParams.set('select', '*');
   query.searchParams.set('slug', `eq.${slug}`);
@@ -24,6 +27,7 @@ export async function getPublishedArticleRecord(slug: string): Promise<any | nul
 }
 
 export async function getArticleRedirect(slug: string): Promise<string | null> {
+  if (!isServerSupabaseConfigured) return null;
   const query = new URL('/rest/v1/article_redirects', SUPABASE_URL);
   query.searchParams.set('select', 'new_slug');
   query.searchParams.set('old_slug', `eq.${slug}`);
@@ -35,6 +39,7 @@ export async function getArticleRedirect(slug: string): Promise<string | null> {
 }
 
 export async function getPublishedArticleEntries(): Promise<Array<{ slug: string; updated_at?: string }>> {
+  if (!isServerSupabaseConfigured) return [];
   const query = new URL('/rest/v1/published_articles', SUPABASE_URL);
   query.searchParams.set('select', 'slug,updated_at');
   query.searchParams.set('order', 'published_at.desc');
