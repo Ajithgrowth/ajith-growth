@@ -11,7 +11,9 @@ export default async function handler(req: any, res: any) {
   if (!article) {
     const redirect = await getArticleRedirect(slug);
     if (redirect) return res.redirect(301, `/insights/${redirect}`);
-    return res.redirect(302, '/404.html');
+    const notFound = await fetch(`${origin}/404.html`);
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    return res.status(404).send(notFound.ok ? await notFound.text() : 'Not found');
   }
   const shellResponse = await fetch(`${origin}/?cms-shell=1`);
   if (!shellResponse.ok) return res.status(503).send('Article is temporarily unavailable.');

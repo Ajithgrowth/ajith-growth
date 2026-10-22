@@ -25,9 +25,15 @@ export interface SocialProfiles {
 // Keeping the fallback preserves the currently deployed .com site until that
 // environment value is explicitly changed.
 const configuredSiteUrl =
+  (typeof process !== 'undefined' && process.env?.VITE_SITE_URL) ||
   (typeof import.meta !== 'undefined' && (import.meta as any).env?.VITE_SITE_URL) ||
   'https://ajithgrowth.com';
 const canonicalDomain = String(configuredSiteUrl).replace(/\/+$/, '');
+const enableLocalBusinessSchema =
+  ((typeof process !== 'undefined' && process.env?.VITE_ENABLE_LOCAL_BUSINESS_SCHEMA) ||
+    (typeof import.meta !== 'undefined' && (import.meta as any).env?.VITE_ENABLE_LOCAL_BUSINESS_SCHEMA) || '')
+    .toString()
+    .toLowerCase() === 'true';
 
 export const siteConfig = {
   siteName: "Ajith Growth",
@@ -35,6 +41,11 @@ export const siteConfig = {
   siteUrl: canonicalDomain,
   websiteUrl: canonicalDomain,
   canonicalDomain,
+  schema: {
+    // Organization is the safe default. Only enable LocalBusiness after the
+    // public address and opening hours have been explicitly approved.
+    enableLocalBusinessSchema,
+  },
   positioning: "Google Growth Consultant for Construction & Premium Bridal & Designer Boutiques",
   primaryTagline: "Turning Google Visibility Into Meaningful Business Growth",
   heroH1: "Turning Google Visibility Into Meaningful Business Growth",

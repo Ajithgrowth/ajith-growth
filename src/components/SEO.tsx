@@ -51,6 +51,10 @@ export function SEO({
     : `${title} | ${siteConfig.brandName}`;
 
   useEffect(() => {
+    const absoluteUrl = (value: string) =>
+      /^https?:\/\//i.test(value) ? value : `${siteConfig.canonicalDomain}${value.startsWith('/') ? value : `/${value}`}`;
+    const resolvedCanonicalUrl = absoluteUrl(canonicalUrl);
+    const resolvedOgImage = absoluteUrl(ogImage);
     // 1. Title
     document.title = fullTitle;
 
@@ -77,13 +81,13 @@ export function SEO({
     setMetaTag('name', 'description', description);
     setMetaTag('property', 'og:title', fullTitle);
     setMetaTag('property', 'og:description', description);
-    setMetaTag('property', 'og:url', canonicalUrl);
-    setMetaTag('property', 'og:image', ogImage);
+    setMetaTag('property', 'og:url', resolvedCanonicalUrl);
+    setMetaTag('property', 'og:image', resolvedOgImage);
     setMetaTag('property', 'og:type', ogType);
     setMetaTag('property', 'og:site_name', siteConfig.brandName);
     setMetaTag('name', 'twitter:title', fullTitle);
     setMetaTag('name', 'twitter:description', description);
-    setMetaTag('name', 'twitter:image', ogImage);
+    setMetaTag('name', 'twitter:image', resolvedOgImage);
     setMetaTag('name', 'twitter:card', 'summary_large_image');
 
     // Google Site Verification meta tag (only if configured)
@@ -108,7 +112,7 @@ export function SEO({
       canonicalLink.setAttribute('rel', 'canonical');
       document.head.appendChild(canonicalLink);
     }
-    canonicalLink.setAttribute('href', canonicalUrl);
+    canonicalLink.setAttribute('href', resolvedCanonicalUrl);
 
     // 4. Schema JSON-LD Graph for Entity and GEO readiness
     let scriptTag = document.getElementById('page-schema-jsonld') as HTMLScriptElement;
@@ -206,8 +210,8 @@ export function SEO({
         },
         {
           '@type': 'WebPage',
-          '@id': `${canonicalUrl}#webpage`,
-          url: canonicalUrl,
+          '@id': `${resolvedCanonicalUrl}#webpage`,
+          url: resolvedCanonicalUrl,
           name: fullTitle,
           description: description,
           isPartOf: {
@@ -217,7 +221,7 @@ export function SEO({
       ];
 
       // Add LocalBusiness schema on Contact page
-      if (includeLocalBusiness) {
+      if (includeLocalBusiness && siteConfig.schema.enableLocalBusinessSchema) {
         graph.push({
           '@type': 'LocalBusiness',
           '@id': SCHEMA_IDS.localBusiness,
@@ -273,7 +277,7 @@ export function SEO({
       if (breadcrumbs && breadcrumbs.length > 0) {
         graph.push({
           '@type': 'BreadcrumbList',
-          '@id': `${canonicalUrl}#breadcrumb`,
+          '@id': `${resolvedCanonicalUrl}#breadcrumb`,
           itemListElement: breadcrumbs.map((crumb, idx) => ({
             '@type': 'ListItem',
             position: idx + 1,
@@ -287,14 +291,14 @@ export function SEO({
       if (ogType === 'article') {
         const articlePosting: Record<string, any> = {
           '@type': 'BlogPosting',
-          '@id': `${canonicalUrl}#article`,
+          '@id': `${resolvedCanonicalUrl}#article`,
           headline: fullTitle,
           description: description,
           datePublished: publishedTime,
           dateModified: modifiedTime || publishedTime,
           mainEntityOfPage: {
             '@type': 'WebPage',
-            '@id': canonicalUrl,
+            '@id': resolvedCanonicalUrl,
           },
           author: {
             '@id': SCHEMA_IDS.person,
@@ -307,8 +311,8 @@ export function SEO({
         if (ogImage) {
           articlePosting.image = {
             '@type': 'ImageObject',
-            url: ogImage,
-            contentUrl: ogImage,
+            url: resolvedOgImage,
+            contentUrl: resolvedOgImage,
             caption: imageAlt || fullTitle,
           };
         }
@@ -328,7 +332,7 @@ export function SEO({
       if (faqs && faqs.length > 0) {
         graph.push({
           '@type': 'FAQPage',
-          '@id': `${canonicalUrl}#faq`,
+          '@id': `${resolvedCanonicalUrl}#faq`,
           mainEntity: faqs.map((faq) => ({
             '@type': 'Question',
             name: faq.question,
@@ -349,4 +353,3 @@ export function SEO({
 
   return null;
 }
-

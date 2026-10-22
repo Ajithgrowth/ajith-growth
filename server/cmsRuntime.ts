@@ -69,7 +69,7 @@ export function injectArticleSeo(html: string, article: any, origin: string): st
   const faqs = Array.isArray(article.faqs) ? article.faqs : [];
   const graph: any[] = [
     {
-      '@type': 'Article',
+      '@type': 'BlogPosting',
       '@id': `${canonical}#article`,
       headline: article.title,
       description,
@@ -77,9 +77,9 @@ export function injectArticleSeo(html: string, article: any, origin: string): st
       datePublished: article.published_at,
       dateModified: article.updated_at || article.published_at,
       articleSection: category,
-      author: { '@type': 'Person', name: article.author_name || 'Ajith B R', url: `${origin}/about` },
-      publisher: { '@type': 'Organization', name: 'Ajith Growth', url: origin },
-      mainEntityOfPage: canonical,
+      author: { '@type': 'Person', '@id': `${origin}/#person`, name: article.author_name || 'Ajith B R', url: `${origin}/about` },
+      publisher: { '@type': 'Organization', '@id': `${origin}/#organization`, name: 'Ajith Growth', url: origin },
+      mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
     },
     {
       '@type': 'BreadcrumbList',
@@ -116,12 +116,13 @@ export function injectArticleSeo(html: string, article: any, origin: string): st
     <meta property="og:description" content="${escapeHtml(description)}" />
     <meta property="og:url" content="${escapeHtml(canonical)}" />
     <meta property="og:image" content="${escapeHtml(image)}" />
+    <meta property="og:site_name" content="Ajith Growth" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="${escapeHtml(title)}" />
     <meta name="twitter:description" content="${escapeHtml(description)}" />
     <meta name="twitter:image" content="${escapeHtml(image)}" />
     ${article.noindex ? '<meta name="robots" content="noindex, nofollow" />' : ''}
-    <script type="application/ld+json">${JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }).replace(/</g, '\\u003c')}</script>
+    <script id="page-schema-jsonld" type="application/ld+json">${JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }).replace(/</g, '\\u003c')}</script>
   `;
   clean = clean.replace('</head>', `${tags}</head>`);
   return clean;
@@ -132,12 +133,13 @@ export function mergeDynamicSitemap(staticXml: string, entries: Array<{ slug: st
   if (!staticXml.includes(closing)) {
     staticXml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n</urlset>';
   }
+  const normalizedStaticXml = staticXml.replace(/<loc>https?:\/\/[^<\/]+/g, `<loc>${origin}`);
   const existing = new Set(
-    Array.from(staticXml.matchAll(/<loc>([^<]+)<\/loc>/g)).map((match) => match[1].replace(/\/$/, ''))
+    Array.from(normalizedStaticXml.matchAll(/<loc>([^<]+)<\/loc>/g)).map((match) => match[1].replace(/\/$/, ''))
   );
   const additions = entries
     .filter((entry) => !existing.has(`${origin}/insights/${entry.slug}`))
-    .map((entry) => `  <url>\n    <loc>${escapeHtml(`${origin}/insights/${entry.slug}`)}</loc>\n    ${entry.updated_at ? `<lastmod>${escapeHtml(entry.updated_at.split('T')[0])}</lastmod>\n    ` : ''}<changefreq>monthly</changefreq>\n    <priority>0.7</priority>\n  </url>`)
+    .map((entry) => `  <url>\n    <loc>${escapeHtml(`${origin}/insights/${entry.slug}`)}</loc>\n    ${entry.updated_at ? `<lastmod>${escapeHtml(entry.updated_at.split('T')[0])}</lastmod>\n    ` : ''}  </url>`)
     .join('\n');
-  return staticXml.replace(closing, `${additions ? `${additions}\n` : ''}${closing}`);
+  return normalizedStaticXml.replace(closing, `${additions ? `${additions}\n` : ''}${closing}`);
 }

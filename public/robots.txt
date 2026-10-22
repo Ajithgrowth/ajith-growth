@@ -1,9 +1,6 @@
-# robots.txt for https://ajithgrowth.com
 User-agent: *
 Allow: /
 Disallow: /admin/
 Disallow: /api/
 
-# Sitemap
 Sitemap: https://ajithgrowth.com/sitemap.xml
-

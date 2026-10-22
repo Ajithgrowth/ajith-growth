@@ -10,6 +10,10 @@ React and Vite website for Ajith Growth.
 4. Run `npm run lint` for TypeScript validation.
 5. Run `npm run build` for the production build, generated Insights data, prerendered pages and sitemap.
 
+## SEO deployment settings
+
+Set `VITE_SITE_URL` in Vercel to the one final HTTPS public domain before each production build. See [SEO handover](docs/SEO-HANDOVER.md) for the complete deployment, indexing and validation checklist.
+
 ## Content management
 
 The secure Supabase content manager is available at `/admin`. Published and due scheduled articles are read dynamically from the `published_articles` database view, so routine publishing does not require a code change or redeployment. Existing Markdown articles remain as a safe build-time fallback.

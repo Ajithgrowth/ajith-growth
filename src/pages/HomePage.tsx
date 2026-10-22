@@ -43,7 +43,10 @@ export function HomePage() {
     <main id="main-content" className="w-full">
       <SEO title={seo.title} description={seo.description} canonicalUrl={seo.canonicalUrl} ogImage={seo.ogImage} />
       <section className="relative overflow-hidden bg-[#0D1B2A] text-white py-20 sm:py-28 border-b border-slate-800">
-        <img src="/images/hero-home.jpg" alt="Residential construction" className="absolute inset-0 h-full w-full object-cover opacity-20" width={2000} height={1200} fetchPriority="high" />
+        <picture>
+          <source srcSet="/images/hero-home.webp" type="image/webp" />
+          <img src="/images/hero-home.jpg" alt="Residential construction" className="absolute inset-0 h-full w-full object-cover opacity-20" width={2000} height={1200} fetchPriority="high" />
+        </picture>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"><div className="max-w-5xl">
           <span className="inline-flex rounded-md border border-slate-700 bg-slate-900/80 px-3 py-1.5 text-xs font-semibold tracking-wider text-sky-400">GOOGLE GROWTH CONSULTANT FOR CONSTRUCTION &amp; PREMIUM BRIDAL &amp; DESIGNER BOUTIQUES</span>
           <h1 className="mt-6 text-4xl sm:text-6xl font-heading font-bold tracking-tight leading-tight">Turning Google Visibility Into Meaningful Business Growth</h1>

@@ -116,8 +116,9 @@ function buildSchemaGraph(route: typeof routes[0]) {
     },
   ];
 
-  // Contact page: LocalBusiness schema
-  if (route.path === '/contact') {
+  // LocalBusiness is intentionally opt-in: public address and hours must be
+  // approved before this richer local-business markup is emitted.
+  if (route.path === '/contact' && siteConfig.schema.enableLocalBusinessSchema) {
     graph.push({
       '@type': 'LocalBusiness',
       '@id': SCHEMA_IDS.localBusiness,
@@ -360,9 +361,7 @@ ${routes
   .map((r) => {
     return `  <url>
     <loc>${r.canonicalUrl}</loc>
-    <lastmod>${r.lastmod}</lastmod>
-    <changefreq>${r.changefreq}</changefreq>
-    <priority>${r.priority}</priority>
+    ${r.lastmod ? `<lastmod>${r.lastmod}</lastmod>` : ''}
   </url>`;
   })
   .join('\n')}
@@ -374,6 +373,11 @@ fs.writeFileSync(path.join(DIST_DIR, 'sitemap-static.xml'), sitemapXml, 'utf8');
 if (fs.existsSync(PUBLIC_DIR)) {
   fs.writeFileSync(path.join(PUBLIC_DIR, 'sitemap.xml'), sitemapXml, 'utf8');
   fs.writeFileSync(path.join(PUBLIC_DIR, 'sitemap-static.xml'), sitemapXml, 'utf8');
+  fs.writeFileSync(
+    path.join(PUBLIC_DIR, 'robots.txt'),
+    `User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /api/\n\nSitemap: ${siteConfig.canonicalDomain}/sitemap.xml\n`,
+    'utf8',
+  );
 }
 
 console.log(`prerender.ts: Successfully generated sitemap.xml with ${routes.length} URLs in both dist/ and public/.`);
