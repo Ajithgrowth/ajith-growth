@@ -1,4 +1,6 @@
-import { getArticleRedirect, getPublishedArticleRecord, injectArticleSeo } from '../server/cmsRuntime';
+// Vercel runs this as native ESM after transpiling TypeScript, so the runtime
+// import must name the emitted JavaScript file explicitly.
+import { getArticleRedirect, getPublishedArticleRecord, injectArticleSeo } from '../server/cmsRuntime.js';
 
 export default async function handler(req: any, res: any) {
   const slug = String(req.query?.slug || '').toLowerCase();

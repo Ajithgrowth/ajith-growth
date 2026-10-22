@@ -1,4 +1,4 @@
-import { getArticleRedirect, getPublishedArticleRecord, injectArticleSeo } from '../../server/cmsRuntime';
+import { getArticleRedirect, getPublishedArticleRecord, injectArticleSeo } from '../../server/cmsRuntime.js';
 
 export async function handler(event: any) {
   const slug = String(event.queryStringParameters?.slug || '').toLowerCase();

@@ -1,4 +1,4 @@
-import { getPublishedArticleEntries, mergeDynamicSitemap } from '../server/cmsRuntime';
+import { getPublishedArticleEntries, mergeDynamicSitemap } from '../server/cmsRuntime.js';
 
 export default async function handler(req: any, res: any) {
   const protocol = req.headers['x-forwarded-proto'] || 'https';
