@@ -4,15 +4,25 @@ import { Link } from '../utils/router';
 import { defaultAuthor } from '../data/authors';
 import { siteConfig } from '../data/siteConfig';
 import { trackEvent } from '../utils/analytics';
+import type { CMSGlobalSettings } from '../types/cmsSettings';
 
 export interface AuthorCardProps {
   compact?: boolean;
   className?: string;
+  settings?: CMSGlobalSettings;
 }
 
-export function AuthorCard({ compact = false, className = '' }: AuthorCardProps) {
+export function AuthorCard({ compact = false, className = '', settings }: AuthorCardProps) {
   const [imageError, setImageError] = useState(false);
-  const author = defaultAuthor;
+  const author = {
+    ...defaultAuthor,
+    name: settings?.authorName || defaultAuthor.name,
+    bio: settings?.authorBio || defaultAuthor.bio,
+    image: settings?.authorImage || defaultAuthor.image,
+  };
+  const whatsappUrl = settings?.whatsappNumber
+    ? `https://wa.me/${settings.whatsappNumber.replace(/\D/g, '')}${settings.whatsappMessage ? `?text=${encodeURIComponent(settings.whatsappMessage)}` : ''}`
+    : siteConfig.whatsappUrl;
 
   if (compact) {
     return (
@@ -45,6 +55,7 @@ export function AuthorCard({ compact = false, className = '' }: AuthorCardProps)
         <p className="text-xs font-body text-[#64748B] leading-relaxed mb-4">
           {author.bio}
         </p>
+        {settings?.authorClosingText && <p className="text-xs font-body italic text-slate-500 mb-4">{settings.authorClosingText}</p>}
         <div className="flex flex-wrap items-center justify-between gap-2">
           <Link
             href={author.profileUrl}
@@ -54,7 +65,7 @@ export function AuthorCard({ compact = false, className = '' }: AuthorCardProps)
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
           <a
-            href={siteConfig.whatsappUrl}
+            href={whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => trackEvent('whatsapp_click', { location: 'author_card_compact' })}
@@ -95,6 +106,7 @@ export function AuthorCard({ compact = false, className = '' }: AuthorCardProps)
         <p className="text-sm font-body text-[#64748B] leading-relaxed mb-4">
           {author.bio}
         </p>
+        {settings?.authorClosingText && <p className="text-sm font-body italic text-slate-500 mb-4">{settings.authorClosingText}</p>}
         <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4">
           <Link
             href={author.profileUrl}
@@ -113,7 +125,7 @@ export function AuthorCard({ compact = false, className = '' }: AuthorCardProps)
           </Link>
           <span className="text-slate-300 hidden sm:inline">•</span>
           <a
-            href={siteConfig.whatsappUrl}
+            href={whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => trackEvent('whatsapp_click', { location: 'author_card_full' })}

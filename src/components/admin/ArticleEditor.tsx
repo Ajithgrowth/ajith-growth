@@ -22,6 +22,7 @@ import { CMS_CATEGORIES, generateSlug } from '../../types/cms';
 import { deleteBlogImage, listBlogImages, uploadBlogImage, type BlogMediaItem } from '../../lib/cmsStorage';
 import { MarkdownEditor } from './MarkdownEditor';
 import { ArticlePreviewModal } from './ArticlePreviewModal';
+import { defaultCmsSettings, getCmsSettings } from '../../lib/cmsSettings';
 
 interface ArticleEditorProps {
   initialArticle?: CMSArticle | null;
@@ -99,6 +100,7 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
   const [validationError, setValidationError] = useState<string | null>(null);
   const [showPreviewModal, setShowPreviewModal] = useState<boolean>(false);
   const [mediaLibrary, setMediaLibrary] = useState<BlogMediaItem[]>([]);
+  const [siteLinks, setSiteLinks] = useState(defaultCmsSettings.keyUrls);
 
   const removeSelectedMedia = async () => {
     const media = mediaLibrary.find((item) => item.id === featuredMediaId);
@@ -116,6 +118,7 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
 
   useEffect(() => {
     listBlogImages().then(setMediaLibrary);
+    getCmsSettings().then((settings) => setSiteLinks(settings.keyUrls));
   }, []);
 
   const initialSnapshot = useMemo(() => JSON.stringify({
@@ -229,6 +232,12 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
     setUploadingImage(false);
   };
 
+  const handleBodyImageUpload = async (file: File) => {
+    const result = await uploadBlogImage(file);
+    if (result.url) listBlogImages().then(setMediaLibrary);
+    return result;
+  };
+
   // FAQ Dynamic Handlers
   const handleAddFaq = () => {
     setFaqs([...faqs, { question: '', answer: '' }]);
@@ -315,6 +324,12 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
 
     if (!content.trim()) {
       setValidationError('Article Content is required.');
+      return;
+    }
+
+    const dedicatedFaqs = faqs.filter((faq) => faq.question.trim() && faq.answer.trim());
+    const duplicatedFaq = dedicatedFaqs.find((faq) => content.toLowerCase().includes(faq.question.trim().toLowerCase()));
+    if (duplicatedFaq && !window.confirm(`“${duplicatedFaq.question}” also appears in the article body. Keep FAQs only in the dedicated FAQ section to avoid duplicate visible content and schema. Continue anyway?`)) {
       return;
     }
 
@@ -575,7 +590,8 @@ Targeting specific territories with customized project portfolios improves consu
                   Main Article Content (Markdown) <span className="text-red-500">*</span>
                 </label>
               </div>
-              <MarkdownEditor value={content} onChange={setContent} />
+              <MarkdownEditor value={content} onChange={setContent} siteLinks={siteLinks} onUploadImage={handleBodyImageUpload} />
+              <p className="mt-2 text-[11px] text-slate-500">Use <strong>Site link</strong> for approved service/contact pages, or <strong>Upload image</strong> to place an optimized JPEG, PNG or WebP image anywhere in the Markdown body. Add a descriptive alt text when prompted.</p>
             </div>
           </div>
 

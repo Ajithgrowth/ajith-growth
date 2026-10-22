@@ -20,6 +20,8 @@ import { fetchPublishedArticle, fetchRelatedArticles } from '../lib/publicArticl
 import { createHeadingSlugger } from '../utils/slugify';
 import { trackEvent } from '../utils/analytics';
 import type { Article } from '../types';
+import { buildWhatsAppUrl, defaultCmsSettings, getCmsSettings } from '../lib/cmsSettings';
+import type { CMSGlobalSettings } from '../types/cmsSettings';
 
 interface ArticlePageProps {
   slug: string;
@@ -41,6 +43,9 @@ export function ArticlePage({ slug }: ArticlePageProps) {
     initialArticle ? getStaticRelatedArticles(initialArticle.slug, 3) : []
   );
   const [isLoading, setIsLoading] = useState(!initialArticle);
+  const [globalSettings, setGlobalSettings] = useState<CMSGlobalSettings>(defaultCmsSettings);
+
+  useEffect(() => { getCmsSettings().then(setGlobalSettings); }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -107,7 +112,7 @@ export function ArticlePage({ slug }: ArticlePageProps) {
   const canonicalUrl = article.canonicalUrl || `${siteConfig.canonicalDomain}/insights/${article.slug}`;
 
   // Check for verified WhatsApp URL from centralized siteConfig
-  const verifiedWhatsAppUrl = siteConfig.whatsappUrl;
+  const verifiedWhatsAppUrl = buildWhatsAppUrl(globalSettings);
 
   // Heading slugger for duplicate-safe IDs matching extractTableOfContents exactly
   const headingSlugger = createHeadingSlugger();
@@ -128,7 +133,7 @@ export function ArticlePage({ slug }: ArticlePageProps) {
         ogType="article"
         publishedTime={article.publishedDate}
         modifiedTime={article.updatedDate || article.publishedDate}
-        author={defaultAuthor.name}
+        author={globalSettings.authorName || defaultAuthor.name}
         breadcrumbs={breadcrumbs}
         faqs={article.faqs && article.faqs.length > 0 ? article.faqs : undefined}
         keywords={article.keywords}
@@ -359,7 +364,7 @@ export function ArticlePage({ slug }: ArticlePageProps) {
                   ),
                   img: ({ src, alt, ...props }) => (
                     <div className="my-6 rounded-xl overflow-hidden border border-[#DCE5EE]">
-                      <img src={src} alt={alt || ''} className="w-full h-auto object-cover" {...props} />
+                      <img src={src} alt={alt || ''} loading="lazy" decoding="async" className="w-full h-auto object-cover" {...props} />
                       {alt && <p className="text-[11px] font-supporting text-[#64748B] text-center mt-2 italic">{alt}</p>}
                     </div>
                   ),
@@ -401,18 +406,18 @@ export function ArticlePage({ slug }: ArticlePageProps) {
                 GROWTH CONSULTATION
               </span>
               <h3 className="text-lg sm:text-xl font-heading font-bold text-[#0D1B2A] mb-2">
-                Let's Build a Better Growth System
+                {globalSettings.ctaHeading}
               </h3>
               <p className="text-xs sm:text-sm text-[#64748B] font-body mb-5 leading-relaxed">
-                Start with a conversation about your business, your goals and where your current growth system can improve.
+                {globalSettings.ctaDescription}
               </p>
               <div className="flex flex-col sm:flex-row items-center gap-3">
                 <Link
-                  href="/contact"
+                  href={globalSettings.primaryCtaUrl || '/contact'}
                   onClick={() => trackEvent('consultation_cta_click', { location: 'article_inline', article: article.slug })}
                   className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-[#0D1B2A] hover:bg-[#172A3A] text-white font-body text-xs sm:text-sm font-medium transition-all shadow-xs"
                 >
-                  <span>Book a Growth Consultation</span>
+                  <span>{globalSettings.primaryCtaText}</span>
                   <ArrowRight className="w-3.5 h-3.5 text-sky-400" />
                 </Link>
 
@@ -425,7 +430,7 @@ export function ArticlePage({ slug }: ArticlePageProps) {
                     className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-emerald-600 bg-emerald-50 text-emerald-900 font-body text-xs font-medium hover:bg-emerald-100 transition-colors"
                   >
                     <MessageCircle className="w-4 h-4 text-emerald-700" />
-                    <span>Chat on WhatsApp</span>
+                    <span>{globalSettings.whatsappButtonText || 'Chat on WhatsApp'}</span>
                   </a>
                 )}
               </div>
@@ -458,7 +463,7 @@ export function ArticlePage({ slug }: ArticlePageProps) {
             )}
 
             {/* Author Box Component */}
-            <AuthorCard compact />
+            <AuthorCard compact settings={globalSettings} />
           </aside>
         </div>
 
@@ -476,7 +481,7 @@ export function ArticlePage({ slug }: ArticlePageProps) {
 
         {/* 8. Full Author Section */}
         <section className="mt-16 bg-[#F8FAFC]">
-          <AuthorCard />
+          <AuthorCard settings={globalSettings} />
         </section>
 
         {/* 9. Related Articles (Exactly 3, same category first, no drafts) */}
@@ -510,12 +515,12 @@ export function ArticlePage({ slug }: ArticlePageProps) {
       {/* 10. Book Consultation CTA */}
       <CTASection
         eyebrow="GROWTH CONSULTATION"
-        title="Let's Build a Better Growth System"
-        description="Start with a conversation about your business, your goals and where your current growth system can improve."
-        primaryButtonText="Book a Growth Consultation"
-        primaryButtonHref="/contact"
-        secondaryButtonText="Explore All Services"
-        secondaryButtonHref="/services"
+        title={globalSettings.ctaHeading}
+        description={globalSettings.ctaDescription}
+        primaryButtonText={globalSettings.primaryCtaText}
+        primaryButtonHref={globalSettings.primaryCtaUrl}
+        secondaryButtonText={globalSettings.secondaryCtaText}
+        secondaryButtonHref={globalSettings.secondaryCtaUrl}
       />
 
       {/* Mobile Spacer to avoid sticky bar collision */}
@@ -525,10 +530,10 @@ export function ArticlePage({ slug }: ArticlePageProps) {
       <aside aria-label="Quick Actions" className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-[#DCE5EE] p-3 shadow-lg pb-[max(0.75rem,env(safe-area-inset-bottom))]">
         <div className="max-w-md mx-auto flex items-center gap-2.5">
           <Link
-            href="/contact"
+            href={globalSettings.primaryCtaUrl || '/contact'}
             className="flex-1 py-2.5 px-4 rounded-xl bg-[#0D1B2A] text-white text-xs font-supporting font-semibold uppercase tracking-wider text-center shadow-xs hover:bg-sky-900 transition-colors"
           >
-            Book a Growth Consultation
+            {globalSettings.primaryCtaText}
           </Link>
           {verifiedWhatsAppUrl && (
             <a

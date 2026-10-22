@@ -11,6 +11,7 @@ import {
   ArrowLeft,
   Loader2,
   AlertTriangle,
+  Settings2,
 } from 'lucide-react';
 import { supabase, AUTHORIZED_CMS_EMAIL, isAuthorizedEmail, isSupabaseConfigured } from '../lib/supabase';
 import { SEO } from '../components/SEO';
@@ -19,8 +20,9 @@ import type { CMSArticle, CMSArticleStatus } from '../types/cms';
 import { ArticleListDashboard } from '../components/admin/ArticleListDashboard';
 import { ArticleEditor } from '../components/admin/ArticleEditor';
 import { ArticlePreviewModal } from '../components/admin/ArticlePreviewModal';
+import { GlobalSettingsPanel } from '../components/admin/GlobalSettingsPanel';
 
-type AdminViewMode = 'list' | 'editor';
+type AdminViewMode = 'list' | 'editor' | 'settings';
 
 export function AdminPage() {
   const { navigate } = useRouter();
@@ -619,6 +621,15 @@ export function AdminPage() {
             </button>
 
             <button
+              onClick={() => { setViewMode('settings'); setEditingArticle(null); }}
+              title="Global article settings"
+              className="inline-flex items-center gap-1.5 text-xs font-supporting font-medium text-slate-300 hover:text-white py-1.5 px-3 rounded-lg hover:bg-slate-800 transition-colors cursor-pointer"
+            >
+              <Settings2 className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Settings</span>
+            </button>
+
+            <button
               onClick={handleLogout}
               disabled={isLoggingOut}
               className="inline-flex items-center gap-1.5 text-xs font-supporting font-semibold text-rose-300 hover:text-rose-100 bg-rose-950/50 hover:bg-rose-900/60 border border-rose-800/50 py-1.5 px-3 rounded-lg transition-colors cursor-pointer disabled:opacity-50"
@@ -651,7 +662,9 @@ export function AdminPage() {
         )}
 
         {/* View Switcher: List Dashboard OR Editor */}
-        {viewMode === 'list' ? (
+        {viewMode === 'settings' ? (
+          <GlobalSettingsPanel onBack={() => setViewMode('list')} />
+        ) : viewMode === 'list' ? (
           <ArticleListDashboard
             articles={articles}
             isLoading={isLoadingArticles}

@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   Heading2,
   Heading3,
@@ -16,14 +16,20 @@ interface MarkdownEditorProps {
   value: string;
   onChange: (value: string) => void;
   disabled?: boolean;
+  siteLinks?: Record<string, string>;
+  onUploadImage?: (file: File) => Promise<{ url?: string; error?: string }>;
 }
 
 export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
   value,
   onChange,
   disabled = false,
+  siteLinks = {},
+  onUploadImage,
 }) => {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const bodyImageInputRef = useRef<HTMLInputElement | null>(null);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
 
   /**
    * Helper to wrap or insert markdown syntax around selected text or cursor
@@ -121,6 +127,38 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
     insertFormatting('![', `](${trimmedUrl})`, altText.trim());
   };
 
+  const handleSiteLinkInsert = () => {
+    const options = Object.entries(siteLinks).map(([name, url]) => `${name}: ${url}`).join('\n');
+    if (!options) return handleLinkInsert();
+    const choice = window.prompt(`Choose a destination by name, or paste a URL:\n\n${options}`, 'Insights');
+    if (!choice) return;
+    const match = Object.entries(siteLinks).find(([name]) => name.toLowerCase() === choice.trim().toLowerCase());
+    const destination = match ? match[1] : choice.trim();
+    if (!destination.startsWith('/') && !/^https:\/\//i.test(destination)) {
+      window.alert('Use one of the listed names, a site-relative path, or an https:// URL.');
+      return;
+    }
+    const textarea = textareaRef.current;
+    const selected = textarea ? textarea.value.substring(textarea.selectionStart, textarea.selectionEnd) : 'link text';
+    insertFormatting('[', `](${destination})`, selected || 'link text');
+  };
+
+  const handleBodyImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file || !onUploadImage) return;
+    setIsUploadingImage(true);
+    const result = await onUploadImage(file);
+    setIsUploadingImage(false);
+    if (result.error || !result.url) {
+      window.alert(result.error || 'Image upload did not return a URL.');
+      return;
+    }
+    const altText = window.prompt('Describe this image for visitors using screen readers:', file.name.replace(/\.[^/.]+$/, ''));
+    if (altText === null) return;
+    insertFormatting('![', `](${result.url})`, altText.trim());
+  };
+
   return (
     <div className="border border-[#DCE5EE] rounded-xl overflow-hidden bg-white focus-within:ring-2 focus-within:ring-sky-800/20 focus-within:border-sky-800 transition-all">
       {/* Editor Toolbar */}
@@ -206,12 +244,29 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
         <button
           type="button"
           disabled={disabled}
+          title="Insert an important site link"
+          onClick={handleSiteLinkInsert}
+          className="px-2 py-1.5 rounded-lg text-slate-700 hover:bg-slate-200 hover:text-[#0D1B2A] transition-colors disabled:opacity-50 text-[11px] font-semibold"
+        >
+          Site link
+        </button>
+
+        <button
+          type="button"
+          disabled={disabled}
           title="Insert image with alt text"
           onClick={handleImageInsert}
           className="p-1.5 rounded-lg text-slate-700 hover:bg-slate-200 hover:text-[#0D1B2A] transition-colors disabled:opacity-50"
         >
           <ImagePlus className="w-4 h-4" />
         </button>
+
+        {onUploadImage && <>
+          <input ref={bodyImageInputRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={handleBodyImageUpload} />
+          <button type="button" disabled={disabled || isUploadingImage} title="Upload and insert article-body image" onClick={() => bodyImageInputRef.current?.click()} className="px-2 py-1.5 rounded-lg text-slate-700 hover:bg-slate-200 hover:text-[#0D1B2A] transition-colors disabled:opacity-50 text-[11px] font-semibold">
+            {isUploadingImage ? 'Uploading…' : 'Upload image'}
+          </button>
+        </>}
 
         <button
           type="button"
