@@ -14,6 +14,7 @@ import {
   Eye,
   RefreshCw,
   Copy,
+  RotateCcw,
 } from 'lucide-react';
 import type { CMSArticle, CMSArticleStatus } from '../../types/cms';
 import { CMS_CATEGORIES } from '../../types/cms';
@@ -29,6 +30,9 @@ interface ArticleListDashboardProps {
   onRefresh: () => void;
   onPreviewArticle: (article: CMSArticle) => void;
   onDuplicateArticle: (article: CMSArticle) => void;
+  archived: boolean;
+  onToggleArchived: () => void;
+  onRestoreArticle: (id?: string) => void;
 }
 
 export const ArticleListDashboard: React.FC<ArticleListDashboardProps> = ({
@@ -42,6 +46,9 @@ export const ArticleListDashboard: React.FC<ArticleListDashboardProps> = ({
   onRefresh,
   onPreviewArticle,
   onDuplicateArticle,
+  archived,
+  onToggleArchived,
+  onRestoreArticle,
 }) => {
   const [searchTerm, setSearchTerm] = React.useState<string>('');
   const [categoryFilter, setCategoryFilter] = React.useState<string>('all');
@@ -262,6 +269,13 @@ export const ArticleListDashboard: React.FC<ArticleListDashboardProps> = ({
           <div className="flex items-center gap-2">
             <button
               type="button"
+              onClick={onToggleArchived}
+              className="px-3 py-2.5 rounded-xl border border-[#DCE5EE] hover:bg-slate-100 text-slate-700 text-xs font-semibold transition-colors"
+            >
+              {archived ? 'Active articles' : 'Archived articles'}
+            </button>
+            <button
+              type="button"
               onClick={onRefresh}
               className="p-2.5 rounded-xl border border-[#DCE5EE] hover:bg-slate-100 text-slate-600 transition-colors cursor-pointer"
               title="Refresh articles"
@@ -324,6 +338,7 @@ export const ArticleListDashboard: React.FC<ArticleListDashboardProps> = ({
                 </tr>
               ) : (
                 filteredArticles.map((article) => {
+                  const isArchived = Boolean(article.deleted_at);
                   const isDraft =
                     (article.status as string) === 'draft' || (article as any).draft === true;
                   const isScheduled = (article.status as string) === 'scheduled';
@@ -396,6 +411,11 @@ export const ArticleListDashboard: React.FC<ArticleListDashboardProps> = ({
                       {/* Actions */}
                       <td className="py-4 px-4 sm:px-6 whitespace-nowrap text-right">
                         <div className="inline-flex items-center gap-1.5">
+                          {isArchived ? (
+                            <button type="button" onClick={() => onRestoreArticle(article.id || article.slug)} className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-emerald-700 text-white font-supporting font-semibold text-xs" title="Restore as draft">
+                              <RotateCcw className="w-3.5 h-3.5" /><span>Restore</span>
+                            </button>
+                          ) : <>
                           {/* Preview button */}
                           <button
                             type="button"
@@ -435,6 +455,7 @@ export const ArticleListDashboard: React.FC<ArticleListDashboardProps> = ({
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
+                          </>}
                         </div>
                       </td>
                     </tr>

@@ -14,9 +14,11 @@ React and Vite website for Ajith Growth.
 
 The secure Supabase content manager is available at `/admin`. Published and due scheduled articles are read dynamically from the `published_articles` database view, so routine publishing does not require a code change or redeployment. Existing Markdown articles remain as a safe build-time fallback.
 
-Apply `supabase/migrations/20261021_cms_dynamic_blog_v21.sql`, followed by `supabase/migrations/20261021_seed_existing_insights.sql`, before deploying this release. Follow `docs/SUPABASE-SQL-STEPS.md` for the exact order, verification queries, Auth setup and backup checklist.
+Apply `supabase/migrations/20261021_cms_dynamic_blog_v21.sql`, followed by `supabase/migrations/20261021_seed_existing_insights.sql` and `supabase/migrations/20261022_cms_refinements_v22.sql`, before deploying this release. Follow `docs/SUPABASE-SQL-STEPS.md` for the exact order, verification queries, Auth setup and backup checklist.
 
 The Insights hub uses in-place category filters, combined title/summary search, featured fallback and Load More. Individual article URLs remain `/insights/article-slug`; category landing pages are intentionally not generated.
+
+Set `VITE_SITE_URL` to the single public canonical domain (for example, `https://ajithgrowth.consulting`) before building. Do not leave multiple domains indexed.
 
 ## Consultation form
 

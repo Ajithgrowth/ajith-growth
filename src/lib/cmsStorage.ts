@@ -13,11 +13,31 @@ export interface UploadImageResult {
 export interface BlogMediaItem {
   id: string;
   filename: string;
+  storage_path?: string;
   public_url: string;
   mime_type?: string;
   file_size?: number;
   width?: number;
   height?: number;
+}
+
+/** Removes an unused image only. Active articles must be updated first. */
+export async function deleteBlogImage(media: BlogMediaItem): Promise<{ error?: string }> {
+  const { count, error: usageError } = await supabase
+    .from('articles')
+    .select('id', { count: 'exact', head: true })
+    .eq('featured_media_id', media.id)
+    .is('deleted_at', null);
+  if (usageError) return { error: usageError.message };
+  if ((count || 0) > 0) {
+    return { error: 'This image is still attached to an active article. Replace it there before deleting it.' };
+  }
+  if (!media.storage_path) return { error: 'This media record has no storage path and cannot be safely deleted.' };
+
+  const { error: storageError } = await supabase.storage.from(BUCKET_NAME).remove([media.storage_path]);
+  if (storageError) return { error: storageError.message };
+  const { error: recordError } = await supabase.from('media_assets').delete().eq('id', media.id);
+  return recordError ? { error: recordError.message } : {};
 }
 
 async function getImageDimensions(file: File): Promise<{ width?: number; height?: number }> {
@@ -107,7 +127,7 @@ export async function uploadBlogImage(file: File): Promise<UploadImageResult> {
 export async function listBlogImages(): Promise<BlogMediaItem[]> {
   const { data, error } = await supabase
     .from('media_assets')
-    .select('id,filename,public_url,mime_type,file_size,width,height')
+    .select('id,filename,storage_path,public_url,mime_type,file_size,width,height')
     .order('created_at', { ascending: false })
     .limit(100);
   if (error || !data) return [];

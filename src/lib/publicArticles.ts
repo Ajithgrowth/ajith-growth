@@ -6,6 +6,7 @@ import {
   getArticleBySlug as getStaticArticleBySlug,
 } from '../generated/insights';
 import { isSupabaseConfigured, supabase } from './supabase';
+import { siteConfig } from '../data/siteConfig';
 
 const DEFAULT_IMAGE = '/images/og-default.jpg';
 const PAGE_SIZE = 12;
@@ -75,7 +76,7 @@ export function mapCMSArticle(record: CMSArticle): Article {
     readingTime: calculateReadingTime(body),
     tableOfContents: buildTableOfContents(body),
     canonicalUrl:
-      record.canonical_override || `https://ajithgrowth.com/insights/${record.slug}`,
+      record.canonical_override || `${siteConfig.canonicalDomain}/insights/${record.slug}`,
     publishDate: publishedDate,
     modifiedDate: updatedDate,
     readTime: calculateReadingTime(body),

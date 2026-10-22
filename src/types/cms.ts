@@ -42,6 +42,7 @@ export interface CMSArticle {
   author_name?: string; // Plain TEXT ("Ajith B R")
   created_at?: string;
   updated_at?: string;
+  deleted_at?: string | null;
 }
 
 export interface CMSCategoryOption {

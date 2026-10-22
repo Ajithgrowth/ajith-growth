@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import type { CMSArticle, CMSArticleFAQ, CMSArticleStatus } from '../../types/cms';
 import { CMS_CATEGORIES, generateSlug } from '../../types/cms';
-import { listBlogImages, uploadBlogImage, type BlogMediaItem } from '../../lib/cmsStorage';
+import { deleteBlogImage, listBlogImages, uploadBlogImage, type BlogMediaItem } from '../../lib/cmsStorage';
 import { MarkdownEditor } from './MarkdownEditor';
 import { ArticlePreviewModal } from './ArticlePreviewModal';
 
@@ -99,6 +99,20 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
   const [validationError, setValidationError] = useState<string | null>(null);
   const [showPreviewModal, setShowPreviewModal] = useState<boolean>(false);
   const [mediaLibrary, setMediaLibrary] = useState<BlogMediaItem[]>([]);
+
+  const removeSelectedMedia = async () => {
+    const media = mediaLibrary.find((item) => item.id === featuredMediaId);
+    if (!media) return;
+    if (!window.confirm(`Delete ${media.filename} from the media library? This cannot be undone.`)) return;
+    const result = await deleteBlogImage(media);
+    if (result.error) {
+      setUploadError(result.error);
+      return;
+    }
+    setMediaLibrary((items) => items.filter((item) => item.id !== media.id));
+    setFeaturedMediaId('');
+    setUploadError(null);
+  };
 
   useEffect(() => {
     listBlogImages().then(setMediaLibrary);
@@ -789,6 +803,11 @@ Targeting specific territories with customized project portfolios improves consu
                   <option value="">Select an uploaded image</option>
                   {mediaLibrary.map((media) => <option key={media.id} value={media.id}>{media.filename}</option>)}
                 </select>
+                {featuredMediaId && (
+                  <button type="button" onClick={removeSelectedMedia} className="mt-2 text-xs font-semibold text-rose-700 hover:text-rose-900">
+                    Delete selected unused image
+                  </button>
+                )}
               </div>
             )}
 

@@ -9,8 +9,7 @@ import {
   ListOrdered,
   Quote,
   Code,
-  Undo2,
-  HelpCircle,
+  ImagePlus,
 } from 'lucide-react';
 
 interface MarkdownEditorProps {
@@ -109,6 +108,19 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
     }
   };
 
+  const handleImageInsert = () => {
+    const imageUrl = window.prompt('Paste the image URL (or a site-relative path):', 'https://');
+    if (!imageUrl) return;
+    const trimmedUrl = imageUrl.trim();
+    if (!/^(https:\/\/|\/)/i.test(trimmedUrl)) {
+      window.alert('Use an https:// URL or a site-relative path beginning with /.');
+      return;
+    }
+    const altText = window.prompt('Describe the image for visitors using screen readers:', '');
+    if (altText === null) return;
+    insertFormatting('![', `](${trimmedUrl})`, altText.trim());
+  };
+
   return (
     <div className="border border-[#DCE5EE] rounded-xl overflow-hidden bg-white focus-within:ring-2 focus-within:ring-sky-800/20 focus-within:border-sky-800 transition-all">
       {/* Editor Toolbar */}
@@ -189,6 +201,16 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
           className="p-1.5 rounded-lg text-slate-700 hover:bg-slate-200 hover:text-[#0D1B2A] transition-colors disabled:opacity-50"
         >
           <Link className="w-4 h-4" />
+        </button>
+
+        <button
+          type="button"
+          disabled={disabled}
+          title="Insert image with alt text"
+          onClick={handleImageInsert}
+          className="p-1.5 rounded-lg text-slate-700 hover:bg-slate-200 hover:text-[#0D1B2A] transition-colors disabled:opacity-50"
+        >
+          <ImagePlus className="w-4 h-4" />
         </button>
 
         <button

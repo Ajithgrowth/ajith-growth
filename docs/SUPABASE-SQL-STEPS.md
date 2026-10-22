@@ -42,6 +42,10 @@ Next, run the complete contents of:
 
 This imports the six approved existing Insights articles into Supabase without overwriting any matching slug already present. It makes the existing articles editable through `/admin` immediately. Expected result: **Success. No rows returned.**
 
+## Step 2b — Apply CMS refinement migration
+
+Run `supabase/migrations/20261022_cms_refinements_v22.sql`. It preserves internal `/insights/...` links when a slug changes and supports recoverable article archiving.
+
 ## Step 3 — Check and validate legacy category values
 
 Run:
@@ -132,6 +136,7 @@ Add these variables to the selected Vercel or Netlify project. Use the project v
 ```text
 VITE_SUPABASE_URL (new project URL)
 VITE_SUPABASE_ANON_KEY (new project publishable/anon key)
+VITE_SITE_URL (single public canonical domain, for example https://ajithgrowth.consulting)
 SUPABASE_URL (new project URL)
 SUPABASE_ANON_KEY (new project publishable/anon key)
 ```

@@ -21,12 +21,20 @@ export interface SocialProfiles {
   instagram: string;
 }
 
+// Set VITE_SITE_URL on the deployment to the one public canonical domain.
+// Keeping the fallback preserves the currently deployed .com site until that
+// environment value is explicitly changed.
+const configuredSiteUrl =
+  (typeof import.meta !== 'undefined' && (import.meta as any).env?.VITE_SITE_URL) ||
+  'https://ajithgrowth.com';
+const canonicalDomain = String(configuredSiteUrl).replace(/\/+$/, '');
+
 export const siteConfig = {
   siteName: "Ajith Growth",
   brandName: "Ajith Growth",
-  siteUrl: "https://ajithgrowth.com",
-  websiteUrl: "https://ajithgrowth.com",
-  canonicalDomain: "https://ajithgrowth.com",
+  siteUrl: canonicalDomain,
+  websiteUrl: canonicalDomain,
+  canonicalDomain,
   positioning: "Google Growth Consultant for Construction & Premium Bridal & Designer Boutiques",
   primaryTagline: "Turning Google Visibility Into Meaningful Business Growth",
   heroH1: "Turning Google Visibility Into Meaningful Business Growth",

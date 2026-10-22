@@ -38,6 +38,7 @@ export function AdminPage() {
   const [editingArticle, setEditingArticle] = useState<CMSArticle | null>(null);
   const [previewArticle, setPreviewArticle] = useState<CMSArticle | null>(null);
   const [filter, setFilter] = useState<'all' | 'draft' | 'scheduled' | 'published'>('all');
+  const [showArchived, setShowArchived] = useState(false);
 
   // Articles Data State
   const [articles, setArticles] = useState<CMSArticle[]>([]);
@@ -133,10 +134,12 @@ export function AdminPage() {
     setDbNotice(null);
 
     try {
-      const { data, error } = await supabase
+      let query = supabase
         .from('articles')
         .select('*')
         .order('created_at', { ascending: false });
+      query = showArchived ? query.not('deleted_at', 'is', null) : query.is('deleted_at', null);
+      const { data, error } = await query;
 
       if (error) {
         // Provide helpful feedback if RLS or schema needs attention
@@ -156,7 +159,7 @@ export function AdminPage() {
     } finally {
       setIsLoadingArticles(false);
     }
-  }, [user]);
+  }, [user, showArchived]);
 
   // Trigger articles fetch once user is authenticated
   useEffect(() => {
@@ -344,13 +347,13 @@ export function AdminPage() {
   const handleDeleteArticle = async (identifier?: string) => {
     if (!identifier || !user) return;
 
-    if (!window.confirm('Are you sure you want to permanently delete this article?')) {
+    if (!window.confirm('Archive this article? It will be removed from public pages and can be restored later.')) {
       return;
     }
 
     try {
       const target = articles.find((article) => article.id === identifier || article.slug === identifier);
-      const deleteQuery = supabase.from('articles').delete();
+      const deleteQuery = supabase.from('articles').update({ deleted_at: new Date().toISOString(), is_featured: false });
       const { error } = target?.id
         ? await deleteQuery.eq('id', target.id)
         : await deleteQuery.eq('slug', identifier);
@@ -362,7 +365,7 @@ export function AdminPage() {
 
       // Refresh list
       await fetchArticles();
-      setStatusMessage('Article deleted. A database revision is retained for recovery.');
+      setStatusMessage('Article archived. It is private and recoverable from the Archived view.');
       if (viewMode === 'editor') {
         setViewMode('list');
         setEditingArticle(null);
@@ -370,6 +373,19 @@ export function AdminPage() {
     } catch (err: any) {
       alert(`Error deleting article: ${err?.message || 'Unknown error'}`);
     }
+  };
+
+  const handleRestoreArticle = async (identifier?: string) => {
+    if (!identifier || !user) return;
+    const target = articles.find((article) => article.id === identifier || article.slug === identifier);
+    const query = supabase.from('articles').update({ deleted_at: null, status: 'draft' });
+    const { error } = target?.id ? await query.eq('id', target.id) : await query.eq('slug', identifier);
+    if (error) {
+      setDbNotice(error.message);
+      return;
+    }
+    await fetchArticles();
+    setStatusMessage('Article restored as a private draft. Review it before publishing again.');
   };
 
   const handleDuplicateArticle = (article: CMSArticle) => {
@@ -653,6 +669,9 @@ export function AdminPage() {
             onRefresh={fetchArticles}
             onPreviewArticle={(art) => setPreviewArticle(art)}
             onDuplicateArticle={handleDuplicateArticle}
+            archived={showArchived}
+            onToggleArchived={() => setShowArchived((value) => !value)}
+            onRestoreArticle={handleRestoreArticle}
           />
         ) : (
           <ArticleEditor

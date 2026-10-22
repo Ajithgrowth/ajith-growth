@@ -42,6 +42,7 @@ export async function getPublishedArticleEntries(): Promise<Array<{ slug: string
   if (!isServerSupabaseConfigured) return [];
   const query = new URL('/rest/v1/published_articles', SUPABASE_URL);
   query.searchParams.set('select', 'slug,updated_at');
+  query.searchParams.set('noindex', 'eq.false');
   query.searchParams.set('order', 'published_at.desc');
   const response = await fetch(query, { headers });
   if (!response.ok) return [];
