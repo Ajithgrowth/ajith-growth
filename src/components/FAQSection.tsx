@@ -47,7 +47,7 @@ export interface FAQSectionProps {
 
 export function FAQSection({
   items = servicesFAQs,
-  title = 'Frequently Asked Strategic Questions',
+  title = 'Frequently Asked Questions',
   eyebrow = 'TRANSPARENT CLARITY',
   description = 'Direct, technical answers on how our Google growth systems operate for custom home builders and luxury residential remodelers.',
   className = '',

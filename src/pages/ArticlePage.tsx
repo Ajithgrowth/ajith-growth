@@ -36,6 +36,28 @@ function getNodeText(node: any): string {
   return '';
 }
 
+/**
+ * Keep links to Ajith Growth inside the site router, whether an editor enters
+ * a relative URL (/services) or copies the full public URL into Markdown.
+ */
+function getInternalArticleHref(href: string): string | null {
+  const value = href.trim();
+  if (!value || /^(?:javascript|data):/i.test(value)) return null;
+  if (value.startsWith('/') || value.startsWith('#')) return value;
+
+  try {
+    const destination = new URL(value);
+    const destinationHost = destination.hostname.replace(/^www\./i, '').toLowerCase();
+    const siteHost = new URL(siteConfig.canonicalDomain).hostname.replace(/^www\./i, '').toLowerCase();
+    if (destinationHost === siteHost) {
+      return `${destination.pathname || '/'}${destination.search}${destination.hash}`;
+    }
+  } catch {
+    // Non-URL values are handled as normal external links by the Markdown renderer.
+  }
+  return null;
+}
+
 export function ArticlePage({ slug }: ArticlePageProps) {
   const initialArticle = getStaticArticleBySlug(slug);
   const [article, setArticle] = useState<Article | undefined>(initialArticle);
@@ -222,10 +244,10 @@ export function ArticlePage({ slug }: ArticlePageProps) {
       </header>
 
       {/* Article Content Layout: Main Body + Sidebar */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 overflow-x-hidden">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
           {/* Main Article Column */}
-          <article className="lg:col-span-8 bg-white p-6 sm:p-10 rounded-2xl border border-[#DCE5EE] shadow-xs">
+          <article className="lg:col-span-8 min-w-0 bg-white p-6 sm:p-10 rounded-2xl border border-[#DCE5EE] shadow-xs">
             {/* 4. Quick Summary (Populated from summary[]) */}
             {article.summary && article.summary.length > 0 && (
               <div className="bg-[#F3F7FB] border border-[#DCE5EE] rounded-xl p-6 mb-8">
@@ -273,7 +295,7 @@ export function ArticlePage({ slug }: ArticlePageProps) {
             )}
 
             {/* 6. Main Article Content (ReactMarkdown + remark-gfm) */}
-            <div className="font-body text-[#334155] text-base leading-relaxed">
+            <div className="font-body text-[#334155] text-[1.0625rem] leading-8">
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
                 components={{
@@ -318,7 +340,7 @@ export function ArticlePage({ slug }: ArticlePageProps) {
                   },
 
                   p: ({ children, ...props }) => (
-                    <p className="text-[#334155] leading-relaxed mb-6" {...props}>
+                    <p className="text-[#334155] leading-8 mb-7 break-words" {...props}>
                       {children}
                     </p>
                   ),
@@ -370,11 +392,11 @@ export function ArticlePage({ slug }: ArticlePageProps) {
                   ),
                   a: ({ href, children, ...props }) => {
                     if (!href) return <span {...props}>{children}</span>;
-                    const isInternal = href.startsWith('/') || href.startsWith('#');
-                    if (isInternal) {
+                    const internalHref = getInternalArticleHref(href);
+                    if (internalHref) {
                       return (
                         <Link
-                          href={href}
+                          href={internalHref}
                           className="text-sky-800 font-medium underline decoration-sky-300 underline-offset-2 hover:text-[#0D1B2A] transition-colors"
                           {...props}
                         >
@@ -384,7 +406,7 @@ export function ArticlePage({ slug }: ArticlePageProps) {
                     }
                     return (
                       <a
-                        href={href}
+                        href={href.trim()}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-sky-800 font-medium underline decoration-sky-300 underline-offset-2 hover:text-[#0D1B2A] transition-colors"
@@ -472,7 +494,7 @@ export function ArticlePage({ slug }: ArticlePageProps) {
           <div className="mt-16">
             <FAQSection
               items={article.faqs}
-              title={`Frequently Asked Questions on ${article.title}`}
+              title={article.category === 'business-strategy' ? 'Business Strategy FAQs' : 'Frequently Asked Questions'}
               eyebrow="FREQUENTLY ASKED QUESTIONS"
               description="Clear answers to common questions related to this topic."
             />
