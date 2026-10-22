@@ -289,26 +289,17 @@ export function AdminPage() {
       };
 
       if (articleData.id) {
-        // Update existing record
+        // Editing is ID-only. Never fall back to the slug: a slug can change and
+        // must not select a different record or turn an edit into a create flow.
         const { data, error } = await supabase
           .from('articles')
           .update(payload)
           .eq('id', articleData.id)
-          .select()
+          .select('id, slug')
           .single();
 
-        if (error) {
-          // If update by ID fails because of schema column mismatch, attempt slug update
-          const slugUpdate = await supabase
-            .from('articles')
-            .update(payload)
-            .eq('slug', articleData.slug)
-            .select()
-            .single();
-
-          if (slugUpdate.error) {
-            return { success: false, error: slugUpdate.error.message };
-          }
+        if (error || !data || data.id !== articleData.id) {
+          return { success: false, error: error?.message || 'The original article could not be found. Nothing was changed.' };
         }
       } else {
         // Insert new record

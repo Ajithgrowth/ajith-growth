@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import type { CMSArticle, CMSArticleStatus } from '../../types/cms';
 import { CMS_CATEGORIES } from '../../types/cms';
+import { siteConfig } from '../../data/siteConfig';
 
 interface ArticleListDashboardProps {
   articles: CMSArticle[];
@@ -52,6 +53,22 @@ export const ArticleListDashboard: React.FC<ArticleListDashboardProps> = ({
 }) => {
   const [searchTerm, setSearchTerm] = React.useState<string>('');
   const [categoryFilter, setCategoryFilter] = React.useState<string>('all');
+  const [copiedSlug, setCopiedSlug] = React.useState<string | null>(null);
+
+  const copyPublishedUrl = async (article: CMSArticle) => {
+    const url = `${siteConfig.canonicalDomain}/insights/${article.slug}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopiedSlug(article.slug);
+      window.setTimeout(() => setCopiedSlug((current) => current === article.slug ? null : current), 2200);
+    } catch {
+      window.prompt('Copy this published URL:', url);
+    }
+  };
+
+  const openPublishedArticle = (article: CMSArticle) => {
+    window.open(`${siteConfig.canonicalDomain}/insights/${article.slug}`, '_blank', 'noopener,noreferrer');
+  };
 
   // Calculate dashboard counts
   const totalCount = articles.length;
@@ -342,6 +359,7 @@ export const ArticleListDashboard: React.FC<ArticleListDashboardProps> = ({
                   const isDraft =
                     (article.status as string) === 'draft' || (article as any).draft === true;
                   const isScheduled = (article.status as string) === 'scheduled';
+                  const isPubliclyAvailable = !isDraft && !isScheduled && (!article.published_at || new Date(article.published_at).getTime() <= Date.now());
                   const pubDate = isScheduled && article.scheduled_at
                     ? article.scheduled_at.split('T')[0]
                     : article.published_at
@@ -416,12 +434,12 @@ export const ArticleListDashboard: React.FC<ArticleListDashboardProps> = ({
                               <RotateCcw className="w-3.5 h-3.5" /><span>Restore</span>
                             </button>
                           ) : <>
-                          {/* Preview button */}
+                          {/* Preview stays private for drafts. Published entries open their real URL. */}
                           <button
                             type="button"
-                            onClick={() => onPreviewArticle(article)}
+                            onClick={() => isPubliclyAvailable ? openPublishedArticle(article) : onPreviewArticle(article)}
                             className="p-1.5 rounded-lg border border-[#DCE5EE] hover:bg-slate-100 text-slate-600 transition-colors"
-                            title="Preview Article (Private)"
+                            title={isPubliclyAvailable ? 'Open published article in a new tab' : 'Preview article privately'}
                           >
                             <Eye className="w-3.5 h-3.5" />
                           </button>
@@ -437,13 +455,26 @@ export const ArticleListDashboard: React.FC<ArticleListDashboardProps> = ({
                             <span>Edit</span>
                           </button>
 
+                          {isPubliclyAvailable && (
+                            <button
+                              type="button"
+                              onClick={() => copyPublishedUrl(article)}
+                              className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-[#DCE5EE] hover:bg-slate-100 text-slate-600 font-supporting font-semibold text-xs transition-colors"
+                              title="Copy published article URL"
+                            >
+                              <Copy className="w-3.5 h-3.5" />
+                              <span>{copiedSlug === article.slug ? 'Copied' : 'Copy URL'}</span>
+                            </button>
+                          )}
+
                           <button
                             type="button"
                             onClick={() => onDuplicateArticle(article)}
-                            className="p-1.5 rounded-lg border border-[#DCE5EE] hover:bg-slate-100 text-slate-600 transition-colors"
-                            title="Duplicate as Draft"
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-[#DCE5EE] hover:bg-slate-100 text-slate-600 font-supporting font-semibold text-xs transition-colors"
+                            title="Duplicate as new draft"
                           >
                             <Copy className="w-3.5 h-3.5" />
+                            <span>Duplicate</span>
                           </button>
 
                           {/* Delete button */}

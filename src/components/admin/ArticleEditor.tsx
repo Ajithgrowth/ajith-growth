@@ -41,7 +41,10 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
   onCancel,
   isSaving,
 }) => {
-  const isEditMode = Boolean(initialArticle && (initialArticle.id || initialArticle.slug));
+  // A duplicate deliberately has no ID and is a new draft; only a database ID
+  // makes this an edit of an existing article.
+  const isEditMode = Boolean(initialArticle?.id);
+  const isPersistedEdit = Boolean(initialArticle?.id);
 
   // Form State
   const [title, setTitle] = useState<string>(initialArticle?.title || '');
@@ -198,8 +201,8 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
       return false;
     }
     // Check collision against other articles
-    const otherSlugs = isEditMode
-      ? existingSlugs.filter((s) => s !== initialArticle?.slug)
+    const otherSlugs = isPersistedEdit
+      ? existingSlugs.filter((s) => s.toLowerCase() !== initialArticle?.slug?.toLowerCase())
       : existingSlugs;
 
     if (otherSlugs.includes(slugToTest.trim().toLowerCase())) {
@@ -317,6 +320,11 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
       return;
     }
 
+    if (isEditMode && !isPersistedEdit) {
+      setValidationError('This record has no database ID, so it cannot be safely edited. Return to the dashboard and refresh before trying again.');
+      return;
+    }
+
     if (!validateSlug(slug)) {
       setValidationError('Please resolve the slug collision error.');
       return;
@@ -375,7 +383,7 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
               {isEditMode ? 'Edit Article' : 'New Article'}
             </h1>
             <p className="text-xs text-[#64748B] font-body">
-              {isEditMode ? `Editing slug: /insights/${slug}` : 'Drafting new residential construction insight'}
+              {isEditMode ? `Editing record ${initialArticle?.id} • URL remains /insights/${slug} unless you change the slug.` : 'Drafting a new insight'}
             </p>
           </div>
         </div>
