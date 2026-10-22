@@ -2,10 +2,10 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "routes": [
-    { "src": "^/admin(?:/.*)?$", "dest": "/index.html" },
+    { "src": "^/admin(?:/.*)?$", "dest": "/" },
     { "src": "^/sitemap\\.xml$", "dest": "/api/sitemap" },
     { "handle": "filesystem" },
     { "src": "^/insights/([a-z0-9-]+)/?$", "dest": "/api/article?slug=$1" },
-    { "src": "/(.*)", "dest": "/index.html" }
+    { "src": "/(.*)", "dest": "/" }
   ]
 }
