@@ -26,7 +26,7 @@ Set `VITE_SITE_URL` to the single public canonical domain (for example, `https:/
 
 ## Consultation form
 
-The form posts to `/api/contact`. Configure `RESEND_API_KEY` and `CONTACT_FROM_EMAIL` in the deployment environment to enable email delivery. A Vercel API handler and an equivalent Netlify Function are included; Netlify redirects `/api/contact` to that function before the single-page-app fallback.
+The form posts to `/api/contact`. To store leads in Google Sheets, configure the server-only `LEADS_WEBHOOK_URL` and `LEADS_WEBHOOK_TOKEN` environment variables with the Google Apps Script Web App URL and matching private token. The Google Sheet is the primary delivery destination. Optionally configure `RESEND_API_KEY` and `CONTACT_FROM_EMAIL` to keep an email notification as a backup. A Vercel API handler and an equivalent Netlify Function are included; Netlify redirects `/api/contact` to that function before the single-page-app fallback.
 
 The form supports Residential Construction and Premium Bridal & Designer Boutiques. Boutique CTAs open `/contact?industry=boutiques#consultation-form`, which preselects the boutique-specific consultation journey.
 
