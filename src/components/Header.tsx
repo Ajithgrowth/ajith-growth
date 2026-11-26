@@ -39,17 +39,13 @@ export function Header() {
             className="flex items-center gap-3 group focus:outline-none min-h-[44px]"
             aria-label="Ajith Growth - Home"
           >
-            <div className="w-10 h-10 rounded-lg bg-[#0D1B2A] flex items-center justify-center text-white font-heading font-bold text-lg tracking-wider shadow-xs group-hover:bg-[#172A3A] transition-colors">
-              AG
-            </div>
-            <div className="flex flex-col">
-              <span className="font-heading font-bold text-lg sm:text-xl text-[#0D1B2A] tracking-tight leading-tight">
-                {siteConfig.brandName}
-              </span>
-              <span className="font-supporting text-[11px] font-semibold tracking-wider text-[#64748B] uppercase leading-none mt-0.5">
-                Google Growth Consultant
-              </span>
-            </div>
+            <img
+              src="/images/ajith-growth-logo.png"
+              alt="Ajith Growth — Visibility, Trust, Growth"
+              width={222}
+              height={87}
+              className="w-[150px] sm:w-[178px] h-auto object-contain transition-opacity group-hover:opacity-85"
+            />
           </Link>
 
           {/* Desktop Navigation Links */}

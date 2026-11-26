@@ -44,7 +44,7 @@ export const staticPagesSeo: Record<string, SeoRouteData> = {
     canonicalUrl: `${siteConfig.canonicalDomain}/about`,
     ogImage: `${siteConfig.canonicalDomain}/images/og-about.jpg`,
     ogType: 'website',
-    lastmod: '2026-10-16',
+    lastmod: '2026-11-26',
     changefreq: 'monthly',
     priority: '0.8',
     breadcrumbs: [

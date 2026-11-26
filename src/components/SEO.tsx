@@ -134,7 +134,7 @@ export function SEO({
         '@id': SCHEMA_IDS.organization,
         name: siteConfig.brandName,
         url: siteConfig.canonicalDomain,
-        logo: `${siteConfig.canonicalDomain}/favicon.svg`,
+        logo: `${siteConfig.canonicalDomain}/images/ajith-growth-logo.png`,
         slogan: siteConfig.primaryTagline,
         description: siteConfig.heroSupportingCopy,
         email: siteConfig.email,

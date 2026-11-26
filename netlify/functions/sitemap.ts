@@ -3,11 +3,13 @@ import { getPublishedArticleEntries, mergeDynamicSitemap } from '../../server/cm
 export async function handler(event: any) {
   const protocol = event.headers['x-forwarded-proto'] || 'https';
   const origin = `${protocol}://${event.headers.host}`;
-  const [staticResponse, entries] = await Promise.all([
+  const [staticResult, entriesResult] = await Promise.allSettled([
     fetch(`${origin}/sitemap-static.xml`),
     getPublishedArticleEntries(),
   ]);
-  const staticXml = staticResponse.ok ? await staticResponse.text() : '';
+  const staticResponse = staticResult.status === 'fulfilled' ? staticResult.value : null;
+  const staticXml = staticResponse?.ok ? await staticResponse.text().catch(() => '') : '';
+  const entries = entriesResult.status === 'fulfilled' ? entriesResult.value : [];
   return {
     statusCode: 200,
     headers: {

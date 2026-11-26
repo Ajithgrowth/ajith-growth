@@ -40,14 +40,19 @@ export async function getArticleRedirect(slug: string): Promise<string | null> {
 
 export async function getPublishedArticleEntries(): Promise<Array<{ slug: string; updated_at?: string }>> {
   if (!isServerSupabaseConfigured) return [];
-  const query = new URL('/rest/v1/published_articles', SUPABASE_URL);
-  query.searchParams.set('select', 'slug,updated_at');
-  query.searchParams.set('noindex', 'eq.false');
-  query.searchParams.set('order', 'published_at.desc');
-  const response = await fetch(query, { headers });
-  if (!response.ok) return [];
-  const rows = await response.json();
-  return Array.isArray(rows) ? rows : [];
+  try {
+    const query = new URL('/rest/v1/published_articles', SUPABASE_URL);
+    query.searchParams.set('select', 'slug,updated_at');
+    query.searchParams.set('noindex', 'eq.false');
+    query.searchParams.set('order', 'published_at.desc');
+    const response = await fetch(query, { headers });
+    if (!response.ok) return [];
+    const rows = await response.json();
+    return Array.isArray(rows) ? rows : [];
+  } catch {
+    // Keep the static sitemap available during temporary CMS/network outages.
+    return [];
+  }
 }
 
 export function escapeHtml(value: unknown): string {
@@ -133,13 +138,35 @@ export function mergeDynamicSitemap(staticXml: string, entries: Array<{ slug: st
   if (!staticXml.includes(closing)) {
     staticXml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n</urlset>';
   }
-  const normalizedStaticXml = staticXml.replace(/<loc>https?:\/\/[^<\/]+/g, `<loc>${origin}`);
+  const normalizedOrigin = origin.replace(/\/+$/, '');
+  const normalizedStaticXml = staticXml.replace(/<loc>https?:\/\/[^<\/]+/g, `<loc>${normalizedOrigin}`);
+  const pathFor = (url: string) => {
+    try {
+      const pathname = new URL(url, normalizedOrigin).pathname.replace(/\/+$/, '');
+      return pathname || '/';
+    } catch {
+      return '';
+    }
+  };
   const existing = new Set(
-    Array.from(normalizedStaticXml.matchAll(/<loc>([^<]+)<\/loc>/g)).map((match) => match[1].replace(/\/$/, ''))
+    Array.from(normalizedStaticXml.matchAll(/<loc>([^<]+)<\/loc>/g)).map((match) => pathFor(match[1]))
   );
+  const seen = new Set(existing);
   const additions = entries
-    .filter((entry) => !existing.has(`${origin}/insights/${entry.slug}`))
-    .map((entry) => `  <url>\n    <loc>${escapeHtml(`${origin}/insights/${entry.slug}`)}</loc>\n    ${entry.updated_at ? `<lastmod>${escapeHtml(entry.updated_at.split('T')[0])}</lastmod>\n    ` : ''}  </url>`)
+    .filter((entry) => typeof entry.slug === 'string' && /^[a-z0-9]+(?:-[a-z0-9]+)*$/i.test(entry.slug))
+    .filter((entry) => {
+      const path = `/insights/${entry.slug}`;
+      if (seen.has(path)) return false;
+      seen.add(path);
+      return true;
+    })
+    .map((entry) => {
+      const updated = entry.updated_at ? new Date(entry.updated_at) : null;
+      const lastmod = updated && Number.isFinite(updated.getTime())
+        ? `    <lastmod>${updated.toISOString().slice(0, 10)}</lastmod>\n`
+        : '';
+      return `  <url>\n    <loc>${escapeHtml(`${normalizedOrigin}/insights/${entry.slug}`)}</loc>\n${lastmod}  </url>`;
+    })
     .join('\n');
   return normalizedStaticXml.replace(closing, `${additions ? `${additions}\n` : ''}${closing}`);
 }
